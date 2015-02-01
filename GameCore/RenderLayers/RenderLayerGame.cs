@@ -361,7 +361,7 @@ namespace GameCore.RenderLayers
             {
                 Vector tempLoc = gameObject.Location;
                 tempLoc -= new Vector(gameObject.Diameter*0.5f, gameObject.Diameter*0.5f);
-                ObjObject tempObjObject = CreateCube(program, new Vector3(tempLoc.X, tempLoc.Y, 0),
+                ObjObject tempObjObject = CreateCubeUV(program, new Vector3(tempLoc.X, tempLoc.Y, 0),
                                                      new Vector3(tempLoc.X + gameObject.Diameter,
                                                                  tempLoc.Y + gameObject.Diameter, 1));
                 tempObjObject.Material = gameObjectsTextures[gameObject.TheObjectId].Material;
@@ -384,7 +384,7 @@ namespace GameCore.RenderLayers
             {
                 Vector tempLoc = new Vector(0.0f, 0.0f);
                 tempLoc -= new Vector(gameObject.Diameter*0.5f, gameObject.Diameter*0.5f);
-                RenderGameObject tempObjObject = CreateCube(program, new Vector3(tempLoc.X, tempLoc.Y, 0),
+                RenderGameObject tempObjObject = CreateCubeUV(program, new Vector3(tempLoc.X, tempLoc.Y, 0),
                                                             new Vector3(tempLoc.X + gameObject.Diameter,
                                                                         tempLoc.Y + gameObject.Diameter, 1));
                 tempObjObject.Material = gameObjectsTextures[gameObject.TheObjectId].Material;
