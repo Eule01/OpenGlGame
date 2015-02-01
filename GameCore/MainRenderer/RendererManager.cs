@@ -29,7 +29,7 @@ namespace GameCore.MainRenderer
             get { return theRenderer; }
         }
 
-        public void SetRenderer(int aIndex, GameStatus aGameStatus, UserInput aUserInput)
+        public void SetRenderer(int aIndex, GameStatus aGameStatus, UserInputPlayer aUserInputPlayer)
         {
             if (theRenderer != null)
             {
@@ -37,7 +37,7 @@ namespace GameCore.MainRenderer
             }
             theRenderer = theRenderers[aIndex];
             theRenderer.TheGameStatus = aGameStatus;
-            theRenderer.TheUserInput = aUserInput;
+            theRenderer.TheUserInputPlayer = aUserInputPlayer;
 //            theRenderer.Start();
         }
 

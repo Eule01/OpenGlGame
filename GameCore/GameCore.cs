@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.IO;
 using GameCore.Engine;
 using GameCore.MainRenderer;
@@ -60,13 +61,28 @@ namespace GameCore
             set { theRenderer = value; }
         }
 
-        public UserInput TheUserInput
+        public UserInputPlayer TheUserInputPlayer
         {
-            get { return theGameEngine.TheUserInput; }
+            get { return theGameEngine.TheUserInputPlayer; }
         }
 
         private void GameCore_TheGameEventHandler(object sender, GameEventArgs args)
         {
+            switch (args.TheType)
+            {
+                case GameEventArgs.Types.Status:
+                    break;
+                case GameEventArgs.Types.Message:
+                    break;
+                case GameEventArgs.Types.MapLoaded:
+                    break;
+                case GameEventArgs.Types.MapSaved:
+                    break;
+                case GameEventArgs.Types.RendererExited:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         /// <summary>
@@ -75,7 +91,7 @@ namespace GameCore
         /// <param name="aMessage"></param>
         internal void RaiseMessage(string aMessage)
         {
-            OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.Message));
+            OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.Message){Message = aMessage});
         }
 
         #region Game flow
@@ -89,7 +105,7 @@ namespace GameCore
         public void ChangeRenderer(int aRendererIndex)
         {
             theGameEngine.Pause();
-            theRendererManager.SetRenderer(aRendererIndex, theGameStatus, TheUserInput);
+            theRendererManager.SetRenderer(aRendererIndex, theGameStatus, TheUserInputPlayer);
             theRenderer = theRendererManager.TheRenderer;
             theGameEngine.Resume();
             theRendererManager.Start();

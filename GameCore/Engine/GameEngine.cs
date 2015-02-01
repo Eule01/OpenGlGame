@@ -18,7 +18,7 @@ namespace GameCore.Engine
         /// </summary>
         private const int timerTickIntervalMs = 10;
 
-        private UserInput theUserInput;
+        private UserInputPlayer theUserInputPlayer;
 
         public GameEngine()
         {
@@ -30,14 +30,14 @@ namespace GameCore.Engine
         /// </summary>
         private void Init()
         {
-            theUserInput = new UserInput();
+            theUserInputPlayer = new UserInputPlayer();
             theTickEngine = new TickEngineThread();
             theTickEngine.Setup("GameEngine", GameTick, StatusTick, timerTickIntervalMs);
         }
 
-        public UserInput TheUserInput
+        public UserInputPlayer TheUserInputPlayer
         {
-            get { return theUserInput; }
+            get { return theUserInputPlayer; }
         }
 
         private void StatusTick(OpStatus opstatus)
@@ -56,25 +56,25 @@ namespace GameCore.Engine
         private void GameTick()
         {
             ObjectPlayer thePlayer = GameCore.TheGameCore.TheGameStatus.ThePlayer;
-            if (theUserInput.Forward)
+            if (theUserInputPlayer.Forward)
             {
                 thePlayer.Location += thePlayer.Orientation*0.1f;
             }
-            else if (theUserInput.Backward)
+            else if (theUserInputPlayer.Backward)
             {
                 thePlayer.Location -= thePlayer.Orientation*0.1f;
             }
-            if (theUserInput.Right)
+            if (theUserInputPlayer.Right)
             {
                 thePlayer.Location -= (thePlayer.Orientation.Perpendicular())*0.1f;
             }
-            else if (theUserInput.Left)
+            else if (theUserInputPlayer.Left)
             {
                 thePlayer.Location += (thePlayer.Orientation.Perpendicular()) * 0.1f;
             }
-            if (!theUserInput.MousePosition.IsEmpty)
+            if (!theUserInputPlayer.MousePosition.IsEmpty)
             {
-                Vector gameMousePos = theUserInput.MousePosition;
+                Vector gameMousePos = theUserInputPlayer.MousePosition;
                 Vector playerMouseVec = gameMousePos - thePlayer.Location;
                 playerMouseVec.Normalize();
                 thePlayer.Orientation = playerMouseVec;

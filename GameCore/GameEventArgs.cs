@@ -23,7 +23,11 @@ namespace GameCore
             /// <summary>
             /// Map has been saved (Message = filePath).
             /// </summary>
-            MapSaved
+            MapSaved,
+            /// <summary>
+            /// The render enigine exited.
+            /// </summary>
+            RendererExited
         }
 
         private Types theType;

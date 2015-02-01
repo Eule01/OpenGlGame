@@ -25,7 +25,8 @@ namespace GameCore.DrawingObjects
             defaultMaterial = new ObjMaterial(program);
 
             watch.Stop();
-            Console.WriteLine("Took {0}ms", watch.ElapsedMilliseconds);
+            GameCore.TheGameCore.RaiseMessage(string.Format("Took {0}ms", watch.ElapsedMilliseconds));
+//            Console.WriteLine("Took {0}ms", watch.ElapsedMilliseconds);
         }
 
         public ObjLoader(string filename, ShaderProgram program)
@@ -73,7 +74,9 @@ namespace GameCore.DrawingObjects
             }
 
             watch.Stop();
-            Console.WriteLine("Took {0}ms", watch.ElapsedMilliseconds);
+            GameCore.TheGameCore.RaiseMessage(string.Format("Took {0}ms", watch.ElapsedMilliseconds));
+
+//            Console.WriteLine("Took {0}ms", watch.ElapsedMilliseconds);
         }
 
         public void AddObject(ObjObject aObject)

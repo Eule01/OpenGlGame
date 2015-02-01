@@ -13,6 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Glut", "Glut", "{94381022-6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Async", "External\Async\Async.csproj", "{18BCA4A3-F860-4558-9EB7-0C7FECDBD3BE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{96F6E608-043B-4AF5-A67A-CF4AB9221995}"
+	ProjectSection(SolutionItems) = preProject
+		ChangeLog.md = ChangeLog.md
+		README.md = README.md
+		Todo.md = Todo.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

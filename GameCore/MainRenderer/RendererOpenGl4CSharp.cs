@@ -3,8 +3,8 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
-using CodeToast;
 using GameCore.RenderLayers;
+using GameCore.UserInterface;
 using OpenGL;
 using Tao.FreeGlut;
 
@@ -43,6 +43,8 @@ namespace GameCore.MainRenderer
         public Vector3 MouseWorld = Vector3.Zero;
         public Vector2 MouseCoord = Vector2.Zero;
 
+        private KeyBindings theKeyBindings;
+
         public RendererOpenGl4CSharp()
         {
             name = "RendererOpenGl4CSharp";
@@ -51,6 +53,10 @@ namespace GameCore.MainRenderer
         public override void Start()
         {
 //            Async.Do(delegate { StartOpenGl(); });
+            theKeyBindings = KeyBindings.GetDefaultKeyBindings();
+            theKeyBindings.Initialise();
+            GameCore.TheGameCore.RaiseMessage("Loaded KeyBindings: " + Environment.NewLine + theKeyBindings);
+
             StartOpenGl();
         }
 
@@ -92,9 +98,10 @@ namespace GameCore.MainRenderer
             int major, minor;
             major = Gl.GetInteger(GetPName.MajorVersion);
             minor = Gl.GetInteger(GetPName.MinorVersion);
-            Console.WriteLine("Major " + major + " Minor " + minor);
+            GameCore.TheGameCore.RaiseMessage("Major " + major + " Minor " + minor);
+//            Console.WriteLine("Major " + major + " Minor " + minor);
             //you can also get your GLSL version, although not sure if it varies from the above
-            Console.WriteLine("GLSL " + Gl.GetString(StringName.ShadingLanguageVersion));
+            GameCore.TheGameCore.RaiseMessage("GLSL " + Gl.GetString(StringName.ShadingLanguageVersion));
 
             #endregion
 
@@ -103,18 +110,20 @@ namespace GameCore.MainRenderer
             Gl.Enable(EnableCap.Blend);
             Gl.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-            layerGame = new RenderLayerGame(width, height, TheGameStatus, TheUserInput);
+            layerGame = new RenderLayerGame(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings);
             layerGame.OnLoad();
 
-            layerHud = new RenderLayerHud(width, height, TheGameStatus, TheUserInput);
+            layerHud = new RenderLayerHud(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings);
             layerHud.OnLoad();
 
-            layerInfo = new RenderLayerTextInfo(width, height, TheGameStatus, TheUserInput);
+            layerInfo = new RenderLayerTextInfo(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings);
             layerInfo.OnLoad();
 
             watch = Stopwatch.StartNew();
 
             Glut.glutMainLoop();
+
+            GameCore.TheGameCore.OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.RendererExited));
         }
 
 
@@ -173,8 +182,8 @@ namespace GameCore.MainRenderer
 
 
                 layerGame.OnRenderFrame(deltaTime);
-                layerInfo.OnRenderFrame(deltaTime);
                 layerHud.OnRenderFrame(deltaTime);
+                layerInfo.OnRenderFrame(deltaTime);
 
                 Glut.glutSwapBuffers();
             }
@@ -259,8 +268,15 @@ namespace GameCore.MainRenderer
 
         private void OnKeyboardDown(byte key, int x, int y)
         {
-            layerGame.OnKeyboardDown(key, x, y);
-//            else if (key == 27) Glut.glutLeaveMainLoop();
+            if (key == theKeyBindings.TheKeyLookUp[KeyBindings.Ids.GameExit])
+            {
+                exit = true;
+//                Glut.glutLeaveMainLoop();
+            }
+            else
+            {
+                layerGame.OnKeyboardDown(key, x, y);
+            }
 //            else
 //            {
 //                //                char c = Convert.ToChar(key);
@@ -272,7 +288,7 @@ namespace GameCore.MainRenderer
 
         private void OnKeyboardUp(byte key, int x, int y)
         {
-            if (key == 'f')
+            if (key == theKeyBindings.TheKeyLookUp[KeyBindings.Ids.DisplayToggleFullFrame])
             {
                 fullscreen = !fullscreen;
                 if (fullscreen)

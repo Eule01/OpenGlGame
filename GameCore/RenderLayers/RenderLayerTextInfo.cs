@@ -1,6 +1,10 @@
+#region
+
 using GameCore.Font;
 using GameCore.UserInterface;
 using OpenGL;
+
+#endregion
 
 namespace GameCore.RenderLayers
 {
@@ -14,8 +18,9 @@ namespace GameCore.RenderLayers
         public string GameInfo = "";
 
 
-        public RenderLayerTextInfo(int width, int height, GameStatus theGameStatus, UserInput theUserInput)
-            : base(width, height, theGameStatus, theUserInput)
+        public RenderLayerTextInfo(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
+                                   KeyBindings theKeyBindings)
+            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings)
         {
         }
 
@@ -103,7 +108,7 @@ namespace GameCore.RenderLayers
 
         public override void OnKeyboardUp(byte key, int x, int y)
         {
-            if (key == 'i') ShowInfo = !ShowInfo;
+            if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.DisplayToggleDisplayInfo]) ShowInfo = !ShowInfo;
         }
     }
 }

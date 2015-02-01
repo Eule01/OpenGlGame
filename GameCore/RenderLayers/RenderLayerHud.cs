@@ -25,8 +25,8 @@ namespace GameCore.RenderLayers
         private Matrix4 projectionMatrix;
 
 
-        public RenderLayerHud(int width, int height, GameStatus theGameStatus, UserInput theUserInput)
-            : base(width, height, theGameStatus, theUserInput)
+        public RenderLayerHud(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer, KeyBindings theKeyBindings)
+            : base(width, height, theGameStatus, theUserInputPlayer,theKeyBindings)
         {
             theTileObjects = new List<ObjObject>();
         }
@@ -65,16 +65,22 @@ namespace GameCore.RenderLayers
             theTileObjects.AddRange(tempObjList);
 
             tempSize = new Size(100, Height);
-            ObjHudPanel hudPanel = CreateHudPanel(tempSize, Color.Brown, ObjHudPanel.Anchors.TopRight);
+//            ObjHudPanel hudPanel = CreateHudPanel(tempSize, Color.Brown, ObjHudPanel.Anchors.TopRight);
+            ObjHudPanel hudPanel = CreateHudPanel(@"./Resources/Images/HudPanelCreative.png", ObjHudPanel.Anchors.TopRight);
 
             theHudPanels.Add(hudPanel);
 
 
-            counter = 2;
-            tempSize = new Size(50, 50);
+            counter = 0;
+            int cellsPerRow = 2;
+             Vector2 startLoc = new Vector2(120,200);
+            int rowOffset = 100;
+            tempSize = new Size(60, 60);
             foreach (KeyValuePair<Tile.TileIds, PlainBmpTexture> tempTile in tempTiletypeList)
             {
-                Vector2 tempLoc = new Vector2(10, 10 + counter*(tempSize.Height + 10));
+                int row = counter/cellsPerRow;
+                int col = counter % cellsPerRow;
+                Vector2 tempLoc = startLoc + new Vector2( -row * rowOffset,  col * rowOffset);
 
                 ObjHudButton tempObjHudButton = RenderLayerGame.CreateSquareHudButton(hudProgram, new Vector3(0, 0, 0),
                                                                                       new Vector3(tempSize.Width,
@@ -99,6 +105,27 @@ namespace GameCore.RenderLayers
             Bitmap tempBmp = BitmapHelper.CreatBitamp(new Size(20, 20), tempBrush);
             ObjMaterial tempMaterial = new ObjMaterial(hudProgram) {DiffuseMap = new Texture(tempBmp)};
 
+
+            ObjHudPanel tempObjObject2 = RenderLayerGame.CreateSquareHudPanel(hudProgram, new Vector3(0, 0, 0),
+                                                                              new Vector3(tempSize.Width,
+                                                                                          tempSize.Height,
+                                                                                          0),
+                                                                              anAnchor, tempLoc2,
+                                                                              tempSize);
+            tempObjObject2.Size = tempSize;
+            tempObjObject2.UpdatePosition(Width, Height);
+            tempObjObject2.Material = tempMaterial;
+            return tempObjObject2;
+        }
+
+        private ObjHudPanel CreateHudPanel(string aBmpPath, ObjHudPanel.Anchors anAnchor)
+        {
+            Texture tempTexture = new Texture(aBmpPath);
+            Size tempSize = tempTexture.Size;
+
+            ObjMaterial tempMaterial = new ObjMaterial(hudProgram) { DiffuseMap = tempTexture };
+
+            Vector2 tempLoc2 = new Vector2(0, 0);
 
             ObjHudPanel tempObjObject2 = RenderLayerGame.CreateSquareHudPanel(hudProgram, new Vector3(0, 0, 0),
                                                                               new Vector3(tempSize.Width,
@@ -198,7 +225,7 @@ namespace GameCore.RenderLayers
                     ObjObject tempObj = aHudObject.IsOn((int) MouseWorld.x, (int) MouseWorld.y);
                     if (tempObj != null)
                     {
-                        Console.WriteLine("Mouse: [" + x + "," + y + "] on HUD: " + tempObj + ".");
+                        GameCore.TheGameCore.RaiseMessage("Mouse: [" + x + "," + y + "] on HUD: " + tempObj + ".");
                         return true;
                     }
                 }

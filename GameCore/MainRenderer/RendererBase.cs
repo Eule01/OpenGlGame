@@ -6,7 +6,7 @@ namespace GameCore.MainRenderer
     {
         public GameStatus TheGameStatus;
 
-        public UserInput TheUserInput;
+        public UserInputPlayer TheUserInputPlayer;
 
         protected string name = "RendererBase";
 

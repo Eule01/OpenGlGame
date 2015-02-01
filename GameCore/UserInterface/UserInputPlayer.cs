@@ -1,11 +1,15 @@
-﻿using System.Drawing;
+﻿#region
+
+using System.Drawing;
+
+#endregion
 
 namespace GameCore.UserInterface
 {
     /// <summary>
     ///     This class gets the user input and will be used by the engine to update the game status
     /// </summary>
-    public class UserInput
+    public class UserInputPlayer
     {
         /// <summary>
         ///     Move player forward.
@@ -20,8 +24,6 @@ namespace GameCore.UserInterface
         public bool Right;
 
         public bool Left;
-
-
 
         public PointF MousePosition;
     }

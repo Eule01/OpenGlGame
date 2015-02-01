@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cameras\Camera.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="DrawingObjects\ObjHudButton.cs" />
     <Compile Include="DrawingObjects\ObjHudPanel.cs" />
     <Compile Include="DrawingObjects\ObjLoader.cs" />
@@ -73,7 +72,9 @@
     <Compile Include="RenderLayers\RenderLayerGame.cs" />
     <Compile Include="RenderLayers\RenderLayerHud.cs" />
     <Compile Include="RenderLayers\RenderLayerTextInfo.cs" />
-    <Compile Include="UserInterface\UserInput.cs" />
+    <Compile Include="UserInterface\KeyBinding.cs" />
+    <Compile Include="UserInterface\KeyBindings.cs" />
+    <Compile Include="UserInterface\UserInputPlayer.cs" />
     <Compile Include="Utils\BitmapHelper.cs" />
     <Compile Include="Utils\FormPositioner.cs" />
     <Compile Include="Utils\RandomNumGen.cs" />
@@ -114,9 +115,17 @@
     <Content Include="freeglut.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="HudPanelCreative.png" />
+    <Content Include="Resources\Images\HudPanelCreative.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Tao.FreeGlut.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

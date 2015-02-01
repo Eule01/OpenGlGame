@@ -23,9 +23,8 @@ namespace GameCore.RenderLayers
         private ShaderProgram program;
         private ObjLoader objectList;
         private bool wireframe;
-        private bool msaa;
 
-        private bool camLeft, camRight, camForward, camBack, space;
+        private bool camLeft, camRight, camForward, camBack;
 
         private bool camUp;
         private bool camDown;
@@ -60,8 +59,9 @@ namespace GameCore.RenderLayers
         private Dictionary<Tile.TileIds, PlainBmpTexture> tileTextures;
 
 
-        public RenderLayerGame(int width, int height, GameStatus theGameStatus, UserInput theUserInput)
-            : base(width, height, theGameStatus, theUserInput)
+        public RenderLayerGame(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
+                               KeyBindings theKeyBindings)
+            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings)
         {
         }
 
@@ -128,7 +128,7 @@ namespace GameCore.RenderLayers
             if (camForward) Camera.MoveRelative(-Vector3.UnitZ*deltaTime*5);
             if (camLeft) Camera.MoveRelative(-Vector3.UnitX*deltaTime*5);
             if (camRight) Camera.MoveRelative(Vector3.UnitX*deltaTime*5);
-            if (space || camUp) Camera.MoveRelative(Vector3.Up*deltaTime*3);
+            if (camUp) Camera.MoveRelative(Vector3.Up*deltaTime*3);
             if (camDown) Camera.MoveRelative(-Vector3.Up*deltaTime*3);
 
 
@@ -286,26 +286,26 @@ namespace GameCore.RenderLayers
         public override void OnSpecialKeyboardDown(int key, int x, int y)
         {
             //            Console.WriteLine("Key: " + key);
-            if (key == Glut.GLUT_KEY_UP) camForward = true;
-            else if (key == Glut.GLUT_KEY_DOWN) camBack = true;
-            else if (key == Glut.GLUT_KEY_RIGHT) camRight = true;
-            else if (key == Glut.GLUT_KEY_LEFT) camLeft = true;
-            else if (key == Glut.GLUT_KEY_PAGE_UP) camUp = true;
-            else if (key == Glut.GLUT_KEY_PAGE_DOWN) camDown = true;
+            if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraForward]) camForward = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraBackward]) camBack = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraRight]) camRight = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraLeft]) camLeft = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraUp]) camUp = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraDown]) camDown = true;
         }
 
         public override void OnSpecialKeyboardUp(int key, int x, int y)
         {
-            if (key == Glut.GLUT_KEY_UP) camForward = false;
-            else if (key == Glut.GLUT_KEY_DOWN) camBack = false;
-            else if (key == Glut.GLUT_KEY_RIGHT) camRight = false;
-            else if (key == Glut.GLUT_KEY_LEFT) camLeft = false;
-            else if (key == Glut.GLUT_KEY_PAGE_UP) camUp = false;
-            else if (key == Glut.GLUT_KEY_PAGE_DOWN) camDown = false;
-            else if (key == Glut.GLUT_KEY_HOME)
+            if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraForward]) camForward = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraBackward]) camBack = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraRight]) camRight = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraLeft]) camLeft = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraUp]) camUp = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraDown]) camDown = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtPlayer])
                 Camera.LookAt(new Vector3(playerObjObject.TheGameObject.Location.X,
                                           playerObjObject.TheGameObject.Location.Y, 0.0f));
-            else if (key == Glut.GLUT_KEY_END)
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtField])
             {
                 RectangleF tempRec = TheGameStatus.TheMap.TheBoundingBox;
                 Vector3 tempTopLeft = new Vector3(tempRec.Location.X, tempRec.Location.Y, 0.0f);
@@ -317,21 +317,28 @@ namespace GameCore.RenderLayers
 
         public override void OnKeyboardDown(byte key, int x, int y)
         {
-            if (key == 'w') TheUserInput.Forward = true;
-            else if (key == 's') TheUserInput.Backward = true;
-            else if (key == 'd') TheUserInput.Right = true;
-            else if (key == 'a') TheUserInput.Left = true;
+//            if (key == 'w') TheUserInputPlayer.Forward = true;
+            if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.PlayerForward]) TheUserInputPlayer.Forward = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.PlayerBackward])
+                TheUserInputPlayer.Backward = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.PlayerRight])
+                TheUserInputPlayer.Right = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.PlayerLeft])
+                TheUserInputPlayer.Left = true;
         }
 
         public override void OnKeyboardUp(byte key, int x, int y)
         {
-            if (key == 'w') TheUserInput.Forward = false;
-            else if (key == 's') TheUserInput.Backward = false;
-            else if (key == 'd') TheUserInput.Right = false;
-            else if (key == 'a') TheUserInput.Left = false;
-            else if (key == ' ') space = false;
-            else if (key == 'q') wireframe = !wireframe;
-            else if (key == 'm') msaa = !msaa;
+//            if (key == 'w') TheUserInputPlayer.Forward = false;
+            if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.PlayerForward]) TheUserInputPlayer.Forward = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.PlayerBackward])
+                TheUserInputPlayer.Backward = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.PlayerRight])
+                TheUserInputPlayer.Right = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.PlayerLeft])
+                TheUserInputPlayer.Left = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.DisplayToggleRenderWireFrame])
+                wireframe = !wireframe;
         }
 
         #region Game objects
@@ -425,7 +432,6 @@ namespace GameCore.RenderLayers
         /// <returns></returns>
         public static RenderGameObject CreateCube(ShaderProgram program, Vector3 min, Vector3 max)
         {
-            RenderGameObject tempObj;
             Vector3[] vertex = new[]
                 {
                     new Vector3(min.x, min.y, max.z),
@@ -448,7 +454,17 @@ namespace GameCore.RenderLayers
                     2, 3, 6, 3, 5, 6
                 };
 
-            tempObj = new RenderGameObject(vertex, element);
+            RenderGameObject tempObj = new RenderGameObject(vertex, element);
+//            Vector2[] uvs = new Vector2[]
+//                {
+//                    new Vector2(0, 0),
+//                    new Vector2(1, 0),
+//                    new Vector2(0, 1),
+//                    new Vector2(1, 1),
+//                };
+//            tempObj.uvs = new VBO<Vector2>(uvs);
+
+
             return tempObj;
             //            return new VAO(program, new VBO<Vector3>(vertex), new VBO<int>(element, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead));
         }
@@ -456,7 +472,6 @@ namespace GameCore.RenderLayers
         /// <returns></returns>
         public static ObjObject CreateSquare(ShaderProgram program, Vector3 min, Vector3 max)
         {
-            ObjObject tempObj;
             Vector3[] vertex = new[]
                 {
                     new Vector3(min.x, min.y, min.z),
@@ -471,15 +486,24 @@ namespace GameCore.RenderLayers
                     0, 2, 3,
                 };
 
-            tempObj = new ObjObject(vertex, element);
+            ObjObject tempObj = new ObjObject(vertex, element);
+            Vector2[] uvs = new Vector2[]
+                {
+                    new Vector2(0, 0),
+                    new Vector2(1, 0),
+                    new Vector2(0, 1),
+                    new Vector2(1, 1),
+                };
+            tempObj.uvs = new VBO<Vector2>(uvs);
+
             return tempObj;
         }
 
         /// <returns></returns>
-        public static ObjHudButton CreateSquareHudButton(ShaderProgram program, Vector3 min, Vector3 max, ObjHudButton.Anchors anAnchor,
-                                             Vector2 aPosition, Size aSize)
+        public static ObjHudButton CreateSquareHudButton(ShaderProgram program, Vector3 min, Vector3 max,
+                                                         ObjHudButton.Anchors anAnchor,
+                                                         Vector2 aPosition, Size aSize)
         {
-            ObjHudButton tempObj;
             Vector3[] vertex = new[]
                 {
                     new Vector3(min.x, min.y, min.z),
@@ -494,15 +518,25 @@ namespace GameCore.RenderLayers
                     0, 2, 3,
                 };
 
-            tempObj = new ObjHudButton(vertex, element) { Anchor = anAnchor, Position = aPosition, Size = aSize };
+            ObjHudButton tempObj = new ObjHudButton(vertex, element) {Anchor = anAnchor, Position = aPosition, Size = aSize};
+            Vector2[] uvs = new Vector2[]
+                {
+                    new Vector2(0, 0),
+                    new Vector2(1, 0),
+                    new Vector2(0, 1),
+                    new Vector2(1, 1),
+                };
+            tempObj.uvs = new VBO<Vector2>(uvs);
+
             return tempObj;
         }
 
-       /// <returns></returns>
-        public static ObjHudPanel CreateSquareHudPanel(ShaderProgram program, Vector3 min, Vector3 max, ObjHudPanel.Anchors anAnchor,
-                                             Vector2 aPosition, Size aSize)
+
+        /// <returns></returns>
+        public static ObjHudPanel CreateSquareHudPanel(ShaderProgram program, Vector3 min, Vector3 max,
+                                                       ObjHudPanel.Anchors anAnchor,
+                                                       Vector2 aPosition, Size aSize)
         {
-            ObjHudPanel tempObj;
             Vector3[] vertex = new[]
                 {
                     new Vector3(min.x, min.y, min.z),
@@ -517,13 +551,28 @@ namespace GameCore.RenderLayers
                     0, 2, 3,
                 };
 
-            tempObj = new ObjHudPanel(vertex, element) { Anchor = anAnchor, Position = aPosition, Size = aSize };
+            ObjHudPanel tempObj = new ObjHudPanel(vertex, element)
+                {
+                    Anchor = anAnchor,
+                    Position = aPosition,
+                    Size = aSize
+                };
+            Vector2[] uvs = new Vector2[]
+                {
+                    new Vector2(0, 0),
+                    new Vector2(1, 0),
+                    new Vector2(0, 1),
+                    new Vector2(1, 1),
+                };
+            tempObj.uvs = new VBO<Vector2>(uvs);
+
             return tempObj;
         }
 
         #endregion
 
         // functions:
+
         #region Mouse to World
 
         /// <summary>
@@ -715,7 +764,6 @@ namespace GameCore.RenderLayers
         }
 
         #endregion
-
 
         private const string VertexShader = @"
 #version 130
