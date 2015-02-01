@@ -1,4 +1,5 @@
 Todo:
+- FEATURE		Add texture manager.
 - FEATURE		Add SkyBox.
 - FEATURE		Add console layer.
 - BUGFIX		Fix missalignment of mouse to world coordinate system (I think this is due to the width and heigh not taking the Form boundary into account).
