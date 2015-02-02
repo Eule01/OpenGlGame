@@ -2,6 +2,7 @@
 
 using System;
 using GameCore.GameObjects;
+using GameCore.OpenGlHelper;
 using GameCore.Utils;
 using OpenGL;
 
@@ -14,8 +15,11 @@ namespace GameCore.DrawingObjects
 
         public GameObject TheGameObject;
 
-
         public RenderGameObject(Vector3[] vertexData, int[] elementData) : base(vertexData, elementData)
+        {
+        }
+
+        public RenderGameObject(ObjectVectors anObjectVectors) : base(anObjectVectors)
         {
         }
 

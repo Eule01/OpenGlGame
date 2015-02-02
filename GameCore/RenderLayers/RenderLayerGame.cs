@@ -7,6 +7,7 @@ using GameCore.Cameras;
 using GameCore.DrawingObjects;
 using GameCore.GameObjects;
 using GameCore.Map;
+using GameCore.OpenGlHelper;
 using GameCore.UserInterface;
 using GameCore.Utils;
 using OpenGL;
@@ -94,19 +95,25 @@ namespace GameCore.RenderLayers
             tileTextures = RenderObjects.CreateTileTextures(new Size(20, 20), program);
 
 
-            ObjObject tempObj = CreateCube(program, new Vector3(1, 1, 1), new Vector3(0, 0, 0));
-            tempObj.Material = tileTextures[Tile.TileIds.Desert].Material;
+            ObjObject tempObj =
+                new ObjObject(ObjectPrimitives.CreateCube(new Vector3(1, 1, 1), new Vector3(0, 0, 0), false))
+                    {
+                        Material = tileTextures[Tile.TileIds.Desert].Material
+                    };
+//            ObjObject tempObj = CreateCube(program, new Vector3(1, 1, 1), new Vector3(0, 0, 0));
             objectList.AddObject(tempObj);
-            tempObj = CreateCube(program, new Vector3(3, 1, 1), new Vector3(2, 0, 0));
-            tempObj.Material = tileTextures[Tile.TileIds.Road].Material;
+            tempObj = new ObjObject(ObjectPrimitives.CreateCube(new Vector3(3, 1, 1), new Vector3(2, 0, 0), false))
+                {
+                    Material = tileTextures[Tile.TileIds.Road].Material
+                };
 
             objectList.AddObject(tempObj);
 
-            tempObj = CreateSquare(program, new Vector3(5, 1, 1), new Vector3(4, 0, 1));
+            tempObj = new ObjObject(ObjectPrimitives.CreateSquare(new Vector3(5, 1, 1), new Vector3(4, 0, 1), true));
             tempObj.Material = tempMaterial;
             objectList.AddObject(tempObj);
 
-            tempObj = CreateSquare(program, new Vector3(-1, 1, 1), new Vector3(-2, 0, 0));
+            tempObj = new ObjObject(ObjectPrimitives.CreateSquare(new Vector3(-1, 1, 1), new Vector3(-2, 0, 0), true));
             objectList.AddObject(tempObj);
 
             theTileObjects = GetTileObjects();
@@ -349,29 +356,6 @@ namespace GameCore.RenderLayers
             return tempTileObj;
         }
 
-        private List<ObjObject> CreateGameObjects()
-        {
-            Dictionary<GameObject.ObjcetIds, PlainBmpTexture> gameObjectsTextures =
-                RenderObjects.CreateGameObjectsTextures(new Size(20, 20), program);
-            List<ObjObject> tempObjList = new List<ObjObject>();
-            List<GameObject> gameObjects = TheGameStatus.GameObjects;
-
-
-            foreach (GameObject gameObject in gameObjects)
-            {
-                Vector tempLoc = gameObject.Location;
-                tempLoc -= new Vector(gameObject.Diameter*0.5f, gameObject.Diameter*0.5f);
-                ObjObject tempObjObject = CreateCubeUV(program, new Vector3(tempLoc.X, tempLoc.Y, 0),
-                                                     new Vector3(tempLoc.X + gameObject.Diameter,
-                                                                 tempLoc.Y + gameObject.Diameter, 1));
-                tempObjObject.Material = gameObjectsTextures[gameObject.TheObjectId].Material;
-
-
-                tempObjList.Add(tempObjObject);
-            }
-            return tempObjList;
-        }
-
         private List<RenderGameObject> CreateRenderGameObjects()
         {
             Dictionary<GameObject.ObjcetIds, PlainBmpTexture> gameObjectsTextures =
@@ -384,10 +368,11 @@ namespace GameCore.RenderLayers
             {
                 Vector tempLoc = new Vector(0.0f, 0.0f);
                 tempLoc -= new Vector(gameObject.Diameter*0.5f, gameObject.Diameter*0.5f);
-                RenderGameObject tempObjObject = CreateCubeUV(program, new Vector3(tempLoc.X, tempLoc.Y, 0),
-                                                            new Vector3(tempLoc.X + gameObject.Diameter,
-                                                                        tempLoc.Y + gameObject.Diameter, 1));
-                tempObjObject.Material = gameObjectsTextures[gameObject.TheObjectId].Material;
+                RenderGameObject tempObjObject =
+                    new RenderGameObject(ObjectPrimitives.CreateCube(new Vector3(tempLoc.X, tempLoc.Y, 0),
+                                                                     new Vector3(tempLoc.X + gameObject.Diameter,
+                                                                                 tempLoc.Y + gameObject.Diameter, 1),
+                                                                     true));
 
                 tempObjObject.TheGameObject = gameObject;
                 if (gameObject.TheObjectId == GameObject.ObjcetIds.Player)
@@ -400,6 +385,10 @@ namespace GameCore.RenderLayers
 
 
                     playerObjObject.Material = tempMaterial;
+                }
+                else
+                {
+                    tempObjObject.Material = gameObjectsTextures[gameObject.TheObjectId].Material;
                 }
                 tempObjList.Add(tempObjObject);
             }
@@ -423,9 +412,13 @@ namespace GameCore.RenderLayers
             {
                 Vector tempLoc = tempTile.Location;
 
-                ObjObject tempObjObject = CreateSquare(program, new Vector3(tempLoc.X, tempLoc.Y, 0),
-                                                       new Vector3(tempLoc.X + Tile.Size.X, tempLoc.Y + Tile.Size.Y, 0));
-                tempObjObject.Material = tempTiletypeList[tempTile.TheTileId].Material;
+                ObjObject tempObjObject =
+                    new ObjObject(ObjectPrimitives.CreateSquare(new Vector3(tempLoc.X, tempLoc.Y, 0),
+                                                                new Vector3(tempLoc.X + Tile.Size.X,
+                                                                            tempLoc.Y + Tile.Size.Y, 0), true))
+                        {
+                            Material = tempTiletypeList[tempTile.TheTileId].Material
+                        };
 
                 tempObjList.Add(tempObjObject);
             }
@@ -433,249 +426,6 @@ namespace GameCore.RenderLayers
         }
 
         #endregion
-
-        #region Basic Objects
-
-        /// <returns></returns>
-        public static RenderGameObject CreateCubeUV(ShaderProgram program, Vector3 min, Vector3 max)
-        {
-//             Vector3[] vertices = new Vector3[] {
-//                new Vector3(1, 1, -1), new Vector3(-1, 1, -1), new Vector3(-1, 1, 1), new Vector3(1, 1, 1),         // top
-//                new Vector3(1, -1, 1), new Vector3(-1, -1, 1), new Vector3(-1, -1, -1), new Vector3(1, -1, -1),     // bottom
-//                new Vector3(1, 1, 1), new Vector3(-1, 1, 1), new Vector3(-1, -1, 1), new Vector3(1, -1, 1),         // front face
-//                new Vector3(1, -1, -1), new Vector3(-1, -1, -1), new Vector3(-1, 1, -1), new Vector3(1, 1, -1),     // back face
-//                new Vector3(-1, 1, 1), new Vector3(-1, 1, -1), new Vector3(-1, -1, -1), new Vector3(-1, -1, 1),     // left
-//                new Vector3(1, 1, -1), new Vector3(1, 1, 1), new Vector3(1, -1, 1), new Vector3(1, -1, -1) };
-//            cube = new VBO<Vector3>(vertices);
-//
-//            Vector2[] uvs = new Vector2[] {
-//                new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
-//                new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
-//                new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
-//                new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
-//                new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
-//                new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
-//            cubeUV = new VBO<Vector2>(uvs);
-//
-
-            Vector3[] vertex = new[]
-                {
-                    new Vector3(max.x, max.y, min.z), new Vector3(min.x, max.y, min.z), new Vector3(min.x, max.y, max.z)
-                    , new Vector3(max.x, max.y, max.z), // top
-                    new Vector3(max.x, min.y, max.z), new Vector3(min.x, min.y, max.z), new Vector3(min.x, min.y, min.z)
-                    , new Vector3(max.x, min.y, min.z), // bottom
-                    new Vector3(max.x, max.y, max.z), new Vector3(min.x, max.y, max.z), new Vector3(min.x, min.y, max.z)
-                    , new Vector3(max.x, min.y, max.z), // front face
-                    new Vector3(max.x, min.y, min.z), new Vector3(min.x, min.y, min.z), new Vector3(min.x, max.y, min.z)
-                    , new Vector3(max.x, max.y, min.z), // back face
-                    new Vector3(min.x, max.y, max.z), new Vector3(min.x, max.y, min.z), new Vector3(min.x, min.y, min.z)
-                    , new Vector3(min.x, min.y, max.z), // left
-                    new Vector3(max.x, max.y, min.z), new Vector3(max.x, max.y, max.z), new Vector3(max.x, min.y, max.z)
-                    , new Vector3(max.x, min.y, min.z) // right
-                };
-            Vector2[] uvs = new Vector2[]
-                {
-                    new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
-                    new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
-                    new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
-                    new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
-                    new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
-                    new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1)
-                };
-
-            List<int> triangles = new List<int>();
-            for (int i = 0; i < 6; i++)
-            {
-                triangles.Add(i*4);
-                triangles.Add(i*4 + 1);
-                triangles.Add(i*4 + 2);
-                triangles.Add(i*4);
-                triangles.Add(i*4 + 2);
-                triangles.Add(i*4 + 3);
-            }
-
-
-//        Vector3[] vertex = new[]
-//                {
-//                    new Vector3(min.x, min.y, max.z),   // 0
-//                    new Vector3(max.x, min.y, max.z),   // 1
-//                    new Vector3(min.x, max.y, max.z),   // 2
-//                    new Vector3(max.x, max.y, max.z),   // 3
-//                    new Vector3(max.x, min.y, min.z),   // 4
-//                    new Vector3(max.x, max.y, min.z),   // 5
-//                    new Vector3(min.x, max.y, min.z),   // 6
-//                    new Vector3(min.x, min.y, min.z)    // 7
-//                };
-//
-//
-//            int[] element = new[]
-//                {
-//                    0, 1, 2, 1, 3, 2,   // Top
-//                    1, 4, 3, 4, 5, 3,   // Right
-//                    4, 7, 5, 7, 6, 5,   // Bottom
-//                    7, 0, 6, 0, 2, 6,   // Left
-//                    7, 4, 0, 4, 1, 0,   // Back
-//                    2, 3, 6, 3, 5, 6    // Front
-//                };
-
-            RenderGameObject tempObj = new RenderGameObject(vertex, triangles.ToArray());
-            tempObj.uvs = new VBO<Vector2>(uvs);
-
-
-            return tempObj;
-            //            return new VAO(program, new VBO<Vector3>(vertex), new VBO<int>(element, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead));
-        }
-
-        /// <returns></returns>
-        public static RenderGameObject CreateCube(ShaderProgram program, Vector3 min, Vector3 max)
-        {
-            Vector3[] vertex = new[]
-                {
-                    new Vector3(min.x, min.y, max.z), // 0
-                    new Vector3(max.x, min.y, max.z), // 1
-                    new Vector3(min.x, max.y, max.z), // 2
-                    new Vector3(max.x, max.y, max.z), // 3
-                    new Vector3(max.x, min.y, min.z), // 4
-                    new Vector3(max.x, max.y, min.z), // 5
-                    new Vector3(min.x, max.y, min.z), // 6
-                    new Vector3(min.x, min.y, min.z) // 7
-                };
-
-            int[] element = new[]
-                {
-                    0, 1, 2, 1, 3, 2, // Top
-                    1, 4, 3, 4, 5, 3, // Right
-                    4, 7, 5, 7, 6, 5, // Bottom
-                    7, 0, 6, 0, 2, 6, // Left
-                    7, 4, 0, 4, 1, 0, // Back
-                    2, 3, 6, 3, 5, 6 // Front
-                };
-
-            RenderGameObject tempObj = new RenderGameObject(vertex, element);
-//            Vector2[] uvs = new Vector2[]
-//                {
-//                    new Vector2(0, 0),new Vector2(0, 1),new Vector2(1, 0),new Vector2(1, 1),  // Top *
-//                    new Vector2(0, 0),new Vector2(1, 0),new Vector2(0, 1),new Vector2(1, 1),  // Right *
-//                    new Vector2(1, 1),new Vector2(0, 0),new Vector2(0, 1),new Vector2(1, 0),  // Bottom
-//                    new Vector2(1, 1),new Vector2(0, 0),new Vector2(1, 0),new Vector2(0, 1),  // Left
-//                    new Vector2(0, 0),new Vector2(1, 0),new Vector2(0, 1),new Vector2(1, 1),  // Back
-//                    new Vector2(0, 0),new Vector2(1, 0),new Vector2(0, 1),new Vector2(1, 1),  // Front
-//               };
-//            tempObj.uvs = new VBO<Vector2>(uvs);
-
-
-            return tempObj;
-            //            return new VAO(program, new VBO<Vector3>(vertex), new VBO<int>(element, BufferTarget.ElementArrayBuffer, BufferUsageHint.StaticRead));
-        }
-
-        /// <returns></returns>
-        public static ObjObject CreateSquare(ShaderProgram program, Vector3 min, Vector3 max)
-        {
-            Vector3[] vertex = new[]
-                {
-                    new Vector3(min.x, min.y, min.z),
-                    new Vector3(max.x, min.y, min.z),
-                    new Vector3(min.x, max.y, max.z),
-                    new Vector3(max.x, max.y, max.z),
-                };
-
-            int[] element = new[]
-                {
-                    0, 1, 3,
-                    0, 2, 3,
-                };
-
-            ObjObject tempObj = new ObjObject(vertex, element);
-            Vector2[] uvs = new Vector2[]
-                {
-                    new Vector2(0, 0),
-                    new Vector2(1, 0),
-                    new Vector2(0, 1),
-                    new Vector2(1, 1),
-                };
-            tempObj.uvs = new VBO<Vector2>(uvs);
-
-            return tempObj;
-        }
-
-        /// <returns></returns>
-        public static ObjHudButton CreateSquareHudButton(ShaderProgram program, Vector3 min, Vector3 max,
-                                                         ObjHudButton.Anchors anAnchor,
-                                                         Vector2 aPosition, Size aSize)
-        {
-            Vector3[] vertex = new[]
-                {
-                    new Vector3(min.x, min.y, min.z),
-                    new Vector3(max.x, min.y, min.z),
-                    new Vector3(min.x, max.y, max.z),
-                    new Vector3(max.x, max.y, max.z),
-                };
-
-            int[] element = new[]
-                {
-                    0, 1, 3,
-                    0, 2, 3,
-                };
-
-            ObjHudButton tempObj = new ObjHudButton(vertex, element)
-                {
-                    Anchor = anAnchor,
-                    Position = aPosition,
-                    Size = aSize
-                };
-            Vector2[] uvs = new Vector2[]
-                {
-                    new Vector2(0, 0),
-                    new Vector2(1, 0),
-                    new Vector2(0, 1),
-                    new Vector2(1, 1),
-                };
-            tempObj.uvs = new VBO<Vector2>(uvs);
-
-            return tempObj;
-        }
-
-
-        /// <returns></returns>
-        public static ObjHudPanel CreateSquareHudPanel(ShaderProgram program, Vector3 min, Vector3 max,
-                                                       ObjHudPanel.Anchors anAnchor,
-                                                       Vector2 aPosition, Size aSize)
-        {
-            Vector3[] vertex = new[]
-                {
-                    new Vector3(min.x, min.y, min.z),
-                    new Vector3(max.x, min.y, min.z),
-                    new Vector3(min.x, max.y, max.z),
-                    new Vector3(max.x, max.y, max.z),
-                };
-
-            int[] element = new[]
-                {
-                    0, 1, 3,
-                    0, 2, 3,
-                };
-
-            ObjHudPanel tempObj = new ObjHudPanel(vertex, element)
-                {
-                    Anchor = anAnchor,
-                    Position = aPosition,
-                    Size = aSize
-                };
-            Vector2[] uvs = new Vector2[]
-                {
-                    new Vector2(0, 0),
-                    new Vector2(1, 0),
-                    new Vector2(0, 1),
-                    new Vector2(1, 1),
-                };
-            tempObj.uvs = new VBO<Vector2>(uvs);
-
-            return tempObj;
-        }
-
-        #endregion
-
-        // functions:
 
         #region Mouse to World
 
