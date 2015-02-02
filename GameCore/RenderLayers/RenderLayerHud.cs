@@ -1,10 +1,10 @@
 #region
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using GameCore.DrawingObjects;
 using GameCore.Map;
+using GameCore.OpenGlHelper;
 using GameCore.UserInterface;
 using GameCore.Utils;
 using OpenGL;
@@ -25,8 +25,9 @@ namespace GameCore.RenderLayers
         private Matrix4 projectionMatrix;
 
 
-        public RenderLayerHud(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer, KeyBindings theKeyBindings)
-            : base(width, height, theGameStatus, theUserInputPlayer,theKeyBindings)
+        public RenderLayerHud(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
+                              KeyBindings theKeyBindings)
+            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings)
         {
             theTileObjects = new List<ObjObject>();
         }
@@ -37,7 +38,7 @@ namespace GameCore.RenderLayers
 //            hudProgram = new ShaderProgram(vertexShader2Source, fragmentShader2Source);
 
             hudProgram.Use();
-            projectionMatrix = Matrix4.CreateOrthographic(Width, Height, 0, 1000);
+            projectionMatrix = Matrix4.CreateOrthographic(Width, Height, 0, 10);
             hudProgram["projection_matrix"].SetValue(projectionMatrix);
             hudProgram["model_matrix"].SetValue(Matrix4.Identity);
 
@@ -54,9 +55,11 @@ namespace GameCore.RenderLayers
             {
                 Vector tempLoc = new Vector(zeroX + 10, zeroY - 10 - counter*(tempSize.Height + 10));
 
-                ObjObject tempObjObject = RenderLayerGame.CreateSquare(hudProgram, new Vector3(tempLoc.X, tempLoc.Y, -0.1),
-                                                                       new Vector3(tempLoc.X + tempSize.Width,
-                                                                                   tempLoc.Y + tempSize.Height, -0.1));
+                ObjObject tempObjObject =
+                    new ObjObject(ObjectPrimitives.CreateSquare(new Vector3(tempLoc.X, tempLoc.Y, -0.1),
+                                                                new Vector3(tempLoc.X + tempSize.Width,
+                                                                            tempLoc.Y + tempSize.Height, -0.1),
+                                                                true));
                 tempObjObject.Material = tempTiletypeList[tempTile.Key].Material;
 
                 tempObjList.Add(tempObjObject);
@@ -66,27 +69,35 @@ namespace GameCore.RenderLayers
 
             tempSize = new Size(100, Height);
 //            ObjHudPanel hudPanel = CreateHudPanel(tempSize, Color.Brown, ObjHudPanel.Anchors.TopRight);
-            ObjHudPanel hudPanel = CreateHudPanel(@"./Resources/Images/HudPanelCreative.png", ObjHudPanel.Anchors.TopRight);
+            ObjHudPanel hudPanel = CreateHudPanel(@"./Resources/Images/HudPanelCreative.png",
+                                                  ObjHudPanel.Anchors.TopRight);
 
             theHudPanels.Add(hudPanel);
 
 
             counter = 0;
             int cellsPerRow = 2;
-             Vector2 startLoc = new Vector2(120,200);
+            Vector2 startLoc = new Vector2(120, 200);
             int rowOffset = 100;
             tempSize = new Size(60, 60);
             foreach (KeyValuePair<Tile.TileIds, PlainBmpTexture> tempTile in tempTiletypeList)
             {
                 int row = counter/cellsPerRow;
-                int col = counter % cellsPerRow;
-                Vector2 tempLoc = startLoc + new Vector2( -row * rowOffset,  col * rowOffset);
+                int col = counter%cellsPerRow;
+                Vector2 tempLoc = startLoc + new Vector2(-row*rowOffset, col*rowOffset);
 
-                ObjHudButton tempObjHudButton = RenderLayerGame.CreateSquareHudButton(hudProgram, new Vector3(0, 0, 0),
-                                                                                      new Vector3(tempSize.Width,
-                                                                                                  tempSize.Height, 0),
-                                                                                      ObjHudButton.Anchors.TopRight,
-                                                                                      tempLoc, tempSize);
+                ObjHudButton tempObjHudButton = new ObjHudButton(ObjectPrimitives.CreateSquare(new Vector3(0, 0, 0),
+                                                                                               new Vector3(
+                                                                                                   tempSize.Width,
+                                                                                                   tempSize.Height, 0),
+                                                                                               true))
+                    {
+                        Anchor =
+                            ObjHudButton.Anchors
+                                        .TopRight,
+                        Position = tempLoc,
+                        Size = tempSize
+                    };
                 tempObjHudButton.Size = tempSize;
                 tempObjHudButton.UpdatePosition(Width, Height);
                 tempObjHudButton.Material = tempTiletypeList[tempTile.Key].Material;
@@ -106,12 +117,16 @@ namespace GameCore.RenderLayers
             ObjMaterial tempMaterial = new ObjMaterial(hudProgram) {DiffuseMap = new Texture(tempBmp)};
 
 
-            ObjHudPanel tempObjObject2 = RenderLayerGame.CreateSquareHudPanel(hudProgram, new Vector3(0, 0, 0),
-                                                                              new Vector3(tempSize.Width,
-                                                                                          tempSize.Height,
-                                                                                          0),
-                                                                              anAnchor, tempLoc2,
-                                                                              tempSize);
+            ObjHudPanel tempObjObject2 = new ObjHudPanel(ObjectPrimitives.CreateSquare(new Vector3(0, 0, 0),
+                                                                                       new Vector3(tempSize.Width,
+                                                                                                   tempSize.Height,
+                                                                                                   0), true))
+                {
+                    Anchor = anAnchor,
+                    Position =
+                        tempLoc2,
+                    Size = tempSize
+                };
             tempObjObject2.Size = tempSize;
             tempObjObject2.UpdatePosition(Width, Height);
             tempObjObject2.Material = tempMaterial;
@@ -123,16 +138,20 @@ namespace GameCore.RenderLayers
             Texture tempTexture = new Texture(aBmpPath);
             Size tempSize = tempTexture.Size;
 
-            ObjMaterial tempMaterial = new ObjMaterial(hudProgram) { DiffuseMap = tempTexture };
+            ObjMaterial tempMaterial = new ObjMaterial(hudProgram) {DiffuseMap = tempTexture};
 
             Vector2 tempLoc2 = new Vector2(0, 0);
 
-            ObjHudPanel tempObjObject2 = RenderLayerGame.CreateSquareHudPanel(hudProgram, new Vector3(0, 0, 0),
-                                                                              new Vector3(tempSize.Width,
-                                                                                          tempSize.Height,
-                                                                                          0),
-                                                                              anAnchor, tempLoc2,
-                                                                              tempSize);
+            ObjHudPanel tempObjObject2 = new ObjHudPanel(ObjectPrimitives.CreateSquare(new Vector3(0, 0, 0),
+                                                                                       new Vector3(tempSize.Width,
+                                                                                                   tempSize.Height,
+                                                                                                   0), true))
+                {
+                    Anchor = anAnchor,
+                    Position =
+                        tempLoc2,
+                    Size = tempSize
+                };
             tempObjObject2.Size = tempSize;
             tempObjObject2.UpdatePosition(Width, Height);
             tempObjObject2.Material = tempMaterial;

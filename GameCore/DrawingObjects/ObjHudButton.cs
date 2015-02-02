@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using GameCore.OpenGlHelper;
 using OpenGL;
 
 #endregion
@@ -61,6 +62,11 @@ namespace GameCore.DrawingObjects
         }
 
         public ObjHudButton(Vector3[] vertexData, int[] elementData) : base(vertexData, elementData)
+        {
+            Name += ":ObjHudButton";
+        }
+
+        public ObjHudButton(ObjectVectors anObjectVectors) : base(anObjectVectors)
         {
             Name += ":ObjHudButton";
         }

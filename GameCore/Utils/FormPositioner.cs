@@ -1,6 +1,8 @@
 ﻿#region
 
+using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CodeToast;
 
@@ -32,6 +34,37 @@ namespace GameCore.Utils
         {
             Screen firstNonPrimaryScreen = GetFirstNonPrimaryScreen();
             PlaceOnScreen(aForm, aLocations, fillWidth, firstNonPrimaryScreen);
+        }
+
+
+
+        const int SWP_NOSIZE = 0x0001;
+
+
+        [DllImport("kernel32.dll", ExactSpelling = true)]
+        private static extern IntPtr GetConsoleWindow();
+
+        private static IntPtr MyConsole = GetConsoleWindow();
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        public static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);
+
+//        http://stackoverflow.com/questions/1548838/setting-position-of-a-console-window-opened-in-a-winforms-app/1548881#1548881
+//        http://blog.csharplearners.com/2012/01/14/working-console-window-c/
+        /// <summary>
+        /// Kind of works:
+        ///        http://stackoverflow.com/questions/1548838/setting-position-of-a-console-window-opened-in-a-winforms-app/1548881#1548881
+        ///        http://blog.csharplearners.com/2012/01/14/working-console-window-c/
+        /// </summary>
+        /// <param name="maximise"></param>
+        public static void PlaceConsoleOnSecondScreenIfPossible(bool maximise = false)
+        {
+            Screen firstNonPrimaryScreen = GetFirstNonPrimaryScreen();
+            Rectangle bounds = firstNonPrimaryScreen.WorkingArea;
+            SetWindowPos(MyConsole, 0, bounds.Left, bounds.Top, 0, 0, SWP_NOSIZE);
+
+//           Console.SetWindowPosition(0,0);
+//           Console.WindowHeight = bounds.Height;
         }
 
 

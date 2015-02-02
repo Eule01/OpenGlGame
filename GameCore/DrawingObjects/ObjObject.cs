@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using GameCore.OpenGlHelper;
 using OpenGL;
 
 #endregion
@@ -25,10 +26,26 @@ namespace GameCore.DrawingObjects
             triangles = new VBO<int>(elementData, BufferTarget.ElementArrayBuffer);
             Vector3[] normalData = CalculateNormals(vertexData, elementData);
 
-            vertices = new VBO<Vector3>(vertexData);
+//            vertices = new VBO<Vector3>(vertexData);
             normals = new VBO<Vector3>(normalData);
             triangles = new VBO<int>(elementData, BufferTarget.ElementArrayBuffer);
         }
+
+        public ObjObject(ObjectVectors anObjectVectors)
+        {
+            vertices = new VBO<Vector3>(anObjectVectors.Vertex);
+            triangles = new VBO<int>(anObjectVectors.ElementData, BufferTarget.ElementArrayBuffer);
+            Vector3[] normalData = CalculateNormals(anObjectVectors.Vertex, anObjectVectors.ElementData);
+
+//            vertices = new VBO<Vector3>(anObjectVectors.Vertex);
+            normals = new VBO<Vector3>(normalData);
+            triangles = new VBO<int>(anObjectVectors.ElementData, BufferTarget.ElementArrayBuffer);
+            if (anObjectVectors.Uvs != null)
+            {
+                uvs = new VBO<Vector2>(anObjectVectors.Uvs);
+            }
+        }
+
 
         public ObjObject(List<string> lines, Dictionary<string, ObjMaterial> materials, int vertexOffset, int uvOffset)
         {

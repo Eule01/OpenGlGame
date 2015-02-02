@@ -32,10 +32,10 @@ namespace GameCore.RenderLayers
             fontProgram = new ShaderProgram(BMFont.FontVertexSource, BMFont.FontFragmentSource);
 
             fontProgram.Use();
-            fontProgram["ortho_matrix"].SetValue(Matrix4.CreateOrthographic(Width, Height, 0, 1000));
+            fontProgram["ortho_matrix"].SetValue(Matrix4.CreateOrthographic(Width, Height, 0, 10));
             fontProgram["color"].SetValue(new Vector3(1, 1, 1));
 
-            information = font.CreateString(fontProgram, "OpenGL 4 C Sharp");
+            information = font.CreateString(fontProgram, "Mikes Test Engine");
         }
 
         public override void OnDisplay()

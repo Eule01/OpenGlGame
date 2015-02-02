@@ -2,6 +2,7 @@
 
 using System;
 using GameCore;
+using GameCore.Utils;
 
 #endregion
 
@@ -13,6 +14,8 @@ namespace OpenGlGame
 
         private static void Main(string[] args)
         {
+            FormPositioner.PlaceConsoleOnSecondScreenIfPossible();
+
             theGameCore = new GameCore.GameCore();
             theGameCore.TheGameEventHandler += theGameCore_TheGameEventHandler;
             theGameCore.Start();

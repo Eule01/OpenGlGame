@@ -74,7 +74,7 @@ namespace GameCore.MainRenderer
             Glut.glutSetOption(Glut.GLUT_ACTION_ON_WINDOW_CLOSE, Glut.GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
             Glut.glutInitWindowSize(width, height);
-            Glut.glutCreateWindow("OpenGL RendererOpenGl4CSharp");
+            Glut.glutCreateWindow("OpenGL Test using OpenGl4CSharp");
 
 
             Glut.glutIdleFunc(OnRenderFrame);
