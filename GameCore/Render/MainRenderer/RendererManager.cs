@@ -5,7 +5,7 @@ using GameCore.UserInterface;
 
 #endregion
 
-namespace GameCore.MainRenderer
+namespace GameCore.Render.MainRenderer
 {
     public class RendererManager
     {

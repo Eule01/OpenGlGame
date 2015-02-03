@@ -45,35 +45,36 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cameras\Camera.cs" />
-    <Compile Include="DrawingObjects\ObjHudButton.cs" />
-    <Compile Include="DrawingObjects\ObjHudPanel.cs" />
-    <Compile Include="DrawingObjects\ObjLoader.cs" />
-    <Compile Include="DrawingObjects\ObjMaterial.cs" />
-    <Compile Include="DrawingObjects\ObjObject.cs" />
-    <Compile Include="DrawingObjects\RenderGameObject.cs" />
-    <Compile Include="DrawingObjects\RenderObjects.cs" />
+    <Compile Include="Render\Cameras\Camera.cs" />
+    <Compile Include="Render\RenderMaterial\MaterialManager.cs" />
+    <Compile Include="Render\RenderObjects\ObjHudButton.cs" />
+    <Compile Include="Render\RenderObjects\ObjHudPanel.cs" />
+    <Compile Include="Render\RenderObjects\ObjLoader.cs" />
+    <Compile Include="Render\RenderMaterial\ObjMaterial.cs" />
+    <Compile Include="Render\RenderObjects\ObjObject.cs" />
+    <Compile Include="Render\RenderObjects\RenderGameObject.cs" />
+    <Compile Include="Render\RenderObjects\RenderObjects.cs" />
     <Compile Include="Engine\GameEngine.cs" />
-    <Compile Include="Font\Font.cs" />
+    <Compile Include="Render\Font\Font.cs" />
     <Compile Include="GameCore.cs" />
     <Compile Include="GameEventArgs.cs" />
     <Compile Include="GameObjects\GameObject.cs" />
     <Compile Include="GameObjects\ObjectPlayer.cs" />
     <Compile Include="GameStatus.cs" />
-    <Compile Include="MainRenderer\RendererBase.cs" />
-    <Compile Include="MainRenderer\RendererManager.cs" />
-    <Compile Include="MainRenderer\RendererOpenGl4CSharp.cs" />
+    <Compile Include="Render\MainRenderer\RendererBase.cs" />
+    <Compile Include="Render\MainRenderer\RendererManager.cs" />
+    <Compile Include="Render\MainRenderer\RendererOpenGl4CSharp.cs" />
     <Compile Include="Map\Map.cs" />
     <Compile Include="Map\Tile.cs" />
     <Compile Include="Map\TileType.cs" />
-    <Compile Include="OpenGlHelper\ObjectPrimitives.cs" />
-    <Compile Include="OpenGlHelper\ObjectVectors.cs" />
+    <Compile Include="Render\OpenGlHelper\ObjectPrimitives.cs" />
+    <Compile Include="Render\OpenGlHelper\ObjectVectors.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RenderLayers\IRenderLayer.cs" />
-    <Compile Include="RenderLayers\RenderLayerBase.cs" />
-    <Compile Include="RenderLayers\RenderLayerGame.cs" />
-    <Compile Include="RenderLayers\RenderLayerHud.cs" />
-    <Compile Include="RenderLayers\RenderLayerTextInfo.cs" />
+    <Compile Include="Render\RenderLayers\IRenderLayer.cs" />
+    <Compile Include="Render\RenderLayers\RenderLayerBase.cs" />
+    <Compile Include="Render\RenderLayers\RenderLayerGame.cs" />
+    <Compile Include="Render\RenderLayers\RenderLayerHud.cs" />
+    <Compile Include="Render\RenderLayers\RenderLayerTextInfo.cs" />
     <Compile Include="UserInterface\KeyBinding.cs" />
     <Compile Include="UserInterface\KeyBindings.cs" />
     <Compile Include="UserInterface\UserInputPlayer.cs" />
@@ -103,13 +104,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Font\font24.fnt">
+    <None Include="Render\Font\font24.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Tao.FreeGlut.dll.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Font\font24.png">
+    <None Include="Render\Font\font24.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

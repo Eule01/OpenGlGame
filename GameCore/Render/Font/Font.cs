@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using OpenGL;
 
-namespace GameCore.Font
+namespace GameCore.Render.Font
 {
     public class FontVAO : IDisposable
     {

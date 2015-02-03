@@ -2,9 +2,10 @@
 
 using System.Collections.Generic;
 using System.Drawing;
-using GameCore.DrawingObjects;
 using GameCore.Map;
-using GameCore.OpenGlHelper;
+using GameCore.Render.OpenGlHelper;
+using GameCore.Render.RenderMaterial;
+using GameCore.Render.RenderObjects;
 using GameCore.UserInterface;
 using GameCore.Utils;
 using OpenGL;
@@ -12,13 +13,11 @@ using Tao.FreeGlut;
 
 #endregion
 
-namespace GameCore.RenderLayers
+namespace GameCore.Render.RenderLayers
 {
     public class RenderLayerHud : RenderLayerBase
     {
         private ShaderProgram hudProgram;
-        private ObjLoader objectList;
-        private List<ObjObject> theTileObjects;
         private List<ObjHudPanel> theHudPanels = new List<ObjHudPanel>();
 
         public Vector3 MouseWorld = Vector3.Zero;
@@ -26,10 +25,10 @@ namespace GameCore.RenderLayers
 
 
         public RenderLayerHud(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
-                              KeyBindings theKeyBindings)
-            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings)
+                              KeyBindings theKeyBindings, MaterialManager theMaterialManager)
+            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
         {
-            theTileObjects = new List<ObjObject>();
+
         }
 
         public override void OnLoad()
@@ -42,44 +41,21 @@ namespace GameCore.RenderLayers
             hudProgram["projection_matrix"].SetValue(projectionMatrix);
             hudProgram["model_matrix"].SetValue(Matrix4.Identity);
 
-//            hudProgram["color"].SetValue(new Vector3(1, 1, 1));
 
             Dictionary<Tile.TileIds, PlainBmpTexture> tempTiletypeList =
-                RenderObjects.CreateTileTextures(new Size(20, 20), hudProgram);
-            List<ObjObject> tempObjList = new List<ObjObject>();
-            int counter = 2;
-            int zeroX = -Width/2;
-            int zeroY = Height/2;
-            Size tempSize = new Size(50, 50);
-            foreach (KeyValuePair<Tile.TileIds, PlainBmpTexture> tempTile in tempTiletypeList)
-            {
-                Vector tempLoc = new Vector(zeroX + 10, zeroY - 10 - counter*(tempSize.Height + 10));
+                RenderObjects.RenderObjects.CreateTileTextures(new Size(20, 20), hudProgram);
 
-                ObjObject tempObjObject =
-                    new ObjObject(ObjectPrimitives.CreateSquare(new Vector3(tempLoc.X, tempLoc.Y, -0.1),
-                                                                new Vector3(tempLoc.X + tempSize.Width,
-                                                                            tempLoc.Y + tempSize.Height, -0.1),
-                                                                true));
-                tempObjObject.Material = tempTiletypeList[tempTile.Key].Material;
-
-                tempObjList.Add(tempObjObject);
-                counter++;
-            }
-            theTileObjects.AddRange(tempObjList);
-
-            tempSize = new Size(100, Height);
-//            ObjHudPanel hudPanel = CreateHudPanel(tempSize, Color.Brown, ObjHudPanel.Anchors.TopRight);
-            ObjHudPanel hudPanel = CreateHudPanel(@"./Resources/Images/HudPanelCreative.png",
+            ObjHudPanel hudPanel = CreateHudPanel("HudPanelCreative.png",
                                                   ObjHudPanel.Anchors.TopRight);
 
             theHudPanels.Add(hudPanel);
 
 
-            counter = 0;
+            int counter = 0;
             int cellsPerRow = 2;
             Vector2 startLoc = new Vector2(120, 200);
             int rowOffset = 100;
-            tempSize = new Size(60, 60);
+            Size tempSize = new Size(60, 60);
             foreach (KeyValuePair<Tile.TileIds, PlainBmpTexture> tempTile in tempTiletypeList)
             {
                 int row = counter/cellsPerRow;
@@ -110,12 +86,14 @@ namespace GameCore.RenderLayers
 
         private ObjHudPanel CreateHudPanel(Size tempSize, Color aColor, ObjHudPanel.Anchors anAnchor)
         {
+//            Vector2 tempLoc2 = new Vector2(0, 0);
+//
+//            SolidBrush tempBrush = new SolidBrush(aColor);
+//            Bitmap tempBmp = BitmapHelper.CreatBitamp(new Size(20, 20), tempBrush);
+//            ObjMaterial tempMaterial = new ObjMaterial(hudProgram) {DiffuseMap = new Texture(tempBmp)};
+            ObjMaterial tempMaterial = TheMaterialManager.GetPlainColor(hudProgram, "HudPanelPlain" + aColor.Name,
+                                                                        aColor);
             Vector2 tempLoc2 = new Vector2(0, 0);
-
-            SolidBrush tempBrush = new SolidBrush(aColor);
-            Bitmap tempBmp = BitmapHelper.CreatBitamp(new Size(20, 20), tempBrush);
-            ObjMaterial tempMaterial = new ObjMaterial(hudProgram) {DiffuseMap = new Texture(tempBmp)};
-
 
             ObjHudPanel tempObjObject2 = new ObjHudPanel(ObjectPrimitives.CreateSquare(new Vector3(0, 0, 0),
                                                                                        new Vector3(tempSize.Width,
@@ -135,10 +113,8 @@ namespace GameCore.RenderLayers
 
         private ObjHudPanel CreateHudPanel(string aBmpPath, ObjHudPanel.Anchors anAnchor)
         {
-            Texture tempTexture = new Texture(aBmpPath);
-            Size tempSize = tempTexture.Size;
-
-            ObjMaterial tempMaterial = new ObjMaterial(hudProgram) {DiffuseMap = tempTexture};
+            ObjMaterial tempMaterial = TheMaterialManager.GetFromFile(hudProgram, aBmpPath);
+            Size tempSize = tempMaterial.DiffuseMap.Size;
 
             Vector2 tempLoc2 = new Vector2(0, 0);
 
@@ -168,21 +144,6 @@ namespace GameCore.RenderLayers
 
             // bind the font program as well as the font texture
             Gl.UseProgram(hudProgram.ProgramID);
-//            Gl.BindTexture(font.FontTexture);
-
-//            if (objectList != null)
-//            {
-//                objectList.Draw();
-//            }
-
-
-//            if (theTileObjects != null)
-//            {
-//                foreach (ObjObject theTileObject in theTileObjects)
-//                {
-//                    theTileObject.Draw();
-//                }
-//            }
 
             foreach (ObjHudPanel theHudObject in theHudPanels)
             {
@@ -203,29 +164,13 @@ namespace GameCore.RenderLayers
             {
                 theHudObject.UpdatePosition(Width, Height);
             }
-
-
-//
-//            information.Position = new Vector2(-width / 2 + 10, height / 2 - font.Height - 10);
         }
 
         public override void OnClose()
         {
-            if (theTileObjects != null)
-            {
-                foreach (ObjObject aObjObject in theTileObjects)
-                {
-                    aObjObject.Dispose();
-                }
-            }
             foreach (ObjHudPanel aHudObject in theHudPanels)
             {
                 aHudObject.Dispose();
-            }
-
-            if (objectList != null)
-            {
-                objectList.Dispose();
             }
             hudProgram.DisposeChildren = true;
             hudProgram.Dispose();

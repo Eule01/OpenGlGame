@@ -1,4 +1,4 @@
-namespace GameCore.RenderLayers
+namespace GameCore.Render.RenderLayers
 {
     public interface IRenderLayer
     {

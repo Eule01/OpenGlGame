@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using OpenGL;
 
-namespace GameCore.DrawingObjects
+namespace GameCore.Render.RenderMaterial
 {
     public class ObjMaterial : IDisposable
     {
-        public string Name { get; private set; }
+        public string Name { get; set; }
         public Vector3 Ambient { get; private set; }
         public Vector3 Diffuse { get; private set; }
         public Vector3 Specular { get; private set; }

@@ -2,12 +2,13 @@
 
 using System;
 using System.Collections.Generic;
-using GameCore.OpenGlHelper;
+using GameCore.Render.OpenGlHelper;
+using GameCore.Render.RenderMaterial;
 using OpenGL;
 
 #endregion
 
-namespace GameCore.DrawingObjects
+namespace GameCore.Render.RenderObjects
 {
     public class ObjObject : IDisposable
     {

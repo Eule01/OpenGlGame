@@ -3,14 +3,15 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
-using GameCore.RenderLayers;
+using GameCore.Render.RenderLayers;
+using GameCore.Render.RenderMaterial;
 using GameCore.UserInterface;
 using OpenGL;
 using Tao.FreeGlut;
 
 #endregion
 
-namespace GameCore.MainRenderer
+namespace GameCore.Render.MainRenderer
 {
     public class RendererOpenGl4CSharp : RendererBase
     {
@@ -45,6 +46,8 @@ namespace GameCore.MainRenderer
 
         private KeyBindings theKeyBindings;
 
+        private MaterialManager theMaterialManager;
+
         public RendererOpenGl4CSharp()
         {
             name = "RendererOpenGl4CSharp";
@@ -55,6 +58,8 @@ namespace GameCore.MainRenderer
 //            Async.Do(delegate { StartOpenGl(); });
             theKeyBindings = KeyBindings.GetDefaultKeyBindings();
             theKeyBindings.Initialise();
+
+            theMaterialManager = new MaterialManager();
             GameCore.TheGameCore.RaiseMessage("Loaded KeyBindings: " + Environment.NewLine + theKeyBindings);
 
             StartOpenGl();
@@ -110,13 +115,16 @@ namespace GameCore.MainRenderer
             Gl.Enable(EnableCap.Blend);
             Gl.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-            layerGame = new RenderLayerGame(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings);
+            layerGame = new RenderLayerGame(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
+                                            theMaterialManager);
             layerGame.OnLoad();
 
-            layerHud = new RenderLayerHud(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings);
+            layerHud = new RenderLayerHud(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
+                                          theMaterialManager);
             layerHud.OnLoad();
 
-            layerInfo = new RenderLayerTextInfo(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings);
+            layerInfo = new RenderLayerTextInfo(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
+                                                theMaterialManager);
             layerInfo.OnLoad();
 
             watch = Stopwatch.StartNew();
@@ -231,6 +239,8 @@ namespace GameCore.MainRenderer
             layerGame.OnClose();
             layerHud.OnClose();
             layerInfo.OnClose();
+
+            theMaterialManager.Close();
         }
 
         #region Controls

@@ -3,7 +3,7 @@
 using System;
 using System.IO;
 using GameCore.Engine;
-using GameCore.MainRenderer;
+using GameCore.Render.MainRenderer;
 using GameCore.UserInterface;
 using GameCore.Utils.Timers;
 

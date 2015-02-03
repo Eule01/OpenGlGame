@@ -5,7 +5,7 @@ using OpenGL;
 
 #endregion
 
-namespace GameCore.OpenGlHelper
+namespace GameCore.Render.OpenGlHelper
 {
     public static class ObjectPrimitives
     {

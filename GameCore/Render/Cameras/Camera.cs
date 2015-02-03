@@ -4,7 +4,7 @@ using OpenGL;
 
 #endregion
 
-namespace GameCore.Cameras
+namespace GameCore.Render.Cameras
 {
     public class Camera
     {

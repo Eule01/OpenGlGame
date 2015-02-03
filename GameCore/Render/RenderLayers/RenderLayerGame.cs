@@ -3,11 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using GameCore.Cameras;
-using GameCore.DrawingObjects;
 using GameCore.GameObjects;
 using GameCore.Map;
-using GameCore.OpenGlHelper;
+using GameCore.Render.Cameras;
+using GameCore.Render.OpenGlHelper;
+using GameCore.Render.RenderMaterial;
+using GameCore.Render.RenderObjects;
 using GameCore.UserInterface;
 using GameCore.Utils;
 using OpenGL;
@@ -15,7 +16,7 @@ using Tao.FreeGlut;
 
 #endregion
 
-namespace GameCore.RenderLayers
+namespace GameCore.Render.RenderLayers
 {
     public class RenderLayerGame : RenderLayerBase
     {
@@ -61,8 +62,8 @@ namespace GameCore.RenderLayers
 
 
         public RenderLayerGame(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
-                               KeyBindings theKeyBindings)
-            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings)
+                               KeyBindings theKeyBindings, MaterialManager theMaterialManager)
+            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
         {
         }
 
@@ -82,17 +83,14 @@ namespace GameCore.RenderLayers
             program["projection_matrix"].SetValue(projectionMatrix);
             program["model_matrix"].SetValue(Matrix4.Identity);
 
-            pointMaterial = RenderObjects.CreatPlainMaterial(new Size(10, 10), program, Color.Red);
+            pointMaterial = TheMaterialManager.GetPlainColor(program, "GamePlainRed", Color.Red);
 
             objectList = new ObjLoader(program);
             // objectList = new ObjLoader("enterprise.obj", program);
 
-            ObjMaterial tempMaterial = new ObjMaterial(program)
-                {
-                    DiffuseMap = new Texture(BitmapHelper.CreatBitamp(new Size(20, 20), new SolidBrush(Color.Green)))
-                };
+            ObjMaterial tempMaterial = TheMaterialManager.GetPlainColor(program, "GamePlainGreen", Color.Green);
 
-            tileTextures = RenderObjects.CreateTileTextures(new Size(20, 20), program);
+            tileTextures = RenderObjects.RenderObjects.CreateTileTextures(new Size(20, 20), program);
 
 
             ObjObject tempObj =
@@ -359,7 +357,7 @@ namespace GameCore.RenderLayers
         private List<RenderGameObject> CreateRenderGameObjects()
         {
             Dictionary<GameObject.ObjcetIds, PlainBmpTexture> gameObjectsTextures =
-                RenderObjects.CreateGameObjectsTextures(new Size(20, 20), program);
+                RenderObjects.RenderObjects.CreateGameObjectsTextures(new Size(20, 20), program);
             List<RenderGameObject> tempObjList = new List<RenderGameObject>();
             List<GameObject> gameObjects = TheGameStatus.GameObjects;
 
@@ -378,11 +376,12 @@ namespace GameCore.RenderLayers
                 if (gameObject.TheObjectId == GameObject.ObjcetIds.Player)
                 {
                     playerObjObject = tempObjObject;
-                    Texture tempTexture = new Texture(@"./Resources/Images/tileTestMike200x200.png");
-                    Size tempSize = tempTexture.Size;
 
-                    ObjMaterial tempMaterial = new ObjMaterial(program) {DiffuseMap = tempTexture};
-
+//                    Texture tempTexture = new Texture(@"./Resources/Images/tileTestMike200x200.png");
+//                    Size tempSize = tempTexture.Size;
+//
+//                    ObjMaterial tempMaterial = new ObjMaterial(program) {DiffuseMap = tempTexture};
+                    ObjMaterial tempMaterial = TheMaterialManager.GetFromFile(program, "tileTestMike200x200.png");
 
                     playerObjObject.Material = tempMaterial;
                 }
@@ -405,7 +404,7 @@ namespace GameCore.RenderLayers
         private List<ObjObject> CreateTiles()
         {
             Dictionary<Tile.TileIds, PlainBmpTexture> tempTiletypeList =
-                RenderObjects.CreateTileTextures(new Size(20, 20), program);
+                RenderObjects.RenderObjects.CreateTileTextures(new Size(20, 20), program);
             List<ObjObject> tempObjList = new List<ObjObject>();
             IEnumerable<Tile> tempTiles = TheGameStatus.TheMap.Tiles;
             foreach (Tile tempTile in tempTiles)

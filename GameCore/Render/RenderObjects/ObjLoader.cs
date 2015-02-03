@@ -4,11 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using GameCore.Render.RenderMaterial;
 using OpenGL;
 
 #endregion
 
-namespace GameCore.DrawingObjects
+namespace GameCore.Render.RenderObjects
 {
     public class ObjLoader : IDisposable
     {

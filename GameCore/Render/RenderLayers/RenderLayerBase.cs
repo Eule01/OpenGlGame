@@ -1,21 +1,23 @@
 #region
 
+using GameCore.Render.RenderMaterial;
 using GameCore.UserInterface;
 
 #endregion
 
-namespace GameCore.RenderLayers
+namespace GameCore.Render.RenderLayers
 {
     public abstract class RenderLayerBase : IRenderLayer
     {
         protected RenderLayerBase(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
-                                  KeyBindings theKeyBindings)
+                                  KeyBindings theKeyBindings, MaterialManager theMaterialManager)
         {
             Width = width;
             Height = height;
             TheGameStatus = theGameStatus;
             TheUserInputPlayer = theUserInputPlayer;
             TheKeyBindings = theKeyBindings;
+            TheMaterialManager = theMaterialManager;
         }
 
         public int Width = 1280;
@@ -23,6 +25,7 @@ namespace GameCore.RenderLayers
         public GameStatus TheGameStatus;
         public UserInputPlayer TheUserInputPlayer;
         public KeyBindings TheKeyBindings;
+        public MaterialManager TheMaterialManager;
         public abstract void OnLoad();
         public abstract void OnDisplay();
         public abstract void OnRenderFrame(float deltaTime);

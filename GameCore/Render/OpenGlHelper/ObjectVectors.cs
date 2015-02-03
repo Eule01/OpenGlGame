@@ -4,7 +4,7 @@ using OpenGL;
 
 #endregion
 
-namespace GameCore.OpenGlHelper
+namespace GameCore.Render.OpenGlHelper
 {
     /// <summary>
     /// This holds the vectors that create object primitives.

@@ -1,12 +1,13 @@
 #region
 
-using GameCore.Font;
+using GameCore.Render.Font;
+using GameCore.Render.RenderMaterial;
 using GameCore.UserInterface;
 using OpenGL;
 
 #endregion
 
-namespace GameCore.RenderLayers
+namespace GameCore.Render.RenderLayers
 {
     public class RenderLayerTextInfo : RenderLayerBase
     {
@@ -19,15 +20,15 @@ namespace GameCore.RenderLayers
 
 
         public RenderLayerTextInfo(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
-                                   KeyBindings theKeyBindings)
-            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings)
+                                   KeyBindings theKeyBindings, MaterialManager theMaterialManager)
+            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
         {
         }
 
         public override void OnLoad()
         {
             // load the bitmap font for this tutorial
-            font = new BMFont(@".\Font\font24.fnt", @".\Font\font24.png");
+            font = new BMFont(@".\Render\Font\font24.fnt", @".\Render\Font\font24.png");
 //            font = new BMFont(@".\Render\OpenGl4CSharp\font24.fnt", @".\Render\OpenGl4CSharp\font24.png");
             fontProgram = new ShaderProgram(BMFont.FontVertexSource, BMFont.FontFragmentSource);
 

@@ -2,13 +2,13 @@
 
 using System;
 using GameCore.GameObjects;
-using GameCore.OpenGlHelper;
+using GameCore.Render.OpenGlHelper;
 using GameCore.Utils;
 using OpenGL;
 
 #endregion
 
-namespace GameCore.DrawingObjects
+namespace GameCore.Render.RenderObjects
 {
     public class RenderGameObject : ObjObject
     {

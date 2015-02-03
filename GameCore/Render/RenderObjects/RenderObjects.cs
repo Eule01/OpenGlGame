@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using GameCore.GameObjects;
 using GameCore.Map;
+using GameCore.Render.RenderMaterial;
 using GameCore.Utils;
 using OpenGL;
 
 #endregion
 
-namespace GameCore.DrawingObjects
+namespace GameCore.Render.RenderObjects
 {
     public class RenderObjects
     {
@@ -44,18 +45,6 @@ namespace GameCore.DrawingObjects
 
             return tiletextureList;
         }
-
-
-        public static ObjMaterial CreatPlainMaterial(Size aTextureSize, ShaderProgram aProgram, Color aColor)
-        {
-                ObjMaterial tempMaterial;
-                SolidBrush tempBrush = new SolidBrush(aColor);
-                Bitmap tempBmp = BitmapHelper.CreatBitamp(aTextureSize, tempBrush);
-                tempMaterial = new ObjMaterial(aProgram) { DiffuseMap = new Texture(tempBmp) };
-
-            return tempMaterial;
-        }
-
 
         public static Dictionary<GameObject.ObjcetIds, PlainBmpTexture> CreateGameObjectsTextures(Size aTextureSize,
                                                                                           ShaderProgram aProgram)

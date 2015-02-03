@@ -1,6 +1,6 @@
 ﻿using GameCore.UserInterface;
 
-namespace GameCore.MainRenderer
+namespace GameCore.Render.MainRenderer
 {
     public abstract class RendererBase
     {
