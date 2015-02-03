@@ -10,16 +10,16 @@ using OpenGL;
 
 namespace GameCore.Render.RenderObjects
 {
-    public class RenderGameObject : ObjObject
+    public class ObjGameObject : ObjObject
     {
 
         public GameObject TheGameObject;
 
-        public RenderGameObject(Vector3[] vertexData, int[] elementData) : base(vertexData, elementData)
+        public ObjGameObject(Vector3[] vertexData, int[] elementData) : base(vertexData, elementData)
         {
         }
 
-        public RenderGameObject(ObjectVectors anObjectVectors) : base(anObjectVectors)
+        public ObjGameObject(ObjectVectors anObjectVectors) : base(anObjectVectors)
         {
         }
 

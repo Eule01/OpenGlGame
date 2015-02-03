@@ -37,8 +37,8 @@ namespace GameCore.Render.RenderLayers
         public Vector3 MouseWorld = Vector3.Zero;
 
         private List<ObjObject> theTileObjects;
-        private List<RenderGameObject> theRenderGameObjects;
-        private RenderGameObject playerObjObject = null;
+        private List<ObjGameObject> theRenderGameObjects;
+        private ObjGameObject playerObjObject = null;
 
         /// <summary>
         ///     The near clipping distance.
@@ -186,7 +186,7 @@ namespace GameCore.Render.RenderLayers
 
             if (theRenderGameObjects != null)
             {
-                foreach (RenderGameObject renderGameObject in theRenderGameObjects)
+                foreach (ObjGameObject renderGameObject in theRenderGameObjects)
                 {
                     renderGameObject.Draw(program);
                 }
@@ -214,7 +214,7 @@ namespace GameCore.Render.RenderLayers
             {
                 objectList.Dispose();
             }
-            foreach (RenderGameObject aRenderGameObject in theRenderGameObjects)
+            foreach (ObjGameObject aRenderGameObject in theRenderGameObjects)
             {
                 aRenderGameObject.Dispose();
             }
@@ -348,17 +348,17 @@ namespace GameCore.Render.RenderLayers
 
         #region Game objects
 
-        private List<RenderGameObject> GetGameObjects()
+        private List<ObjGameObject> GetGameObjects()
         {
-            List<RenderGameObject> tempTileObj = CreateRenderGameObjects();
+            List<ObjGameObject> tempTileObj = CreateRenderGameObjects();
             return tempTileObj;
         }
 
-        private List<RenderGameObject> CreateRenderGameObjects()
+        private List<ObjGameObject> CreateRenderGameObjects()
         {
             Dictionary<GameObject.ObjcetIds, PlainBmpTexture> gameObjectsTextures =
                 RenderObjects.RenderObjects.CreateGameObjectsTextures(new Size(20, 20), program);
-            List<RenderGameObject> tempObjList = new List<RenderGameObject>();
+            List<ObjGameObject> tempObjList = new List<ObjGameObject>();
             List<GameObject> gameObjects = TheGameStatus.GameObjects;
 
 
@@ -366,8 +366,8 @@ namespace GameCore.Render.RenderLayers
             {
                 Vector tempLoc = new Vector(0.0f, 0.0f);
                 tempLoc -= new Vector(gameObject.Diameter*0.5f, gameObject.Diameter*0.5f);
-                RenderGameObject tempObjObject =
-                    new RenderGameObject(ObjectPrimitives.CreateCube(new Vector3(tempLoc.X, tempLoc.Y, 0),
+                ObjGameObject tempObjObject =
+                    new ObjGameObject(ObjectPrimitives.CreateCube(new Vector3(tempLoc.X, tempLoc.Y, 0),
                                                                      new Vector3(tempLoc.X + gameObject.Diameter,
                                                                                  tempLoc.Y + gameObject.Diameter, 1),
                                                                      true));

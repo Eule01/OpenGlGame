@@ -108,5 +108,12 @@ namespace GameCore.Render.RenderMaterial
                 Program.Dispose();
             }
         }
+
+        public override string ToString()
+        {
+            string outStr = "";
+            outStr += Name;
+            return outStr;
+        }
     }
 }
