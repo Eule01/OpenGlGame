@@ -33,13 +33,13 @@ namespace GameCore.Render.RenderObjects
             aProgram.Use();
             if (TheGameObject.TheObjectId == GameObject.ObjcetIds.Player)
             {
-                aProgram["model_matrix"].SetValue(Matrix4.CreateRotationZ(((ObjectPlayer)TheGameObject).Orientation.Angle)*
-                                                  Matrix4.CreateTranslation(new Vector3(tempLoc.X, tempLoc.Y, 0)));
+                aProgram["model_matrix"].SetValue(Matrix4.CreateRotationY(-((ObjectPlayer)TheGameObject).Orientation.Angle)*
+                                                  Matrix4.CreateTranslation(new Vector3(tempLoc.X, 0, tempLoc.Y)));
 
             }
             else
             {
-                aProgram["model_matrix"].SetValue(Matrix4.CreateTranslation(new Vector3(tempLoc.X, tempLoc.Y, 0)));
+                aProgram["model_matrix"].SetValue(Matrix4.CreateTranslation(new Vector3(tempLoc.X, 0, tempLoc.Y)));
             }
 //            aProgram["model_matrix"].SetValue(CreateTranslation(new Vector3(tempLoc.X, tempLoc.Y, 0)));
 

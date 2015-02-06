@@ -14,6 +14,8 @@ namespace GameCore.Render.RenderObjects
 {
     public class RenderObjects
     {
+        public static MaterialManager TheMaterialManager;
+
         public RenderObjects()
         {
         }
@@ -31,15 +33,23 @@ namespace GameCore.Render.RenderObjects
 
             foreach (KeyValuePair<Tile.TileIds, TileType> keyValuePair in tileList)
             {
-                PlainBmpTexture tempBmpTexture = new PlainBmpTexture(keyValuePair.Value.Name)
-                    {
-                        Color = keyValuePair.Value.Color
-                    };
-                tempBrush = new SolidBrush(tempBmpTexture.Color);
-                tempBmp = BitmapHelper.CreatBitamp(aTextureSize, tempBrush);
-                tempBmpTexture.TextureBmp = tempBmp;
-                tempMaterial = new ObjMaterial(aProgram) {DiffuseMap = new Texture(tempBmp)};
-                tempBmpTexture.Material = tempMaterial;
+                string tempTiletextureName = "Tile_" + keyValuePair.Key.ToString() + ".png";
+
+                PlainBmpTexture tempBmpTexture = new PlainBmpTexture(keyValuePair.Value.Name);
+                tempMaterial = TheMaterialManager.GetFromFile(aProgram, tempTiletextureName);
+                if (tempMaterial == null)
+                {
+                    tempBmpTexture.Color = keyValuePair.Value.Color;
+                    tempBrush = new SolidBrush(tempBmpTexture.Color);
+                    tempBmp = BitmapHelper.CreatBitamp(aTextureSize, tempBrush);
+                    tempBmpTexture.TextureBmp = tempBmp;
+                    tempMaterial = new ObjMaterial(aProgram) {DiffuseMap = new Texture(tempBmp)};
+                    tempBmpTexture.Material = tempMaterial;
+                }
+                else
+                {
+                    tempBmpTexture.Material = tempMaterial;
+                }
                 tiletextureList.Add(keyValuePair.Key, tempBmpTexture);
             }
 
@@ -47,7 +57,7 @@ namespace GameCore.Render.RenderObjects
         }
 
         public static Dictionary<GameObject.ObjcetIds, PlainBmpTexture> CreateGameObjectsTextures(Size aTextureSize,
-                                                                                          ShaderProgram aProgram)
+                                                                                                  ShaderProgram aProgram)
         {
             Dictionary<GameObject.ObjcetIds, GameObjectType> objTypeList = GameObject.GetObjTypes();
             Dictionary<GameObject.ObjcetIds, PlainBmpTexture> objTextureList =

@@ -11,15 +11,15 @@ using OpenGL;
 
 namespace GameCore.Render.RenderObjects
 {
-    public class ObjLoader : IDisposable
+    public class ObjMesh : IDisposable
     {
-        private List<ObjObject> objects = new List<ObjObject>();
+        protected List<ObjObject> objects = new List<ObjObject>();
         private Dictionary<string, ObjMaterial> materials = new Dictionary<string, ObjMaterial>();
 
         public ShaderProgram defaultProgram;
         private ObjMaterial defaultMaterial;
 
-        public ObjLoader(ShaderProgram program)
+        public ObjMesh(ShaderProgram program)
         {
             defaultProgram = program;
             Stopwatch watch = Stopwatch.StartNew();
@@ -30,7 +30,7 @@ namespace GameCore.Render.RenderObjects
 //            Console.WriteLine("Took {0}ms", watch.ElapsedMilliseconds);
         }
 
-        public ObjLoader(string filename, ShaderProgram program)
+        public ObjMesh(string filename, ShaderProgram program)
         {
             defaultProgram = program;
 

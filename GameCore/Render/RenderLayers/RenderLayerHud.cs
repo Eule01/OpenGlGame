@@ -62,7 +62,7 @@ namespace GameCore.Render.RenderLayers
                 int col = counter%cellsPerRow;
                 Vector2 tempLoc = startLoc + new Vector2(-row*rowOffset, col*rowOffset);
 
-                ObjHudButton tempObjHudButton = new ObjHudButton(ObjectPrimitives.CreateSquare(new Vector3(0, 0, 0),
+                ObjHudButton tempObjHudButton = new ObjHudButton(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(0, 0, 0),
                                                                                                new Vector3(
                                                                                                    tempSize.Width,
                                                                                                    tempSize.Height, 0),
@@ -95,7 +95,7 @@ namespace GameCore.Render.RenderLayers
                                                                         aColor);
             Vector2 tempLoc2 = new Vector2(0, 0);
 
-            ObjHudPanel tempObjObject2 = new ObjHudPanel(ObjectPrimitives.CreateSquare(new Vector3(0, 0, 0),
+            ObjHudPanel tempObjObject2 = new ObjHudPanel(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(0, 0, 0),
                                                                                        new Vector3(tempSize.Width,
                                                                                                    tempSize.Height,
                                                                                                    0), true))
@@ -118,7 +118,7 @@ namespace GameCore.Render.RenderLayers
 
             Vector2 tempLoc2 = new Vector2(0, 0);
 
-            ObjHudPanel tempObjObject2 = new ObjHudPanel(ObjectPrimitives.CreateSquare(new Vector3(0, 0, 0),
+            ObjHudPanel tempObjObject2 = new ObjHudPanel(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(0, 0, 0),
                                                                                        new Vector3(tempSize.Width,
                                                                                                    tempSize.Height,
                                                                                                    0), true))

@@ -1,4 +1,5 @@
-﻿using GameCore.UserInterface;
+﻿using GameCore.Render.RenderMaterial;
+using GameCore.UserInterface;
 
 namespace GameCore.Render.MainRenderer
 {
@@ -9,6 +10,7 @@ namespace GameCore.Render.MainRenderer
         public UserInputPlayer TheUserInputPlayer;
 
         protected string name = "RendererBase";
+        protected MaterialManager theMaterialManager;
 
         public RendererBase()
         {
@@ -21,6 +23,11 @@ namespace GameCore.Render.MainRenderer
         public string Name
         {
             get { return name; }
+        }
+
+        public MaterialManager TheMaterialManager
+        {
+            get { return theMaterialManager; }
         }
 
         public override string ToString()

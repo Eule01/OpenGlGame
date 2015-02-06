@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
+using GameCore.Render.Cameras;
 using GameCore.Render.RenderLayers;
 using GameCore.Render.RenderMaterial;
 using GameCore.UserInterface;
@@ -25,6 +26,7 @@ namespace GameCore.Render.MainRenderer
         /// </summary>
         private int width = 1280, height = 720;
 
+        private RenderLayerSkyBox layerSky;
 
         private RenderLayerGame layerGame;
 
@@ -46,11 +48,15 @@ namespace GameCore.Render.MainRenderer
 
         private KeyBindings theKeyBindings;
 
-        private MaterialManager theMaterialManager;
 
         public RendererOpenGl4CSharp()
         {
             name = "RendererOpenGl4CSharp";
+        }
+
+        public KeyBindings TheKeyBindings
+        {
+            get { return theKeyBindings; }
         }
 
         public override void Start()
@@ -115,9 +121,16 @@ namespace GameCore.Render.MainRenderer
             Gl.Enable(EnableCap.Blend);
             Gl.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
+            RenderObjects.RenderObjects.TheMaterialManager = theMaterialManager;
+
+            layerSky = new RenderLayerSkyBox(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
+                                            theMaterialManager);
+            layerSky.OnLoad();
+
             layerGame = new RenderLayerGame(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
                                             theMaterialManager);
             layerGame.OnLoad();
+            layerSky.Camera = layerGame.Camera;
 
             layerHud = new RenderLayerHud(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
                                           theMaterialManager);
@@ -174,10 +187,15 @@ namespace GameCore.Render.MainRenderer
 
                 if (layerInfo.ShowInfo)
                 {
+                    Camera tempCam = layerGame.Camera;
+                    Vector4 tempViewDir = tempCam.Orientation.ToAxisAngle();
                     string tempText = string.Format(
-                        "FPS: {0:0.00}, Mouse: [({1:0},{2:0}),{3:0.0},{4:0.0},{5:0.0}], Camera: [{6:0.0},{7:0.0},{8:0.0}]",
+                        "FPS: {0:0.00}, Mouse: [({1:0},{2:0}),{3:0.0},{4:0.0},{5:0.0}], Camera: Pos[{6:0.0},{7:0.0},{8:0.0}]",
+//                        "FPS: {0:0.00}, Mouse: [({1:0},{2:0}),{3:0.0},{4:0.0},{5:0.0}], Camera: Pos[{6:0.0},{7:0.0},{8:0.0}] Dir[{9:0.0},{10:0.0},{11:0.0}]",
                         fps, MouseCoord.x, MouseCoord.y, MouseWorld.x, MouseWorld.y, MouseWorld.z,
-                        layerGame.Camera.Position.x, layerGame.Camera.Position.y, layerGame.Camera.Position.z);
+                        tempCam.Position.x, tempCam.Position.y, tempCam.Position.z
+//                        tempViewDir.x, tempViewDir.y, tempViewDir.z
+                        );
                     layerInfo.GameInfo = tempText;
                 }
 
@@ -188,7 +206,7 @@ namespace GameCore.Render.MainRenderer
                 Gl.Viewport(0, 0, width, height);
                 Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-
+                layerSky.OnRenderFrame(deltaTime);
                 layerGame.OnRenderFrame(deltaTime);
                 layerHud.OnRenderFrame(deltaTime);
                 layerInfo.OnRenderFrame(deltaTime);
@@ -229,6 +247,7 @@ namespace GameCore.Render.MainRenderer
             this.width = width;
             this.height = height;
 
+            layerSky.OnReshape(width,height);
             layerGame.OnReshape(width, height);
             layerHud.OnReshape(width, height);
             layerInfo.OnReshape(width, height);
@@ -236,6 +255,7 @@ namespace GameCore.Render.MainRenderer
 
         private void OnClose()
         {
+            layerSky.OnClose();
             layerGame.OnClose();
             layerHud.OnClose();
             layerInfo.OnClose();

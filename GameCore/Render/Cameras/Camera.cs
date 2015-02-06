@@ -1,5 +1,6 @@
 #region
 
+using GameCore.Utils;
 using OpenGL;
 
 #endregion

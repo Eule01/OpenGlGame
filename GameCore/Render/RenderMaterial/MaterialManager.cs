@@ -34,7 +34,7 @@ namespace GameCore.Render.RenderMaterial
             return null;
         }
 
-        public ObjMaterial GetFromFile(ShaderProgram program, string aName, string aFileName)
+        public ObjMaterial GetFromFile(ShaderProgram program, string aName, string aFileName, bool FlipY = true)
         {
             if (materials.ContainsKey(aName))
             {
@@ -42,18 +42,22 @@ namespace GameCore.Render.RenderMaterial
             }
 
             string tempFilePath = Path.Combine(imageDirectory, aFileName);
+            if (!File.Exists(tempFilePath))
+            {
+                return null;
+            }
 
-            Texture tempTexture = new Texture(tempFilePath);
+            Texture tempTexture = new Texture(tempFilePath,FlipY);
             ObjMaterial tempMaterial = new ObjMaterial(program) {DiffuseMap = tempTexture};
             AddMaterial(aName, tempMaterial);
 
             return tempMaterial;
         }
 
-        public ObjMaterial GetFromFile(ShaderProgram program, string aFileName)
+        public ObjMaterial GetFromFile(ShaderProgram program, string aFileName, bool FlipY = true)
         {
             string aName = Path.GetFileNameWithoutExtension(aFileName);
-            return GetFromFile(program, aName, aFileName);
+            return GetFromFile(program, aName, aFileName,FlipY);
         }
 
         public ObjMaterial GetPlainColor(ShaderProgram program, string aName, Color aColor)

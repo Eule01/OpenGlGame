@@ -30,6 +30,7 @@ namespace GameCore.UserInterface
             CameraTurnAtField,
 
             DisplayToggleRenderWireFrame,
+            DisplayToggleLighting,
             DisplayToggleFullFrame,
             DisplayToggleDisplayInfo,
 
@@ -74,6 +75,8 @@ namespace GameCore.UserInterface
 
                     new KeyBinding(Ids.DisplayToggleRenderWireFrame, (byte) 'q', "Toggle game layer render wire frame",
                                    "q"),
+                    new KeyBinding(Ids.DisplayToggleLighting, (byte) 'e', "Toggle game layer lighting",
+                                   "e"),
                     new KeyBinding(Ids.DisplayToggleFullFrame, (byte) 'f', "Toggle full frame", "f"),
                     new KeyBinding(Ids.DisplayToggleDisplayInfo, (byte) 'i', "Toggle display info", "i"),
 

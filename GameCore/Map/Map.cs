@@ -141,11 +141,15 @@ namespace GameCore.Map
             {
                 for (int y = 0; y < aSize.Height; y++)
                 {
-                    if (x == 5)
+                    if (x == 8)
                     {
-                        tempTile = new Tile(Tile.TileIds.Road) {Location = new Vector(x, y)};
+                        tempTile = new Tile(Tile.TileIds.Grass) {Location = new Vector(x, y)};
                     }
-                    else
+                    else if (x == 5)
+                        {
+                            tempTile = new Tile(Tile.TileIds.Road) { Location = new Vector(x, y) };
+                        }
+                        else
                     {
                         tempTile = new Tile(Tile.TileIds.Desert) {Location = new Vector(x, y)};
                     }

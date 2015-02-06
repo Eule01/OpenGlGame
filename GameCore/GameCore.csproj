@@ -46,13 +46,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Render\Cameras\Camera.cs" />
+    <Compile Include="Render\RenderLayers\RenderLayerSkyBox.cs" />
     <Compile Include="Render\RenderMaterial\MaterialManager.cs" />
     <Compile Include="Render\RenderObjects\ObjHudButton.cs" />
     <Compile Include="Render\RenderObjects\ObjHudPanel.cs" />
-    <Compile Include="Render\RenderObjects\ObjLoader.cs" />
+    <Compile Include="Render\RenderObjects\ObjMesh.cs" />
     <Compile Include="Render\RenderMaterial\ObjMaterial.cs" />
     <Compile Include="Render\RenderObjects\ObjObject.cs" />
     <Compile Include="Render\RenderObjects\ObjGameObject.cs" />
+    <Compile Include="Render\RenderObjects\ObjMeshSkyBox.cs" />
     <Compile Include="Render\RenderObjects\RenderObjects.cs" />
     <Compile Include="Engine\GameEngine.cs" />
     <Compile Include="Render\Font\Font.cs" />
@@ -104,6 +106,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Links.md" />
     <None Include="Render\Font\font24.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -121,6 +124,24 @@
     <Content Include="Resources\Images\HudPanelCreative.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Images\SkyBoxTest\jajlands1_bk.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\SkyBoxTest\jajlands1_dn.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\SkyBoxTest\jajlands1_ft.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\SkyBoxTest\jajlands1_lf.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\SkyBoxTest\jajlands1_rt.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\SkyBoxTest\jajlands1_up.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Images\tileTestMike200x200.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -128,6 +149,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Images\tileTestPlain.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Tile_Grass.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Tao.FreeGlut.dll" />

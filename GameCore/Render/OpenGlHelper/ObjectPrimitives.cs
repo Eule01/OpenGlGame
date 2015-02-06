@@ -69,11 +69,11 @@ namespace GameCore.Render.OpenGlHelper
             ObjectVectors tempObjectVectors = new ObjectVectors();
             tempObjectVectors.Vertex = new[]
                 {
-                    new Vector3(min.x, min.y, max.z), // 0
+                    new Vector3(min.x, min.y, max.z), // 0  
                     new Vector3(max.x, min.y, max.z), // 1
-                    new Vector3(min.x, max.y, max.z), // 2
+                    new Vector3(min.x, max.y, max.z), // 2 
                     new Vector3(max.x, max.y, max.z), // 3
-                    new Vector3(max.x, min.y, min.z), // 4
+                    new Vector3(max.x, min.y, min.z), // 4  
                     new Vector3(max.x, max.y, min.z), // 5
                     new Vector3(min.x, max.y, min.z), // 6
                     new Vector3(min.x, min.y, min.z) // 7
@@ -93,8 +93,16 @@ namespace GameCore.Render.OpenGlHelper
         }
 
 
+
+        
+        /// <summary>
+        /// careful, this does not work for squares in the z plane
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="createUv"></param>
         /// <returns></returns>
-        public static ObjectVectors CreateSquare( Vector3 min, Vector3 max, bool createUv)
+        public static ObjectVectors CreateSquareWithNormalsYorZ( Vector3 min, Vector3 max, bool createUv)
         {
             ObjectVectors tempObjectVectors = new ObjectVectors();
             tempObjectVectors.Vertex = new[]
@@ -103,6 +111,80 @@ namespace GameCore.Render.OpenGlHelper
                     new Vector3(max.x, min.y, min.z),
                     new Vector3(min.x, max.y, max.z),
                     new Vector3(max.x, max.y, max.z),
+                };
+
+            tempObjectVectors.ElementData = new[]
+                {
+                    0, 1, 3,
+                    0, 2, 3,
+                };
+
+            if (createUv)
+            {
+                tempObjectVectors.Uvs = new Vector2[]
+                    {
+                        new Vector2(0, 0),
+                        new Vector2(1, 0),
+                        new Vector2(0, 1),
+                        new Vector2(1, 1),
+                    };
+            }
+            return tempObjectVectors;
+        }        
+        
+       /// <summary>
+        /// careful, this does not work for squares in the z plane
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="createUv"></param>
+        /// <returns></returns>
+        public static ObjectVectors CreateTile( Vector3 min, Vector3 max, bool createUv)
+        {
+            ObjectVectors tempObjectVectors = new ObjectVectors();
+            tempObjectVectors.Vertex = new[]
+                {
+                    new Vector3(min.x, min.y, min.z),
+                    new Vector3(max.x, min.y, min.z),
+                    new Vector3(min.x, max.y, max.z),
+                    new Vector3(max.x, max.y, max.z),
+                };
+
+            tempObjectVectors.ElementData = new[]
+                {
+                    0, 3, 1,
+                    0, 2, 3,
+                };
+
+            if (createUv)
+            {
+                tempObjectVectors.Uvs = new Vector2[]
+                    {
+                        new Vector2(0, 0),
+                        new Vector2(1, 0),
+                        new Vector2(0, 1),
+                        new Vector2(1, 1),
+                    };
+            }
+            return tempObjectVectors;
+        }        
+        
+        /// <summary>
+        /// c
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="createUv"></param>
+        /// <returns></returns>
+        public static ObjectVectors CreateSquareWithNormalX( Vector3 min, Vector3 max, bool createUv)
+        {
+            ObjectVectors tempObjectVectors = new ObjectVectors();
+            tempObjectVectors.Vertex = new[]
+                {
+                    new Vector3(min.x, min.y, min.z),
+                    new Vector3(min.x, min.y, max.z),
+                    new Vector3(min.x, max.y, min.z),
+                    new Vector3(min.x, max.y, max.z),
                 };
 
             tempObjectVectors.ElementData = new[]
