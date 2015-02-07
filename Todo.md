@@ -7,4 +7,6 @@ Todo:
 - IMPROVE		Improve skybox, seams are visable.
 - IMPROVE		Improve skybox, create better texturs.
 - IMPROVE		Improve tile textures, load bitmaps from file if they exist.
+- IMPROVE		Use the .mtl file when loading textures for objects (.obj).
+- FEATURE		Add form showing game stats.
 

@@ -1,4 +1,7 @@
 
+2015.02.08	FEATURE		Models can now be loaded from file (Wavefront (.obj). This is not perfect yet.
+2015.02.08	FEATURE		The light direction now rotates around (this can be toggled on/off with the r key).
+2015.02.07	FEATURE		Added a form showing the key bindings.
 2015.02.06	IMPROVEMENT Tile textue bitmap will now be loaded if the correct image file is present.
 2015.02.06	FEATURE		Added lighting direction.
 2015.02.06	BUGFIX		The tile normals were wrong.

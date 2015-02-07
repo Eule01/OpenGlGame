@@ -36,7 +36,15 @@ namespace GameCore.Render.RenderObjects
         {
             vertices = new VBO<Vector3>(anObjectVectors.Vertex);
             triangles = new VBO<int>(anObjectVectors.ElementData, BufferTarget.ElementArrayBuffer);
-            Vector3[] normalData = CalculateNormals(anObjectVectors.Vertex, anObjectVectors.ElementData);
+            Vector3[] normalData;
+            if (anObjectVectors.normalData == null)
+            {
+                normalData = CalculateNormals(anObjectVectors.Vertex, anObjectVectors.ElementData);
+            }
+            else
+            {
+                normalData = anObjectVectors.normalData;
+            }
 
 //            vertices = new VBO<Vector3>(anObjectVectors.Vertex);
             normals = new VBO<Vector3>(normalData);
@@ -82,6 +90,12 @@ namespace GameCore.Render.RenderObjects
 
                         if (split[1].Contains("/"))
                         {
+//                            string[] tempParts = split[1].Split('/');
+//                            string[] tempUvs = new string[3];
+//                            indices[0] = tempParts[0];
+//                            tempUvs[0] = tempParts[1];
+
+
                             indices[0] = split[1].Substring(0, split[1].IndexOf("/"));
                             indices[1] = split[2].Substring(0, split[2].IndexOf("/"));
                             indices[2] = split[3].Substring(0, split[3].IndexOf("/"));

@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
+using CodeToast;
 using GameCore.Render.Cameras;
 using GameCore.Render.RenderLayers;
 using GameCore.Render.RenderMaterial;
@@ -46,29 +47,22 @@ namespace GameCore.Render.MainRenderer
         public Vector3 MouseWorld = Vector3.Zero;
         public Vector2 MouseCoord = Vector2.Zero;
 
-        private KeyBindings theKeyBindings;
-
 
         public RendererOpenGl4CSharp()
         {
             name = "RendererOpenGl4CSharp";
         }
 
-        public KeyBindings TheKeyBindings
-        {
-            get { return theKeyBindings; }
-        }
-
         public override void Start()
         {
-//            Async.Do(delegate { StartOpenGl(); });
             theKeyBindings = KeyBindings.GetDefaultKeyBindings();
             theKeyBindings.Initialise();
 
             theMaterialManager = new MaterialManager();
             GameCore.TheGameCore.RaiseMessage("Loaded KeyBindings: " + Environment.NewLine + theKeyBindings);
 
-            StartOpenGl();
+           // StartOpenGl();
+                       Async.Do(delegate { StartOpenGl(); });
         }
 
         private void StartOpenGl()

@@ -45,7 +45,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GuiHelpers\KeyboardBindingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GuiHelpers\KeyboardBindingsForm.Designer.cs">
+      <DependentUpon>KeyboardBindingsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Render\Cameras\Camera.cs" />
+    <Compile Include="Render\OpenGlHelper\MeshData.cs" />
+    <Compile Include="Render\OpenGlHelper\ObjLoader.cs" />
     <Compile Include="Render\RenderLayers\RenderLayerSkyBox.cs" />
     <Compile Include="Render\RenderMaterial\MaterialManager.cs" />
     <Compile Include="Render\RenderObjects\ObjHudButton.cs" />
@@ -110,6 +118,9 @@
     <None Include="Render\Font\font24.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Resources\Models\cube.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Tao.FreeGlut.dll.config" />
   </ItemGroup>
   <ItemGroup>
@@ -156,10 +167,16 @@
     </Content>
     <Content Include="Tao.FreeGlut.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GuiHelpers\KeyboardBindingsForm.resx">
+      <DependentUpon>KeyboardBindingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

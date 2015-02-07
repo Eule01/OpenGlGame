@@ -2,9 +2,14 @@
 
 using System;
 using System.IO;
+using System.Threading;
+using System.Windows.Forms;
+using CodeToast;
 using GameCore.Engine;
+using GameCore.GuiHelpers;
 using GameCore.Render.MainRenderer;
 using GameCore.UserInterface;
+using GameCore.Utils;
 using GameCore.Utils.Timers;
 
 #endregion
@@ -23,6 +28,8 @@ namespace GameCore
         private RendererBase theRenderer;
 
         private RendererManager theRendererManager;
+
+        private KeyboardBindingsForm theKeyboardBindingsForm;
 
         /// <summary>
         ///     This is holding the game core so it can be seen from all other classes. This is not best practice I guess.
@@ -100,6 +107,8 @@ namespace GameCore
         {
             theGameEngine.Start();
             ChangeRenderer(0);
+            ShowKeyboardBindingForm();
+
         }
 
         public void ChangeRenderer(int aRendererIndex)
@@ -124,6 +133,8 @@ namespace GameCore
 
         public void Close()
         {
+            if (theKeyboardBindingsForm != null)
+            {theKeyboardBindingsForm.Close();}
             theGameEngine.Close();
             theRendererManager.Close();
 //            theRenderer.Close();
@@ -162,6 +173,34 @@ namespace GameCore
             aFileName = "Map_" + aFileName + ".xml";
             string tempFilePath = Path.Combine(tempPath, aFileName);
             return tempFilePath;
+        }
+
+
+        private void ShowKeyboardBindingForm()
+        {
+            theKeyboardBindingsForm = new KeyboardBindingsForm(theRenderer.TheKeyBindings);
+//            theKeyboardBindingsForm.Show();
+//            Application.Run();
+            Async.Do(delegate
+            {
+                Application.Run(theKeyboardBindingsForm); 
+//                Application.Run();
+//                theKeyboardBindingsForm.ShowDialog();
+            });
+
+            // Wait for the form to start up.
+            Thread.Sleep(200);
+            FormPositioner.PlaceOnSecondScreenIfPossible(theKeyboardBindingsForm, FormPositioner.Locations.TopRight);
+
+
+//            Async.UI(delegate
+//            {
+//                theKeyboardBindingsForm.SetKeyBindingsAsync(theRenderer.TheKeyBindings);
+
+                
+//
+//            }, theKeyboardBindingsForm, false);
+//            theKeyboardBindingsForm.Show();
         }
 
         #region Game Events

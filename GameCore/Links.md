@@ -179,9 +179,25 @@ Tutorial:
 http://nehe.gamedev.net/tutorial/lessons_01__05/22004/
 http://nehe.gamedev.net/
 
+# Blender (Import / Export models)
+
+http://www.raywenderlich.com/48293/how-to-export-blender-models-to-opengl-es-part-1
+http://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Load_OBJ
+
+https://www.youtube.com/watch?v=qTmBULfdVgA
+
+http://uo3d.blogspot.co.nz/2010/08/new-cheat-sheet.html
 
 
-SkyBox:
+http://wiki.blender.org/index.php/Doc:2.6/Manual/Textures/Mapping/UV/Unwrapping
+
+Show normals:
+http://sugarandcyanide.com/blog/2013/01/01/normals-display-in-blender-2-6x/
+
+http://www.raywenderlich.com/49955/blender-tutorial-for-beginners-how-to-make-a-mushroom
+
+
+# SkyBox:
 
 Create a skyBox model in blender:
 https://www.youtube.com/watch?v=QLPYOn7RS8Y

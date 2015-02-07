@@ -60,10 +60,11 @@ namespace GameCore.Render.RenderLayers
 
         private ObjMaterial pointMaterial;
         private Dictionary<Tile.TileIds, PlainBmpTexture> tileTextures;
-
+        private bool lightMove = true;
+        private Vector3 lightDirection = new Vector3(10, 10, 10).Normalize();
 
         public RenderLayerGame(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
-                               KeyBindings theKeyBindings, MaterialManager theMaterialManager)
+            KeyBindings theKeyBindings, MaterialManager theMaterialManager)
             : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
         {
         }
@@ -81,10 +82,10 @@ namespace GameCore.Render.RenderLayers
             // set up the projection and view matrix
             program.Use();
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(Fov, (float) Width/Height, ZNear,
-                                                                    ZFar);
+                ZFar);
             program["projection_matrix"].SetValue(projectionMatrix);
             program["model_matrix"].SetValue(Matrix4.Identity);
-            program["light_direction"].SetValue((new Vector3(5, 10, 7)).Normalize());
+            program["light_direction"].SetValue(lightDirection);
             program["enable_lighting"].SetValue(lighting);
 
             pointMaterial = TheMaterialManager.GetPlainColor(program, "GamePlainRed", Color.Red);
@@ -93,6 +94,26 @@ namespace GameCore.Render.RenderLayers
 
             ObjMesh tempObjMesh = new ObjMesh(program);
             objMeshs.Add(tempObjMesh);
+
+//            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/cube.obj");
+//            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/Monkey.obj");
+//            ObjMaterial tempMat = TheMaterialManager.GetFromFile(program, "Material.001 Normal.001.png");
+//            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/MikeTest1.obj");
+//            ObjMaterial tempMat = TheMaterialManager.GetFromFile(program, "MikeTest1.png");
+//            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/Sphere1.obj");
+//            ObjMaterial tempMat = TheMaterialManager.GetFromFile(program, "Sphere1.png");
+//            MeshData tempMesh3 = ObjLoader.LoadFile(@"./Resources/Models/Cube1.obj");
+//            ObjMaterial tempMat3 = TheMaterialManager.GetFromFile(program, "Cube1.png");
+//            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/Cube2.obj");
+//            ObjMaterial tempMat = TheMaterialManager.GetFromFile(program, "Cube1.png");
+//            ObjObject tempObj3 = tempMesh3.ToObjObject();
+//            ObjObject tempObj2 = tempMesh1.ToObjObject();
+//            tempObj2.Material = tempMat;
+//            tempObjMesh.AddObject(tempObj2);
+//            tempObjMesh = new ObjMesh(@"./Resources/Models/cube.obj",program);
+//            objMeshs.Add(tempObjMesh);
+
+
 //            objMeshs = new ObjMesh(program);
             // objMeshs = new ObjMesh("enterprise.obj", program);
 
@@ -103,23 +124,27 @@ namespace GameCore.Render.RenderLayers
 
             ObjObject tempObj =
                 new ObjObject(ObjectPrimitives.CreateCube(new Vector3(0, 0, 0), new Vector3(1, 1, 1), true))
-                    {
-                        Material = tileTextures[Tile.TileIds.Grass].Material
-                    };
+                {
+                    Material = tileTextures[Tile.TileIds.Grass].Material
+                };
 //            ObjObject tempObj = CreateCube(program, new Vector3(1, 1, 1), new Vector3(0, 0, 0));
             tempObjMesh.AddObject(tempObj);
             tempObj = new ObjObject(ObjectPrimitives.CreateCube(new Vector3(2, 0, 0), new Vector3(3, 1, 1), true))
-                {
-                    Material = tileTextures[Tile.TileIds.Road].Material
-                };
+            {
+                Material = tileTextures[Tile.TileIds.Road].Material
+            };
 
             tempObjMesh.AddObject(tempObj);
 
-            tempObj = new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(5, 1, 1), new Vector3(4, 0, 1), true));
+            tempObj =
+                new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(5, 1, 1), new Vector3(4, 0, 1),
+                    true));
             tempObj.Material = tempMaterial;
             tempObjMesh.AddObject(tempObj);
 
-            tempObj = new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(-1, 1, 1), new Vector3(-2, 0, 0), true));
+            tempObj =
+                new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(-1, 1, 1), new Vector3(-2, 0, 0),
+                    true));
             tempObjMesh.AddObject(tempObj);
 
             theTileObjects = GetTileObjects();
@@ -151,6 +176,13 @@ namespace GameCore.Render.RenderLayers
             program["model_matrix"].SetValue(Matrix4.Identity);
             program["enable_lighting"].SetValue(lighting);
 
+            if (lightMove)
+            {
+                lightDirection = lightDirection*Matrix4.CreateRotationY(deltaTime);
+                program["light_direction"].SetValue(lightDirection);
+            }
+
+
             // now draw the object file
             if (wireframe) Gl.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             if (objMeshs != null)
@@ -180,10 +212,10 @@ namespace GameCore.Render.RenderLayers
                 Vector3 mousePoint = MouseWorld + ((Camera.Position - MouseWorld).Normalize())*0.01f;
 
                 Vector3[] vertexData = new[]
-                    {
-                        mousePoint, new Vector3(0, 0, z),
-                        new Vector3(delta, z, delta), new Vector3(0, z, delta), new Vector3(delta, z, 0),
-                    };
+                {
+                    mousePoint, new Vector3(0, 0, z),
+                    new Vector3(delta, z, delta), new Vector3(0, z, delta), new Vector3(delta, z, 0),
+                };
 
                 VBO<Vector3> vertices = new VBO<Vector3>(vertexData);
 
@@ -215,7 +247,7 @@ namespace GameCore.Render.RenderLayers
             //            projection_matrix = Matrix4.CreatePerspectiveFieldOfView(0.45f, (float) Width/Height, 0.1f,
             //                                                                     1000f);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(Fov, (float) Width/Height, ZNear,
-                                                                    ZFar);
+                ZFar);
             program["projection_matrix"].SetValue(projectionMatrix);
         }
 
@@ -324,7 +356,7 @@ namespace GameCore.Render.RenderLayers
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraDown]) camDown = false;
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtPlayer])
                 Camera.LookAt(new Vector3(playerObjObject.TheGameObject.Location.X,
-                                          playerObjObject.TheGameObject.Location.Y, 0.0f));
+                    playerObjObject.TheGameObject.Location.Y, 0.0f));
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtField])
             {
                 RectangleF tempRec = TheGameStatus.TheMap.TheBoundingBox;
@@ -361,6 +393,8 @@ namespace GameCore.Render.RenderLayers
                 wireframe = !wireframe;
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.DisplayToggleLighting])
                 lighting = !lighting;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.DisplayToggleLightingRotate])
+                lightMove = !lightMove;
         }
 
         #region Game objects
@@ -384,10 +418,10 @@ namespace GameCore.Render.RenderLayers
                 Vector tempLoc = new Vector(0.0f, 0.0f);
                 tempLoc -= new Vector(gameObject.Diameter*0.5f, gameObject.Diameter*0.5f);
                 ObjGameObject tempObjObject =
-                    new ObjGameObject(ObjectPrimitives.CreateCube(new Vector3(tempLoc.X,0, tempLoc.Y),
-                                                                  new Vector3(tempLoc.X + gameObject.Diameter, gameObject.Diameter,
-                                                                              tempLoc.Y + gameObject.Diameter),
-                                                                  true));
+                    new ObjGameObject(ObjectPrimitives.CreateCube(new Vector3(tempLoc.X, 0, tempLoc.Y),
+                        new Vector3(tempLoc.X + gameObject.Diameter, gameObject.Diameter,
+                            tempLoc.Y + gameObject.Diameter),
+                        true));
 
                 tempObjObject.TheGameObject = gameObject;
                 if (gameObject.TheObjectId == GameObject.ObjcetIds.Player)
@@ -425,12 +459,12 @@ namespace GameCore.Render.RenderLayers
                 Vector tempLoc = tempTile.Location;
 
                 ObjObject tempObjObject =
-                    new ObjObject(ObjectPrimitives.CreateTile(new Vector3(tempLoc.X,0, tempLoc.Y),
-                                                                new Vector3(tempLoc.X + Tile.Size.X,0,
-                                                                            tempLoc.Y + Tile.Size.Y), true))
-                        {
-                            Material = tempTiletypeList[tempTile.TheTileId].Material
-                        };
+                    new ObjObject(ObjectPrimitives.CreateTile(new Vector3(tempLoc.X, 0, tempLoc.Y),
+                        new Vector3(tempLoc.X + Tile.Size.X, 0,
+                            tempLoc.Y + Tile.Size.Y), true))
+                    {
+                        Material = tempTiletypeList[tempTile.TheTileId].Material
+                    };
 
                 tempObjList.Add(tempObjObject);
             }
@@ -469,7 +503,7 @@ namespace GameCore.Render.RenderLayers
             //            float[] z = new float[1];
             int[] zInt = new int[1];
             Gl.ReadPixels(x, viewport[3] - y, 1, 1, PixelFormat.DepthComponent,
-                          PixelType.Float, zInt);
+                PixelType.Float, zInt);
             byte[] bytes = BitConverter.GetBytes(zInt[0]);
             float z = BitConverter.ToSingle(bytes, 0);
 
@@ -487,7 +521,8 @@ namespace GameCore.Render.RenderLayers
         }
 
         /// <summary>
-        ///     This one is nearly working perfectly. There is a small error which I think can be corrected using something like this
+        ///     This one is nearly working perfectly. There is a small error which I think can be corrected using something like
+        ///     this
         ///     mouse.Y = y + (ClientRectangle.Height - glview.Size.Height);
         /// </summary>
         /// <param name="x"></param>
@@ -497,8 +532,8 @@ namespace GameCore.Render.RenderLayers
         /// <param name="cameraPosition"></param>
         /// <returns></returns>
         public static Vector3 ConvertScreenToWorldCoordsNoDepth(int x, int y, Matrix4 modelViewMatrix,
-                                                                Matrix4 projectionMatrix,
-                                                                Vector3 cameraPosition)
+            Matrix4 projectionMatrix,
+            Vector3 cameraPosition)
         {
             int[] viewport = new int[4];
             Gl.GetIntegerv(GetPName.Viewport, viewport);
@@ -543,7 +578,8 @@ namespace GameCore.Render.RenderLayers
         }
 
         /// <summary>
-        ///     This one is nearly working perfectly. There is a small error which I think can be corrected using something like this
+        ///     This one is nearly working perfectly. There is a small error which I think can be corrected using something like
+        ///     this
         ///     mouse.Y = y + (ClientRectangle.Height - glview.Size.Height);
         /// </summary>
         /// <param name="x"></param>
@@ -553,14 +589,14 @@ namespace GameCore.Render.RenderLayers
         /// <param name="cameraPosition"></param>
         /// <returns></returns>
         public static Vector3 ConvertScreenToWorldCoords(int x, int y, Matrix4 modelViewMatrix, Matrix4 projectionMatrix,
-                                                         Vector3 cameraPosition)
+            Vector3 cameraPosition)
         {
             int[] viewport = new int[4];
             Gl.GetIntegerv(GetPName.Viewport, viewport);
 
             int[] zInt = new int[1];
             Gl.ReadPixels(x, viewport[3] - y, 1, 1, PixelFormat.DepthComponent,
-                          PixelType.Float, zInt);
+                PixelType.Float, zInt);
             byte[] bytes = BitConverter.GetBytes(zInt[0]);
             float z = BitConverter.ToSingle(bytes, 0);
 
@@ -647,8 +683,8 @@ uniform mat4 model_matrix;
 
 void main(void)
 {
-//    normal = (length(vertexNormal) == 0 ? vec3(0, 0, 0) : normalize((model_matrix * vec4(vertexNormal, 0)).xyz));
-    normal = normalize((model_matrix * vec4(floor(vertexNormal), 0)).xyz);
+    normal = (length(vertexNormal) == 0 ? vec3(0, 0, 0) : normalize((model_matrix * vec4(vertexNormal, 0)).xyz));
+//    normal = normalize((model_matrix * vec4(floor(vertexNormal), 0)).xyz);
     uv = vertexUV;
 
     gl_Position = projection_matrix * view_matrix * model_matrix * vec4(vertexPosition, 1);
@@ -672,7 +708,7 @@ uniform bool enable_lighting;
 
 void main(void)
 {
-    float ambient = 0.5;
+    float ambient = 0.2;
 //    vec3 light_direction = normalize(vec3(1, 1, 0));
     float light = (enable_lighting ? max(ambient, dot(normal, light_direction)) : 1);
     vec4 sample = (useTexture ? texture2D(texture, uv) : vec4(1, 1, 1, 1));

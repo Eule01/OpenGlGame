@@ -11,6 +11,7 @@ namespace GameCore.Render.MainRenderer
 
         protected string name = "RendererBase";
         protected MaterialManager theMaterialManager;
+        protected KeyBindings theKeyBindings;
 
         public RendererBase()
         {
@@ -28,6 +29,11 @@ namespace GameCore.Render.MainRenderer
         public MaterialManager TheMaterialManager
         {
             get { return theMaterialManager; }
+        }
+
+        public KeyBindings TheKeyBindings
+        {
+            get { return theKeyBindings; }
         }
 
         public override string ToString()

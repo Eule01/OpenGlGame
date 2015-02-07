@@ -19,5 +19,7 @@ namespace GameCore.Render.OpenGlHelper
         public int[] ElementData;
 
         public Vector2[] Uvs;
+
+        public Vector3[] normalData;
     }
 }

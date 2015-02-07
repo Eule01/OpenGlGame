@@ -145,6 +145,15 @@ namespace GameCore.Utils
                         }, aForm, true);
 
                     break;
+                case Locations.TopRight:
+                    Async.UI(delegate
+                        {
+                            aForm.DesktopBounds = new Rectangle(bounds.Right - aForm.Width,
+                                                                0,
+                                                                destWidth, aForm.Height);
+                        }, aForm, true);
+
+                    break;
                 default:
                     break;
             }

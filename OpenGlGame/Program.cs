@@ -19,6 +19,7 @@ namespace OpenGlGame
             theGameCore = new GameCore.GameCore();
             theGameCore.TheGameEventHandler += theGameCore_TheGameEventHandler;
             theGameCore.Start();
+            Console.ReadLine();
             theGameCore.TheGameEventHandler -= theGameCore_TheGameEventHandler;
         }
 
