@@ -61,7 +61,16 @@ namespace GameCore.Render.RenderLayers
         private ObjMaterial pointMaterial;
         private Dictionary<Tile.TileIds, PlainBmpTexture> tileTextures;
         private bool lightMove = true;
+
+        /// <summary>
+        /// The direction of the lighting.
+        /// </summary>
         private Vector3 lightDirection = new Vector3(10, 10, 10).Normalize();
+
+        /// <summary>
+        /// The ambient lighting level [0.0-1.0]
+        /// </summary>
+        private float ambientLighting = 0.4f;
 
         public RenderLayerGame(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
             KeyBindings theKeyBindings, MaterialManager theMaterialManager)
@@ -87,6 +96,7 @@ namespace GameCore.Render.RenderLayers
             program["model_matrix"].SetValue(Matrix4.Identity);
             program["light_direction"].SetValue(lightDirection);
             program["enable_lighting"].SetValue(lighting);
+            program["ambient"].SetValue(ambientLighting);
 
             pointMaterial = TheMaterialManager.GetPlainColor(program, "GamePlainRed", Color.Red);
 
@@ -107,9 +117,16 @@ namespace GameCore.Render.RenderLayers
 //            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/Cube2.obj");
 //            ObjMaterial tempMat = TheMaterialManager.GetFromFile(program, "Cube1.png");
 //            ObjObject tempObj3 = tempMesh3.ToObjObject();
+
 //            ObjObject tempObj2 = tempMesh1.ToObjObject();
 //            tempObj2.Material = tempMat;
 //            tempObjMesh.AddObject(tempObj2);
+
+
+            ObjMesh tempObjMesh2 = ObjLoader.LoadObjFile(program,@"./Resources/Models/Turret1.obj");
+            objMeshs.Add(tempObjMesh2);
+
+
 //            tempObjMesh = new ObjMesh(@"./Resources/Models/cube.obj",program);
 //            objMeshs.Add(tempObjMesh);
 
@@ -699,6 +716,7 @@ in vec2 uv;
 
 out vec4 fragment;
 
+uniform float ambient;
 uniform vec3 diffuse;
 uniform sampler2D texture;
 uniform vec3 light_direction;
@@ -708,7 +726,7 @@ uniform bool enable_lighting;
 
 void main(void)
 {
-    float ambient = 0.2;
+//    float ambient = 0.2;
 //    vec3 light_direction = normalize(vec3(1, 1, 0));
     float light = (enable_lighting ? max(ambient, dot(normal, light_direction)) : 1);
     vec4 sample = (useTexture ? texture2D(texture, uv) : vec4(1, 1, 1, 1));

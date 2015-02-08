@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using GameCore.Render.OpenGlHelper;
 using OpenGL;
 
 namespace GameCore.Render.RenderMaterial
@@ -39,6 +40,18 @@ namespace GameCore.Render.RenderMaterial
             Transparency = 1f;
             Ambient = Vector3.UnitScale;
             Diffuse = Vector3.UnitScale;
+            Program = program;
+        }
+
+        public ObjMaterial(ShaderProgram program, MtlData aMtlData)
+        {
+            Name = aMtlData.Name;
+            Transparency = (float) aMtlData.d;
+            Ambient = aMtlData.Ka;
+            Diffuse = aMtlData.Kd;
+            Specular = aMtlData.Ks;
+            SpecularCoefficient = (float) aMtlData.Ns;
+            Illumination =  (IlluminationMode) aMtlData.illum;
             Program = program;
         }
 

@@ -1,4 +1,5 @@
 
+2015.02.08	IMPROVEMENT Models loader now loads multiple ObjObjects into a ObjMesh and loads the Materials via the .mtl file.
 2015.02.08	FEATURE		Models can now be loaded from file (Wavefront (.obj). This is not perfect yet.
 2015.02.08	FEATURE		The light direction now rotates around (this can be toggled on/off with the r key).
 2015.02.07	FEATURE		Added a form showing the key bindings.

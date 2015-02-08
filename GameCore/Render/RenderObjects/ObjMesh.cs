@@ -19,6 +19,8 @@ namespace GameCore.Render.RenderObjects
         public ShaderProgram defaultProgram;
         private ObjMaterial defaultMaterial;
 
+        public string Name;
+
         public ObjMesh(ShaderProgram program)
         {
             defaultProgram = program;
