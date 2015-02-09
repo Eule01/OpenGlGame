@@ -134,7 +134,9 @@ namespace GameCore
         public void Close()
         {
             if (theKeyboardBindingsForm != null)
-            {theKeyboardBindingsForm.Close();}
+            {
+                Async.UI(delegate { theKeyboardBindingsForm.Close(); }, theKeyboardBindingsForm, false);
+            }
             theGameEngine.Close();
             theRendererManager.Close();
 //            theRenderer.Close();

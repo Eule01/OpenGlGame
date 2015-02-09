@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using GameCore.Render.OpenGlHelper;
-using GameCore.Render.RenderMaterial;
 using OpenGL;
 
 #endregion
@@ -30,7 +29,6 @@ namespace GameCore.Render.RenderObjects
             BottomLeft,
             BottomRight
         }
-
 
         private Vector3 realPos;
 
@@ -65,13 +63,6 @@ namespace GameCore.Render.RenderObjects
         {
             Name += "ObjHudPanel";
         }
-
-        public ObjHudPanel(List<string> lines, Dictionary<string, ObjMaterial> materials, int vertexOffset, int uvOffset)
-            : base(lines, materials, vertexOffset, uvOffset)
-        {
-            Name += "ObjHudPanel";
-        }
-
 
         public void AddButton(ObjHudButton anObjHudButton)
         {
@@ -114,9 +105,8 @@ namespace GameCore.Render.RenderObjects
 
             foreach (ObjHudButton anHudButton in theHudButtons)
             {
-                anHudButton.UpdatePosition(aWidth,aHeight);
+                anHudButton.UpdatePosition(aWidth, aHeight);
             }
-
         }
 
         public ObjObject IsOn(int x, int y)

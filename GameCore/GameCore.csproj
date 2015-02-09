@@ -56,6 +56,7 @@
     <Compile Include="Render\OpenGlHelper\ObjLoader.cs" />
     <Compile Include="Render\RenderLayers\RenderLayerSkyBox.cs" />
     <Compile Include="Render\RenderMaterial\MaterialManager.cs" />
+    <Compile Include="Render\RenderObjects\IObjMesh.cs" />
     <Compile Include="Render\RenderObjects\ObjHudButton.cs" />
     <Compile Include="Render\RenderObjects\ObjHudPanel.cs" />
     <Compile Include="Render\RenderObjects\ObjMesh.cs" />

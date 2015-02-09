@@ -72,13 +72,6 @@ namespace GameCore.Render.RenderObjects
             Name += ":ObjHudButton";
         }
 
-        public ObjHudButton(List<string> lines, Dictionary<string, ObjMaterial> materials, int vertexOffset,
-                            int uvOffset)
-            : base(lines, materials, vertexOffset, uvOffset)
-        {
-            Name += ":ObjHudButton";
-        }
-
         public void UpdatePosition(int aWidth, int aHeight)
         {
             Vector3 orgin;

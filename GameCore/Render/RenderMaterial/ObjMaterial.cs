@@ -1,8 +1,10 @@
+#region
+
 using System;
-using System.Collections.Generic;
-using System.IO;
 using GameCore.Render.OpenGlHelper;
 using OpenGL;
+
+#endregion
 
 namespace GameCore.Render.RenderMaterial
 {
@@ -51,47 +53,7 @@ namespace GameCore.Render.RenderMaterial
             Diffuse = aMtlData.Kd;
             Specular = aMtlData.Ks;
             SpecularCoefficient = (float) aMtlData.Ns;
-            Illumination =  (IlluminationMode) aMtlData.illum;
-            Program = program;
-        }
-
-        public ObjMaterial(List<string> lines, ShaderProgram program)
-        {
-            if (!lines[0].StartsWith("newmtl")) return;
-
-            Name = lines[0].Substring(7);
-            Transparency = 1f;
-
-            for (int i = 1; i < lines.Count; i++)
-            {
-                string[] split = lines[i].Split(' ');
-
-                switch (split[0])
-                {
-                    case "Ns":
-                        SpecularCoefficient = float.Parse(split[1]);
-                        break;
-                    case "Ka":
-                        Ambient = new Vector3(float.Parse(split[1]), float.Parse(split[2]), float.Parse(split[3]));
-                        break;
-                    case "Kd":
-                        Diffuse = new Vector3(float.Parse(split[1]), float.Parse(split[2]), float.Parse(split[3]));
-                        break;
-                    case "Ks":
-                        Specular = new Vector3(float.Parse(split[1]), float.Parse(split[2]), float.Parse(split[3]));
-                        break;
-                    case "d":
-                        Transparency = float.Parse(split[1]);
-                        break;
-                    case "illum":
-                        Illumination = (IlluminationMode) int.Parse(split[1]);
-                        break;
-                    case "map_Kd":
-                        if (File.Exists(split[1])) DiffuseMap = new Texture(split[1]);
-                        break;
-                }
-            }
-
+            Illumination = (IlluminationMode) aMtlData.illum;
             Program = program;
         }
 

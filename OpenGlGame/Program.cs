@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Threading;
 using GameCore;
 using GameCore.Utils;
 
@@ -12,6 +13,8 @@ namespace OpenGlGame
     {
         private static GameCore.GameCore theGameCore;
 
+        private static ManualResetEvent waitForClose = new ManualResetEvent(false);
+
         private static void Main(string[] args)
         {
             FormPositioner.PlaceConsoleOnSecondScreenIfPossible();
@@ -19,7 +22,8 @@ namespace OpenGlGame
             theGameCore = new GameCore.GameCore();
             theGameCore.TheGameEventHandler += theGameCore_TheGameEventHandler;
             theGameCore.Start();
-            Console.ReadLine();
+            waitForClose.WaitOne();
+//            Console.ReadLine();
             theGameCore.TheGameEventHandler -= theGameCore_TheGameEventHandler;
         }
 
@@ -38,6 +42,7 @@ namespace OpenGlGame
                     break;
                 case GameEventArgs.Types.RendererExited:
                     theGameCore.Close();
+                    waitForClose.Set();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

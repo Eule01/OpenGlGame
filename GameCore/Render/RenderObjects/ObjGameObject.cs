@@ -41,7 +41,6 @@ namespace GameCore.Render.RenderObjects
             {
                 aProgram["model_matrix"].SetValue(Matrix4.CreateTranslation(new Vector3(tempLoc.X, 0, tempLoc.Y)));
             }
-//            aProgram["model_matrix"].SetValue(CreateTranslation(new Vector3(tempLoc.X, tempLoc.Y, 0)));
 
             Gl.BindBufferToShaderAttribute(vertices, Material.Program, "vertexPosition");
             Gl.BindBufferToShaderAttribute(normals, Material.Program, "vertexNormal");
