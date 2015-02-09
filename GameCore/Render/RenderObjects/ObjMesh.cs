@@ -82,6 +82,15 @@ namespace GameCore.Render.RenderObjects
 //            Console.WriteLine("Took {0}ms", watch.ElapsedMilliseconds);
         }
 
+        public void AddObjects(List<ObjObject> aObjObjects)
+        {
+            foreach (ObjObject aObjObject in aObjObjects)
+            {
+                AddObject(aObjObject);
+            }
+
+        }
+
         public void AddObject(ObjObject aObject)
         {
             objects.Add(aObject);

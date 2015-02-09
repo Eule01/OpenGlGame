@@ -123,7 +123,7 @@ namespace GameCore.Render.RenderLayers
 //            tempObjMesh.AddObject(tempObj2);
 
 
-            ObjMesh tempObjMesh2 = ObjLoader.LoadObjFile(program,@"./Resources/Models/Turret1.obj");
+            ObjMesh tempObjMesh2 = ObjLoader.LoadObjFileToObjMesh(program,@"./Resources/Models/Turret1.obj");
             objMeshs.Add(tempObjMesh2);
 
 

@@ -16,8 +16,99 @@ namespace GameCore.Render.OpenGlHelper
     ///     This is from Meshomatic
     ///     XXX: Sources: http://www.opentk.com/files/ObjMeshLoader.cs, OOGL (MS3D), Icarus (Colladia)
     /// </summary>
-    public class ObjLoader
+    public static class ObjLoader
     {
+        public static MeshData LoadFile(string file)
+        {
+            // Silly me, using() closes the file automatically.
+            using (FileStream s = File.Open(file, FileMode.Open))
+            {
+                return LoadStream(s);
+            }
+        }
+
+        public static ObjMesh LoadObjFileToObjMesh(ShaderProgram aProgram, string filePath)
+        {
+            string fileDirectory = Path.GetDirectoryName(filePath);
+            string fileNameNoExt = Path.GetFileNameWithoutExtension(filePath);
+            ObjMesh tempObjMesh = new ObjMesh(aProgram) {Name = fileNameNoExt};
+
+            List<string> lines = ReadAllLinesRemoveComments(filePath);
+
+            List<string> mtlFiles = GetMtlFiles(lines);
+
+            List<MtlData> tempMtlDatas = null;
+            if (mtlFiles.Count > 0)
+            {
+                string mtlFilePath = Path.Combine(fileDirectory, mtlFiles[0]);
+                List<string> mtlLines = ReadAllLinesRemoveComments(mtlFilePath);
+                tempMtlDatas = GetMtlDatas(mtlLines);
+            }
+
+            List<ObjData> tempObjData = GetObjectDatas(lines);
+
+            List<ObjObject> temObjObjects = GetObjObjects(aProgram, tempObjData, tempMtlDatas, fileDirectory);
+
+            tempObjMesh.AddObjects(temObjObjects);
+
+            return tempObjMesh;
+        }
+
+        private static List<ObjObject> GetObjObjects(ShaderProgram aProgram, List<ObjData> tempObjData,
+            List<MtlData> tempMtlDatas, string fileDirectory)
+        {
+            List<ObjObject> temObjObjects = new List<ObjObject>();
+
+
+            int vertexOffset = 0;
+            int uVOffset = 0;
+            int normalOffset = 0;
+            foreach (ObjData anObjData in tempObjData)
+            {
+                MeshData tempMeshData = ParseFromLines(anObjData.Lines, vertexOffset, uVOffset, normalOffset);
+                vertexOffset += tempMeshData.Vertices.Length;
+                uVOffset += tempMeshData.TexCoords.Length;
+                normalOffset += tempMeshData.Normals.Length;
+
+                ObjObject tempObjObject = tempMeshData.ToObjObject();
+                tempObjObject.Name = anObjData.Name;
+
+                // Add the material
+                if (tempMtlDatas != null)
+                {
+                    MtlData tempMtlData = tempMtlDatas.Find(x => x.Name == anObjData.UseMtl);
+                    ObjMaterial tempMat = new ObjMaterial(aProgram, tempMtlData);
+                    string tempDiffuseTextPath = Path.Combine(fileDirectory, tempMtlData.DiffuseMapFileName);
+                    Texture tempTexture = new Texture(tempDiffuseTextPath);
+                    tempMat.DiffuseMap = tempTexture;
+                    tempObjObject.Material = tempMat;
+                }
+
+                temObjObjects.Add(tempObjObject);
+            }
+            return temObjObjects;
+        }
+
+        private static List<string> ReadAllLinesRemoveComments(string filePath)
+        {
+            List<string> lines = new List<string>();
+            using (FileStream s = File.Open(filePath, FileMode.Open))
+            {
+                StreamReader reader = new StreamReader(s);
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (!line.StartsWith("#"))
+                    {
+                        lines.Add(line);
+                    }
+                }
+            }
+            return lines;
+        }
+
+        #region Obj
+
         public static MeshData ParseFromLines(List<string> lines, int aVertexOffset = 0,
             int anUvOffset = 0, int aNormalOffset = 0)
         {
@@ -165,64 +256,113 @@ namespace GameCore.Render.OpenGlHelper
             return new MeshData(p, n, tc, f);
         }
 
-        public static MeshData LoadFile(string file)
+        private static List<ObjData> GetObjectDatas(List<string> lines)
         {
-            // Silly me, using() closes the file automatically.
-            using (FileStream s = File.Open(file, FileMode.Open))
+            List<ObjData> objDatas = new List<ObjData>();
+            char[] splitChars = {' '};
+            string line;
+            ObjData tempData = null;
+            foreach (string aLine in lines)
             {
-                return LoadStream(s);
+                line = aLine.Trim(splitChars);
+                line = line.Replace("  ", " ");
+
+                string[] parameters = line.Split(splitChars);
+                // New Object starts
+                if (parameters[0] == "o")
+                {
+                    tempData = new ObjData(parameters[1]);
+                    objDatas.Add(tempData);
+                }
+                else if (tempData != null && parameters[0] == "usemtl")
+                {
+                    tempData.UseMtl = parameters[1];
+                }
+                else if (tempData != null)
+                {
+                    tempData.Lines.Add(aLine);
+                }
             }
+
+
+            return objDatas;
         }
 
-        public static ObjMesh LoadObjFile(ShaderProgram aProgram, string filePath)
+        private static Tri[] ParseFace(string[] indices, int aVertexOffset = 0,
+            int anUvOffset = 0, int aNormalOffset = 0)
         {
-            string fileDirectory = Path.GetDirectoryName(filePath);
-            string fileNameNoExt = Path.GetFileNameWithoutExtension(filePath);
-            ObjMesh tempObjMesh = new ObjMesh(aProgram) {Name = fileNameNoExt};
-
-            List<string> lines = ReadAllLinesRemoveComments(filePath);
-
-            List<string> mtlFiles = GetMtlFiles(lines);
-
-            List<MtlData> tempMtlDatas = null;
-            if (mtlFiles.Count > 0)
+            Point[] p = new Point[indices.Length - 1];
+            for (int i = 0; i < p.Length; i++)
             {
-                string mtlFilePath = Path.Combine(fileDirectory, mtlFiles[0]);
-                List<string> mtlLines = ReadAllLinesRemoveComments(mtlFilePath);
-                tempMtlDatas = GetMtlDatas(mtlLines);
+                p[i] = ParsePoint(indices[i + 1], aVertexOffset, anUvOffset, aNormalOffset);
+            }
+            return Triangulate(p);
+            //return new Face(p);
+        }
+
+        // Takes an array of points and returns an array of triangles.
+        // The points form an arbitrary polygon.
+        private static Tri[] Triangulate(Point[] ps)
+        {
+            List<Tri> ts = new List<Tri>();
+            if (ps.Length < 3)
+            {
+                throw new Exception("Invalid shape!  Must have >2 points");
             }
 
-            List<ObjData> tempObjData = GetObjectDatas(lines);
-
-            int vertexOffset = 0;
-            int uVOffset = 0;
-            int normalOffset = 0;
-            foreach (ObjData anObjData in tempObjData)
+            Point lastButOne = ps[1];
+            Point lastButTwo = ps[0];
+            for (int i = 2; i < ps.Length; i++)
             {
+                Tri t = new Tri(lastButTwo, lastButOne, ps[i]);
+                lastButOne = ps[i];
+                lastButTwo = ps[i - 1];
+                ts.Add(t);
+            }
+            return ts.ToArray();
+        }
 
-                MeshData tempMeshData = ParseFromLines(anObjData.Lines, vertexOffset, uVOffset, normalOffset);
-                vertexOffset += tempMeshData.Vertices.Length;
-                uVOffset += tempMeshData.TexCoords.Length;
-                normalOffset += tempMeshData.Normals.Length;
+        private static Point ParsePoint(string s, int aVertexOffset = 0,
+            int anUvOffset = 0, int aNormalOffset = 0)
+        {
+            char[] splitChars = {'/'};
+            string[] parameters = s.Split(splitChars);
+            int vert, tex, norm;
+            vert = tex = norm = 0;
+            vert = int.Parse(parameters[0]) - 1;
+            // Texcoords and normals are optional in .obj files
+            if (parameters[1] != "")
+            {
+                tex = int.Parse(parameters[1]) - 1;
+            }
+            if (parameters[2] != "")
+            {
+                norm = int.Parse(parameters[2]) - 1;
+            }
+            return new Point(vert - aVertexOffset, norm - aNormalOffset, tex - anUvOffset);
+        }
 
-                ObjObject tempObjObject = tempMeshData.ToObjObject();
-                tempObjObject.Name = anObjData.Name;
-                if (tempMtlDatas != null)
+        #endregion
+
+        #region Mtl
+
+        private static List<string> GetMtlFiles(List<string> lines)
+        {
+            List<string> mtlFiles = new List<string>();
+            char[] splitChars = {' '};
+            string line;
+            foreach (string aLine in lines)
+            {
+                line = aLine.Trim(splitChars);
+                line = line.Replace("  ", " ");
+
+                string[] parameters = line.Split(splitChars);
+                if (parameters[0] == "mtllib")
                 {
-                    MtlData tempMtlData = tempMtlDatas.Find(x => x.Name == anObjData.UseMtl);
-                    ObjMaterial tempMat = new ObjMaterial(aProgram, tempMtlData);
-                    string tempDiffuseTextPath = Path.Combine(fileDirectory, tempMtlData.DiffuseMapFileName);
-
-                    Texture tempTexture = new Texture(tempDiffuseTextPath);
-                    tempMat.DiffuseMap = tempTexture;
-
-                    tempObjObject.Material = tempMat;
+                    mtlFiles.Add(parameters[1]);
                 }
-                tempObjMesh.AddObject(tempObjObject);
             }
-
-
-            return tempObjMesh;
+            return mtlFiles;
         }
 
         private static List<MtlData> GetMtlDatas(List<string> mtlLines)
@@ -301,128 +441,7 @@ namespace GameCore.Render.OpenGlHelper
             return mtlDatas;
         }
 
-        private static List<ObjData> GetObjectDatas(List<string> lines)
-        {
-            List<ObjData> objDatas = new List<ObjData>();
-            char[] splitChars = {' '};
-            string line;
-            ObjData tempData = null;
-            foreach (string aLine in lines)
-            {
-                line = aLine.Trim(splitChars);
-                line = line.Replace("  ", " ");
-
-                string[] parameters = line.Split(splitChars);
-                // New Object starts
-                if (parameters[0] == "o")
-                {
-                    tempData = new ObjData(parameters[1]);
-                    objDatas.Add(tempData);
-                }
-                else if (tempData != null && parameters[0] == "usemtl")
-                {
-                    tempData.UseMtl = parameters[1];
-                }
-                else if (tempData != null)
-                {
-                    tempData.Lines.Add(aLine);
-                }
-            }
-
-
-            return objDatas;
-        }
-
-        private static List<string> GetMtlFiles(List<string> lines)
-        {
-            List<string> mtlFiles = new List<string>();
-            char[] splitChars = {' '};
-            string line;
-            foreach (string aLine in lines)
-            {
-                line = aLine.Trim(splitChars);
-                line = line.Replace("  ", " ");
-
-                string[] parameters = line.Split(splitChars);
-                if (parameters[0] == "mtllib")
-                {
-                    mtlFiles.Add(parameters[1]);
-                }
-            }
-            return mtlFiles;
-        }
-
-        private static List<string> ReadAllLinesRemoveComments(string filePath)
-        {
-            List<string> lines = new List<string>();
-            using (FileStream s = File.Open(filePath, FileMode.Open))
-            {
-                StreamReader reader = new StreamReader(s);
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    if (!line.StartsWith("#"))
-                    {
-                        lines.Add(line);
-                    }
-                }
-            }
-            return lines;
-        }
-
-        private static Tri[] ParseFace(string[] indices, int aVertexOffset = 0,
-            int anUvOffset = 0, int aNormalOffset = 0)
-        {
-            Point[] p = new Point[indices.Length - 1];
-            for (int i = 0; i < p.Length; i++)
-            {
-                p[i] = ParsePoint(indices[i + 1], aVertexOffset, anUvOffset, aNormalOffset);
-            }
-            return Triangulate(p);
-            //return new Face(p);
-        }
-
-        // Takes an array of points and returns an array of triangles.
-        // The points form an arbitrary polygon.
-        private static Tri[] Triangulate(Point[] ps)
-        {
-            List<Tri> ts = new List<Tri>();
-            if (ps.Length < 3)
-            {
-                throw new Exception("Invalid shape!  Must have >2 points");
-            }
-
-            Point lastButOne = ps[1];
-            Point lastButTwo = ps[0];
-            for (int i = 2; i < ps.Length; i++)
-            {
-                Tri t = new Tri(lastButTwo, lastButOne, ps[i]);
-                lastButOne = ps[i];
-                lastButTwo = ps[i - 1];
-                ts.Add(t);
-            }
-            return ts.ToArray();
-        }
-
-        private static Point ParsePoint(string s, int aVertexOffset = 0,
-            int anUvOffset = 0, int aNormalOffset = 0)
-        {
-            char[] splitChars = {'/'};
-            string[] parameters = s.Split(splitChars);
-            int vert, tex, norm;
-            vert = tex = norm = 0;
-            vert = int.Parse(parameters[0]) - 1;
-            // Texcoords and normals are optional in .obj files
-            if (parameters[1] != "")
-            {
-                tex = int.Parse(parameters[1]) - 1;
-            }
-            if (parameters[2] != "")
-            {
-                norm = int.Parse(parameters[2]) - 1;
-            }
-            return new Point(vert - aVertexOffset, norm - aNormalOffset, tex - anUvOffset);
-        }
+        #endregion
     }
 
     public class ObjData
