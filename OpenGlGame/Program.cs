@@ -29,10 +29,13 @@ namespace OpenGlGame
 
         private static void theGameCore_TheGameEventHandler(object sender, GameEventArgs args)
         {
-            Console.WriteLine(args);
+            if (args.TheType != GameEventArgs.Types.StatusGameEngine)
+            {
+                Console.WriteLine(args);
+            }
             switch (args.TheType)
             {
-                case GameEventArgs.Types.Status:
+                case GameEventArgs.Types.StatusGameEngine:
                     break;
                 case GameEventArgs.Types.Message:
                     break;
@@ -47,8 +50,6 @@ namespace OpenGlGame
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-
         }
     }
 }

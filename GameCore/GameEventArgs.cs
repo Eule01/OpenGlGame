@@ -14,7 +14,7 @@ namespace GameCore
             /// <summary>
             /// A fps status has been received.
             /// </summary>
-            Status,
+            StatusGameEngine,
             Message,
             /// <summary>
             /// A new map has been loaded (Message = filePath).

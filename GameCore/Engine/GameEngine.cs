@@ -42,7 +42,7 @@ namespace GameCore.Engine
 
         private void StatusTick(OpStatus opstatus)
         {
-            GameCore.TheGameCore.OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.Status)
+            GameCore.TheGameCore.OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.StatusGameEngine)
                 {
                     TheOpStatus = opstatus
                 });

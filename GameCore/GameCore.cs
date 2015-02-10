@@ -77,7 +77,7 @@ namespace GameCore
         {
             switch (args.TheType)
             {
-                case GameEventArgs.Types.Status:
+                case GameEventArgs.Types.StatusGameEngine:
                     break;
                 case GameEventArgs.Types.Message:
                     break;
