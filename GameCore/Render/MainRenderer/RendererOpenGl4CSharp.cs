@@ -79,7 +79,7 @@ namespace GameCore.Render.MainRenderer
             Glut.glutSetOption(Glut.GLUT_ACTION_ON_WINDOW_CLOSE, Glut.GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 
             Glut.glutInitWindowSize(width, height);
-            Glut.glutCreateWindow("OpenGL Test using OpenGl4CSharp");
+            Glut.glutCreateWindow("OpenGL Test");
 
 
             Glut.glutIdleFunc(OnRenderFrame);
@@ -137,6 +137,7 @@ namespace GameCore.Render.MainRenderer
             watch = Stopwatch.StartNew();
 
             Glut.glutMainLoop();
+
 
             GameCore.TheGameCore.OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.RendererExited));
         }

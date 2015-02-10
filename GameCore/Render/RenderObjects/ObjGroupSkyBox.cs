@@ -8,16 +8,21 @@ using OpenGL;
 
 namespace GameCore.Render.RenderObjects
 {
-    public class ObjMeshSkyBox : ObjMesh
+    public class ObjGroupSkyBox : ObjGroup
     {
-        public ObjMeshSkyBox(ShaderProgram program)
+        public ObjGroupSkyBox(ShaderProgram program)
             : base(program)
         {
             ObjObject tempObj =
-                new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(0.5, 0.5, -0.5),
-                    new Vector3(-0.5, 0.5, 0.5),
+                new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(0.5, 0.5,0.5),
+                    new Vector3(-0.5, 0.5, -0.5),
                     true)); // TOP ?
 
+//            ObjObject tempObj =
+//                new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(0.5, 0.5, -0.5),
+//                    new Vector3(-0.5, 0.5, 0.5),
+//                    true)); // TOP ?
+//
             ObjMaterial tempMat =
                 GameCore.TheGameCore.TheRendererManager.TheRenderer.TheMaterialManager.GetFromFile(program,
                     @".\SkyBoxTest\jajlands1_up.jpg");
@@ -26,9 +31,14 @@ namespace GameCore.Render.RenderObjects
             AddObject(tempObj, tempMat);
 
             tempObj =
-                new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(0.5, -0.5, 0.5),
-                    new Vector3(-0.5, -0.5, -0.5),
+                new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(-0.5, -0.5, -0.5),
+                    new Vector3(0.5, -0.5, 0.5),
                     true)); // Bottom 
+//
+//            tempObj =
+//                new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(0.5, -0.5, 0.5),
+//                    new Vector3(-0.5, -0.5, -0.5),
+//                    true)); // Bottom 
             tempMat =
                 GameCore.TheGameCore.TheRendererManager.TheRenderer.TheMaterialManager.GetFromFile(program,
                     @".\SkyBoxTest\jajlands1_dn.jpg");

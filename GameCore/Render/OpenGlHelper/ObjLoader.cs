@@ -27,11 +27,11 @@ namespace GameCore.Render.OpenGlHelper
             }
         }
 
-        public static ObjMesh LoadObjFileToObjMesh(ShaderProgram aProgram, string filePath)
+        public static ObjGroup LoadObjFileToObjMesh(ShaderProgram aProgram, string filePath)
         {
             string fileDirectory = Path.GetDirectoryName(filePath);
             string fileNameNoExt = Path.GetFileNameWithoutExtension(filePath);
-            ObjMesh tempObjMesh = new ObjMesh(aProgram) {Name = fileNameNoExt};
+            ObjGroup tempObjGroup = new ObjGroup(aProgram) {Name = fileNameNoExt};
 
             List<string> lines = ReadAllLinesRemoveComments(filePath);
 
@@ -49,9 +49,9 @@ namespace GameCore.Render.OpenGlHelper
 
             List<ObjObject> temObjObjects = GetObjObjects(aProgram, tempObjData, tempMtlDatas, fileDirectory);
 
-            tempObjMesh.AddObjects(temObjObjects);
+            tempObjGroup.AddObjects(temObjObjects);
 
-            return tempObjMesh;
+            return tempObjGroup;
         }
 
         private static List<ObjObject> GetObjObjects(ShaderProgram aProgram, List<ObjData> tempObjData,

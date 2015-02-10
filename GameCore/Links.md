@@ -36,6 +36,7 @@ http://www.codeproject.com/Articles/26166/D-Map-Editor
 Camera:
 http://en.wikipedia.org/wiki/Virtual_camera_system
 http://www.codeproject.com/Articles/577259/D-solar-system-with-OpenGL-and-Csharp
+http://blog.db-in.com/cameras-on-opengl-es-2-x/
 
 Rendering:
 
@@ -206,3 +207,13 @@ http://www.mbsoftworks.sk/index.php?page=tutorials&series=1&tutorial=13
 https://code.google.com/p/severed-infinity/source/browse/trunk/SIEngine/Graphics/Skybox.cs?r=5
 https://sidvind.com/wiki/Skybox_tutorial
 http://www.wenda.io/questions/4379561/opentk-multiple-textures-on-cube-dont-work.html
+
+
+# Shadows
+
+http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-16-shadow-mapping/
+
+
+# Quaternion and Rotations
+
+http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/

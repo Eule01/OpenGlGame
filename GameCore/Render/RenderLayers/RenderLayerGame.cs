@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using GameCore.GameObjects;
 using GameCore.Map;
@@ -23,7 +24,7 @@ namespace GameCore.Render.RenderLayers
         public Camera Camera;
 
         private ShaderProgram program;
-        private List<ObjMesh> objMeshs;
+        private List<ObjGroup> objMeshs;
         private bool wireframe;
         private bool lighting = true;
 
@@ -100,10 +101,8 @@ namespace GameCore.Render.RenderLayers
 
             pointMaterial = TheMaterialManager.GetPlainColor(program, "GamePlainRed", Color.Red);
 
-            objMeshs = new List<ObjMesh>();
+            objMeshs = new List<ObjGroup>();
 
-            ObjMesh tempObjMesh = new ObjMesh(program);
-            objMeshs.Add(tempObjMesh);
 
 //            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/cube.obj");
 //            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/Monkey.obj");
@@ -120,51 +119,71 @@ namespace GameCore.Render.RenderLayers
 
 //            ObjObject tempObj2 = tempMesh1.ToObjObject();
 //            tempObj2.Material = tempMat;
-//            tempObjMesh.AddObject(tempObj2);
+//            tempObjGroup.AddObject(tempObj2);
 
 
-            ObjMesh tempObjMesh2 = ObjLoader.LoadObjFileToObjMesh(program,@"./Resources/Models/Turret1.obj");
+            ObjGroup tempObjMesh2 = ObjLoader.LoadObjFileToObjMesh(program,@"./Resources/Models/Turret1.obj");
+            tempObjMesh2.Location = new Vector3(10,0,10);
+            tempObjMesh2.Scale = Vector3.UnitScale*0.3f;
             objMeshs.Add(tempObjMesh2);
 
 
-//            tempObjMesh = new ObjMesh(@"./Resources/Models/cube.obj",program);
-//            objMeshs.Add(tempObjMesh);
+//            tempObjGroup = new ObjGroup(@"./Resources/Models/cube.obj",program);
+//            objMeshs.Add(tempObjGroup);
 
 
-//            objMeshs = new ObjMesh(program);
-            // objMeshs = new ObjMesh("enterprise.obj", program);
+//            objMeshs = new ObjGroup(program);
+            // objMeshs = new ObjGroup("enterprise.obj", program);
 
             ObjMaterial tempMaterial = TheMaterialManager.GetPlainColor(program, "GamePlainGreen", Color.Green);
 
             tileTextures = RenderObjects.RenderObjects.CreateTileTextures(new Size(20, 20), program);
 
 
+            ObjGroup tempObjGroup = new ObjGroup(program);
             ObjObject tempObj =
                 new ObjObject(ObjectPrimitives.CreateCube(new Vector3(0, 0, 0), new Vector3(1, 1, 1), true))
                 {
                     Material = tileTextures[Tile.TileIds.Grass].Material
                 };
 //            ObjObject tempObj = CreateCube(program, new Vector3(1, 1, 1), new Vector3(0, 0, 0));
-            tempObjMesh.AddObject(tempObj);
-            tempObj = new ObjObject(ObjectPrimitives.CreateCube(new Vector3(2, 0, 0), new Vector3(3, 1, 1), true))
+            tempObjGroup.AddObject(tempObj);
+            objMeshs.Add(tempObjGroup);
+
+
+     tempObjGroup = new ObjGroup(program);
+//            tempObj = new ObjObject(ObjectPrimitives.CreateCube(new Vector3(2, 0, 0), new Vector3(3, 1, 1), true))
+            tempObj = new ObjObject(ObjectPrimitives.CreateCube(new Vector3(0, 0, 0), new Vector3(1, 1, 1), true))
             {
                 Material = tileTextures[Tile.TileIds.Road].Material
             };
 
-            tempObjMesh.AddObject(tempObj);
+            tempObjGroup.AddObject(tempObj);
+            tempObjGroup.Location = new Vector3(1,0,5);
+            tempObjGroup.Orientation = Quaternion.FromAngleAxis((float) (Math.PI*0.25),Vector3.Up);
+            objMeshs.Add(tempObjGroup);
 
+
+
+            tempObjGroup = new ObjGroup(program);
             tempObj =
                 new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(5, 1, 1), new Vector3(4, 0, 1),
                     true));
             tempObj.Material = tempMaterial;
-            tempObjMesh.AddObject(tempObj);
+            tempObjGroup.AddObject(tempObj);
 
             tempObj =
                 new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(-1, 1, 1), new Vector3(-2, 0, 0),
                     true));
-            tempObjMesh.AddObject(tempObj);
+            tempObjGroup.AddObject(tempObj);
+            objMeshs.Add(tempObjGroup);
 
+            tempObjGroup = new ObjGroup(program);
             theTileObjects = GetTileObjects();
+            tempObjGroup.AddObjects(theTileObjects);
+            objMeshs.Add(tempObjGroup);
+
+            
             theRenderGameObjects = GetGameObjects();
         }
 
@@ -190,7 +209,7 @@ namespace GameCore.Render.RenderLayers
             // apply our camera view matrix to the shader view matrix (this can be used for all objects in the scene)
             Gl.UseProgram(program);
             program["view_matrix"].SetValue(Camera.ViewMatrix);
-            program["model_matrix"].SetValue(Matrix4.Identity);
+//            program["model_matrix"].SetValue(Matrix4.Identity);
             program["enable_lighting"].SetValue(lighting);
 
             if (lightMove)
@@ -201,21 +220,19 @@ namespace GameCore.Render.RenderLayers
 
 
             // now draw the object file
+//            if (wireframe) Gl.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             if (wireframe) Gl.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             if (objMeshs != null)
             {
-                foreach (ObjMesh anObjMesh in objMeshs)
+                foreach (ObjGroup anObjMesh in objMeshs)
                 {
                     anObjMesh.Draw();
                 }
             }
-            if (theTileObjects != null)
-            {
-                foreach (ObjObject theTileObject in theTileObjects)
-                {
-                    theTileObject.Draw();
-                }
-            }
+
+            // Reset the model matrix
+            program["model_matrix"].SetValue(Matrix4.Identity);
+
             if (true)
             {
                 // Draw a small test grid
@@ -261,8 +278,6 @@ namespace GameCore.Render.RenderLayers
 
 
             Gl.UseProgram(program.ProgramID);
-            //            projection_matrix = Matrix4.CreatePerspectiveFieldOfView(0.45f, (float) Width/Height, 0.1f,
-            //                                                                     1000f);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(Fov, (float) Width/Height, ZNear,
                 ZFar);
             program["projection_matrix"].SetValue(projectionMatrix);
@@ -273,7 +288,7 @@ namespace GameCore.Render.RenderLayers
         {
             if (objMeshs != null)
             {
-                foreach (ObjMesh anObjMesh in objMeshs)
+                foreach (ObjGroup anObjMesh in objMeshs)
                 {
                     anObjMesh.Dispose();
                 }
@@ -372,13 +387,13 @@ namespace GameCore.Render.RenderLayers
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraUp]) camUp = false;
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraDown]) camDown = false;
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtPlayer])
-                Camera.LookAt(new Vector3(playerObjObject.TheGameObject.Location.X,
-                    playerObjObject.TheGameObject.Location.Y, 0.0f));
+                Camera.LookAt(new Vector3(playerObjObject.TheGameObject.Location.X, 0.0f,
+                    playerObjObject.TheGameObject.Location.Y));
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtField])
             {
                 RectangleF tempRec = TheGameStatus.TheMap.TheBoundingBox;
-                Vector3 tempTopLeft = new Vector3(tempRec.Location.X, tempRec.Location.Y, 0.0f);
-                Vector3 tempBottomRight = new Vector3(tempRec.Right, tempRec.Bottom, 0.0f);
+                Vector3 tempTopLeft = new Vector3(tempRec.Location.X, 0.0f, tempRec.Location.Y);
+                Vector3 tempBottomRight = new Vector3(tempRec.Right, 0.0f, tempRec.Bottom);
 
                 Camera.LookAtRectangle(tempTopLeft, tempBottomRight);
             }
@@ -467,6 +482,9 @@ namespace GameCore.Render.RenderLayers
 
         private List<ObjObject> CreateTiles()
         {
+            Stopwatch watch = Stopwatch.StartNew();
+
+
             Dictionary<Tile.TileIds, PlainBmpTexture> tempTiletypeList =
                 RenderObjects.RenderObjects.CreateTileTextures(new Size(20, 20), program);
             List<ObjObject> tempObjList = new List<ObjObject>();
@@ -485,6 +503,10 @@ namespace GameCore.Render.RenderLayers
 
                 tempObjList.Add(tempObjObject);
             }
+            watch.Stop();
+            GameCore.TheGameCore.RaiseMessage(string.Format("CreateTiles() took {0}ms", watch.ElapsedMilliseconds));
+
+
             return tempObjList;
         }
 

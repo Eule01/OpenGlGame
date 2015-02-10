@@ -1,4 +1,6 @@
 
+2015.02.10	IMPROVEMENT Renamed ObjMesh into ObjGroup which is a much better description.
+2015.02.10	IMPROVEMENT ObjMesh now has a Location, Orientation and Scale.
 2015.02.09	IMPROVEMENT The shutdown somewhat, still not perfect.
 2015.02.09	IMPROVEMENT The shutdown somewhat, still not perfect.
 2015.02.08	IMPROVEMENT Models loader now loads multiple ObjObjects into a ObjMesh and loads the Materials via the .mtl file.

@@ -77,11 +77,11 @@ namespace GameCore.Render.RenderMaterial
         public void Dispose()
         {
             if (DiffuseMap != null) DiffuseMap.Dispose();
-            if (Program != null)
-            {
-                Program.DisposeChildren = true;
-                Program.Dispose();
-            }
+//            if (Program != null)
+//            {
+//                Program.DisposeChildren = true;
+//                Program.Dispose();
+//            }
         }
 
         public override string ToString()

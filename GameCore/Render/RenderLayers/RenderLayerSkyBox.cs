@@ -16,7 +16,7 @@ namespace GameCore.Render.RenderLayers
         public Camera Camera;
 
         private ShaderProgram program;
-        private List<ObjMesh> objMeshs;
+        private List<ObjGroup> objMeshs;
 
         /// <summary>
         ///     The near clipping distance.
@@ -34,6 +34,7 @@ namespace GameCore.Render.RenderLayers
         private const float Fov = 0.45f;
 
         private Matrix4 projectionMatrix;
+        private ObjGroupSkyBox skyBoxObjGroup;
 
 
         public RenderLayerSkyBox(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
@@ -54,11 +55,12 @@ namespace GameCore.Render.RenderLayers
             program["model_matrix"].SetValue(Matrix4.Identity);
 
 
-            objMeshs = new List<ObjMesh>();
+            objMeshs = new List<ObjGroup>();
 
-            ObjMeshSkyBox tempSkyBox = new ObjMeshSkyBox(program);
+            skyBoxObjGroup = new ObjGroupSkyBox(program);
+            skyBoxObjGroup.Scale = Vector3.UnitScale*0.7f;
 
-            objMeshs.Add(tempSkyBox);
+            objMeshs.Add(skyBoxObjGroup);
         }
 
         public override void OnDisplay()
@@ -72,17 +74,18 @@ namespace GameCore.Render.RenderLayers
             Gl.DepthMask(false);
             Gl.Disable(EnableCap.DepthClamp);
             Vector3 tempLoc = Camera.Position;
-
+            skyBoxObjGroup.Location = tempLoc;
             Gl.UseProgram(program);
             // apply our camera view matrix to the shader view matrix (this can be used for all objects in the scene)
             program["view_matrix"].SetValue(Camera.ViewMatrix);
-            program["model_matrix"].SetValue(Matrix4.CreateScaling(new Vector3(0.7,0.7,0.7))*Matrix4.CreateTranslation(new Vector3(tempLoc.x, tempLoc.y, tempLoc.z)));
+//            program["model_matrix"].SetValue(Matrix4.CreateScaling(new Vector3(0.7,0.7,0.7))*Matrix4.CreateTranslation(new Vector3(tempLoc.x, tempLoc.y, tempLoc.z)));
+
 
             // now draw the object file
 //            if (wireframe) Gl.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             if (objMeshs != null)
             {
-                foreach (ObjMesh anObjMesh in objMeshs)
+                foreach (ObjGroup anObjMesh in objMeshs)
                 {
                     anObjMesh.Draw();
 //                    if (!string.IsNullOrEmpty(program.ProgramLog))
@@ -122,7 +125,7 @@ namespace GameCore.Render.RenderLayers
         {
             if (objMeshs != null)
             {
-                foreach (ObjMesh anObjMesh in objMeshs)
+                foreach (ObjGroup anObjMesh in objMeshs)
                 {
                     anObjMesh.Dispose();
                 }
