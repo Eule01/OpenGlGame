@@ -228,6 +228,9 @@ http://androidblog.reindustries.com/a-real-opengl-es-2-0-2d-tutorial-part-7-text
 
 https://www.opengl.org/wiki/Array_Texture
 https://github.com/Azzi777/Umbra-Voxel-Engine/blob/master/Umbra%20Voxel%20Engine/Implementations/Render.cs
+http://www.gamedev.net/topic/607286-glsl-texture-array/
+http://www.opentk.com/node/2519
+http://trac.openscenegraph.org/documentation/OpenSceneGraphReferenceDocs/a00878.html
 
 
 # Voxel engine optimisations
