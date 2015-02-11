@@ -122,21 +122,32 @@ namespace GameCore.Render.RenderObjects
             {
                 UpdateModelMatrix();
             }
-
             defaultProgram["model_matrix"].SetValue(modelMatrix);
 
-            // Make sure that the transparent objects are drawn last.
-            List<ObjObject> transparentObjects = new List<ObjObject>();
 
-            foreach (ObjObject anObj in objects)
+            if (false)
             {
-                if (anObj.Material.Transparency < 1f) transparentObjects.Add(anObj);
-                else anObj.Draw();
+                foreach (IObjObject anObj in objects)
+                {
+                    anObj.Draw();
+                }
+
             }
-
-            foreach (ObjObject anObj in transparentObjects)
+            else
             {
-                anObj.Draw();
+                // Make sure that the transparent objects are drawn last.
+                List<IObjObject> transparentObjects = new List<IObjObject>();
+
+                foreach (IObjObject anObj in objects)
+                {
+                    if (anObj.Material.Transparency < 1f) transparentObjects.Add(anObj);
+                    else anObj.Draw();
+                }
+
+                foreach (IObjObject anObj in transparentObjects)
+                {
+                    anObj.Draw();
+                }
             }
         }
 

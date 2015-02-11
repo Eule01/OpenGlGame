@@ -192,7 +192,7 @@ http://uo3d.blogspot.co.nz/2010/08/new-cheat-sheet.html
 
 http://wiki.blender.org/index.php/Doc:2.6/Manual/Textures/Mapping/UV/Unwrapping
 
-Show normals:
+## Show normals:
 http://sugarandcyanide.com/blog/2013/01/01/normals-display-in-blender-2-6x/
 
 http://www.raywenderlich.com/49955/blender-tutorial-for-beginners-how-to-make-a-mushroom
@@ -217,3 +217,20 @@ http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-16-shadow-mapping
 # Quaternion and Rotations
 
 http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/
+
+
+# Texture atlas
+
+http://www.meandmark.com/tilingpart1.html
+http://androidblog.reindustries.com/a-real-opengl-es-2-0-2d-tutorial-part-7-texture-atlas/
+
+# Array Texture (Texture2DArray)
+
+https://www.opengl.org/wiki/Array_Texture
+https://github.com/Azzi777/Umbra-Voxel-Engine/blob/master/Umbra%20Voxel%20Engine/Implementations/Render.cs
+
+
+# Voxel engine optimisations
+
+http://0fps.net/2012/07/07/meshing-minecraft-part-2/
+http://0fps.net/2012/06/30/meshing-in-a-minecraft-game/

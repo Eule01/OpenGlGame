@@ -128,7 +128,7 @@ namespace GameCore.Map
 
         internal static Map GetTestMap()
         {
-            Map aMap = new Map {Tiles = CreatTestTiles(new Size(20, 20))};
+            Map aMap = new Map {Tiles = CreatTestTiles(new Size(100, 100))};
             return aMap;
         }
 

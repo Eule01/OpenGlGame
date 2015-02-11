@@ -24,7 +24,7 @@ namespace GameCore.Render.RenderLayers
         public Camera Camera;
 
         private ShaderProgram program;
-        private List<ObjGroup> objMeshs;
+        private List<IObjGroup> objMeshs;
         private bool wireframe;
         private bool lighting = true;
 
@@ -101,7 +101,7 @@ namespace GameCore.Render.RenderLayers
 
             pointMaterial = TheMaterialManager.GetPlainColor(program, "GamePlainRed", Color.Red);
 
-            objMeshs = new List<ObjGroup>();
+            objMeshs = new List<IObjGroup>();
 
 
 //            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/cube.obj");
@@ -224,7 +224,7 @@ namespace GameCore.Render.RenderLayers
             if (wireframe) Gl.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             if (objMeshs != null)
             {
-                foreach (ObjGroup anObjMesh in objMeshs)
+                foreach (IObjGroup anObjMesh in objMeshs)
                 {
                     anObjMesh.Draw();
                 }
