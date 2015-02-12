@@ -8,6 +8,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 using GameCore.Map;
+using GameCore.Render.Cameras;
 using GameCore.Render.RenderMaterial;
 using GameCore.Utils;
 using OpenGL;
@@ -73,6 +74,8 @@ namespace GameCore.Render.RenderObjects
 
         private Map.Map theMap;
 
+        private Camera theCamera;
+
         private readonly SVertex2D[] gQuad = new SVertex2D[]
         {
             SVertex2D.FromArray(new[] {0.0f, 0.0f, 0.0f, 0.0f, 0.0f}),
@@ -90,14 +93,18 @@ namespace GameCore.Render.RenderObjects
 
         private static uint[] gArrayTexture = new uint[1] {0};
 
-        public ObjMap(Map.Map aMap)
+        public ObjMap(Map.Map aMap, Camera aCamera)
         {
             theMap = aMap;
+            theCamera = aCamera;
 
             // create our shader program
             program = new ShaderProgram(vertexShaderSource, fragmentShaderSource);
 
             Gl.UseProgram(program);
+            program["view_matrix"].SetValue(theCamera.ViewMatrix);
+
+
 
             GenerateGeometry();
             GenerateArrayTexture();
@@ -204,7 +211,7 @@ namespace GameCore.Render.RenderObjects
                 vDrawCommand[i].vertexCount = 6;
                 vDrawCommand[i].instanceCount = 1;
                 vDrawCommand[i].firstIndex = 0;
-                vDrawCommand[i].baseVertex = i*4;
+                vDrawCommand[i].baseVertex = (uint) (i*stride);
                 vDrawCommand[i].baseInstance = i;
             }
 
@@ -377,6 +384,25 @@ namespace GameCore.Render.RenderObjects
 
         public void Draw()
         {
+            // apply our camera view matrix to the shader view matrix (this can be used for all objects in the scene)
+            Gl.UseProgram(program);
+            program["view_matrix"].SetValue(theCamera.ViewMatrix);
+
+
+            // This needs to be implemented.
+            // https://www.opengl.org/wiki/GLAPI/glMultiDrawElementsIndirect
+//  glClear( GL_COLOR_BUFFER_BIT );
+
+//            Gl.MultiDrawElementsIndirect();
+//            Gl.MultiDrawElements();
+
+//  glMultiDrawElementsIndirect( GL_TRIANGLES, 
+//			       GL_UNSIGNED_INT, 
+//			       (GLvoid*)0, 
+//			       100, 
+//			       0 );
+ 
+//  glutSwapBuffers();
         }
 
         void IDisposable.Dispose()

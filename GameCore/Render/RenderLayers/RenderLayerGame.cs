@@ -64,12 +64,12 @@ namespace GameCore.Render.RenderLayers
         private bool lightMove = true;
 
         /// <summary>
-        /// The direction of the lighting.
+        ///     The direction of the lighting.
         /// </summary>
         private Vector3 lightDirection = new Vector3(10, 10, 10).Normalize();
 
         /// <summary>
-        /// The ambient lighting level [0.0-1.0]
+        ///     The ambient lighting level [0.0-1.0]
         /// </summary>
         private float ambientLighting = 0.4f;
 
@@ -122,8 +122,8 @@ namespace GameCore.Render.RenderLayers
 //            tempObjGroup.AddObject(tempObj2);
 
 
-            ObjGroup tempObjMesh2 = ObjLoader.LoadObjFileToObjMesh(program,@"./Resources/Models/Turret1.obj");
-            tempObjMesh2.Location = new Vector3(10,0,10);
+            ObjGroup tempObjMesh2 = ObjLoader.LoadObjFileToObjMesh(program, @"./Resources/Models/Turret1.obj");
+            tempObjMesh2.Location = new Vector3(10, 0, 10);
             tempObjMesh2.Scale = Vector3.UnitScale*0.3f;
             objMeshs.Add(tempObjMesh2);
 
@@ -151,7 +151,7 @@ namespace GameCore.Render.RenderLayers
             objMeshs.Add(tempObjGroup);
 
 
-     tempObjGroup = new ObjGroup(program);
+            tempObjGroup = new ObjGroup(program);
 //            tempObj = new ObjObject(ObjectPrimitives.CreateCube(new Vector3(2, 0, 0), new Vector3(3, 1, 1), true))
             tempObj = new ObjObject(ObjectPrimitives.CreateCube(new Vector3(0, 0, 0), new Vector3(1, 1, 1), true))
             {
@@ -159,10 +159,9 @@ namespace GameCore.Render.RenderLayers
             };
 
             tempObjGroup.AddObject(tempObj);
-            tempObjGroup.Location = new Vector3(1,0,5);
-            tempObjGroup.Orientation = Quaternion.FromAngleAxis((float) (Math.PI*0.25),Vector3.Up);
+            tempObjGroup.Location = new Vector3(1, 0, 5);
+            tempObjGroup.Orientation = Quaternion.FromAngleAxis((float) (Math.PI*0.25), Vector3.Up);
             objMeshs.Add(tempObjGroup);
-
 
 
             tempObjGroup = new ObjGroup(program);
@@ -183,7 +182,7 @@ namespace GameCore.Render.RenderLayers
             tempObjGroup.AddObjects(theTileObjects);
             objMeshs.Add(tempObjGroup);
 
-            
+
             theRenderGameObjects = GetGameObjects();
         }
 
