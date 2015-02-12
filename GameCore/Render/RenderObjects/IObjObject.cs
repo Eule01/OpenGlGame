@@ -8,7 +8,6 @@ namespace GameCore.Render.RenderObjects
         string Name { get; set; }
         ObjMaterial Material { get; set; }
         void Draw();
-        void Dispose();
         string ToString();
     }
 }

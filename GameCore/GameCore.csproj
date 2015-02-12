@@ -62,6 +62,7 @@
     <Compile Include="Render\RenderObjects\ObjHudPanel.cs" />
     <Compile Include="Render\RenderObjects\ObjGroup.cs" />
     <Compile Include="Render\RenderMaterial\ObjMaterial.cs" />
+    <Compile Include="Render\RenderObjects\ObjMap.cs" />
     <Compile Include="Render\RenderObjects\ObjObject.cs" />
     <Compile Include="Render\RenderObjects\ObjGameObject.cs" />
     <Compile Include="Render\RenderObjects\ObjGroupSkyBox.cs" />

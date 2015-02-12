@@ -14,12 +14,12 @@ namespace GameCore.Map
     /// </summary>
     public class Tile
     {
-        public enum TileIds
+        public enum TileIds : uint
         {
-            Desert,
-            Grass,
-            Road,
-            Water
+            Desert = 0,
+            Grass = 1,
+            Road = 2,
+            Water =3 
         }
 
         public static Vector Size = new Vector(1, 1);
