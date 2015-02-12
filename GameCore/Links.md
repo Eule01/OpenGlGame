@@ -218,11 +218,16 @@ http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-16-shadow-mapping
 
 http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/
 
+# Texture
+
+http://3dgep.com/texturing-and-lighting-with-opengl-and-glsl/
 
 # Texture atlas
 
 http://www.meandmark.com/tilingpart1.html
 http://androidblog.reindustries.com/a-real-opengl-es-2-0-2d-tutorial-part-7-texture-atlas/
+Example:
+http://www.opentk.com/node/3648
 
 # Array Texture (Texture2DArray)
 
@@ -231,7 +236,15 @@ https://github.com/Azzi777/Umbra-Voxel-Engine/blob/master/Umbra%20Voxel%20Engine
 http://www.gamedev.net/topic/607286-glsl-texture-array/
 http://www.opentk.com/node/2519
 http://trac.openscenegraph.org/documentation/OpenSceneGraphReferenceDocs/a00878.html
+http://stackoverflow.com/questions/9726010/how-to-use-gl-texture-2d-array-on-opengl-using-vbo
+http://www.gamedev.net/topic/660648-opengl-texture-array-difficulties/
+http://www.openglsuperbible.com/2013/10/16/the-road-to-one-million-draws/
 
+
+Example:
+https://ferransole.wordpress.com/2014/07/09/multidrawindirect/     *****
+http://www.openglsuperbible.com/example-code/
+https://ferransole.wordpress.com/2014/06/09/array-textures/
 
 # Voxel engine optimisations
 
