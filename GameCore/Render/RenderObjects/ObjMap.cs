@@ -163,7 +163,7 @@ namespace GameCore.Render.RenderObjects
             numberOfTiles = tempTiles.Count();
             int numberOfTextures = tempTiletypeList.Count;
             // Number of values in SVertex2D
-            int stride = 5;
+            stride = 5;
             SVertex2D[] vVertex = new SVertex2D[numberOfTiles*4];
 
 //            float xOffset = 0.0f;
@@ -472,6 +472,47 @@ namespace GameCore.Render.RenderObjects
             program["projection_matrix"].SetValue(projectionMatrix);
 
 
+            Gl.ActiveTexture(TextureUnit.Texture0);
+            Gl.BindTexture(TextureTarget.Texture2DArray, gArrayTexture[0]);
+
+
+//            Gl.BindBuffer(gVertexBuffer);
+
+            //                in vec3 position;
+            //              in vec2 texCoord;
+
+
+            uint location = (uint)Gl.GetAttribLocation(program.ProgramID, "position");
+            //            int tempStride = stride;
+            int tempStride = sizeof(Single) * stride;
+            //            int tempStride = sizeof(float)*stride;
+            //            int tempStride = Marshal.SizeOf(typeof (float))*stride;
+            Gl.EnableVertexAttribArray(location);
+            Gl.BindBuffer(gVertexBuffer);
+            Gl.VertexAttribPointer(location, 3, VertexAttribPointerType.Float, false, tempStride,
+                IntPtr.Zero);
+
+            location = (uint)Gl.GetAttribLocation(program.ProgramID, "texCoord");
+
+            Gl.EnableVertexAttribArray(location);
+            Gl.BindBuffer(gVertexBuffer);
+            Gl.VertexAttribPointer(location, 2, VertexAttribPointerType.Float, false, tempStride,
+                //                (IntPtr)(3 ));
+                //                (IntPtr)(3 * sizeof()));
+                new IntPtr(3 * sizeof(Single)));
+
+   
+            
+            Gl.BindBuffer(gDrawIdBuffer);
+            location = (uint)Gl.GetAttribLocation(program.ProgramID, "drawid");
+            Gl.EnableVertexAttribArray(location);
+//            Gl.BindBuffer(gVertexBuffer);
+            //            Gl.VertexAttribPointer(location, 1, VertexAttribPointerType.UnsignedInt, true, Marshal.SizeOf(typeof(UInt32)),
+            //                IntPtr.Zero);
+            Gl.VertexAttribPointer(location, 1, VertexAttribPointerType.UnsignedInt, true, 0, IntPtr.Zero);
+            Gl.VertexAttribDivisor(2, 1);
+
+
             // This needs to be implemented.
             // https://www.opengl.org/wiki/GLAPI/glMultiDrawElementsIndirect
 //  glClear( GL_COLOR_BUFFER_BIT );
@@ -538,6 +579,7 @@ namespace GameCore.Render.RenderObjects
       color = texture(textureArray, vec3(uv.x,uv.y,drawID) );
     }";
         private int numberOfTiles;
+        private int stride;
 
         #endregion
     }
