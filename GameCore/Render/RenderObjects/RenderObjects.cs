@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using GameCore.GameObjects;
 using GameCore.Map;
 using GameCore.Render.RenderMaterial;
@@ -20,8 +21,41 @@ namespace GameCore.Render.RenderObjects
         {
         }
 
+        public static Dictionary<Tile.TileIds, Bitmap> CreateTileBitmaps(Size aTextureSize)
+        {
+            Dictionary<Tile.TileIds, TileType> tileList = Tile.GetTileTypes();
+            Dictionary<Tile.TileIds, Bitmap> tiletextureList = new Dictionary<Tile.TileIds, Bitmap>();
+
+            SolidBrush tempBrush;
+            Bitmap tempBmp;
+
+            foreach (KeyValuePair<Tile.TileIds, TileType> keyValuePair in tileList)
+            {
+                string tempTiletextureName = "Tile_" + keyValuePair.Key.ToString() + ".png";
+
+                string tempFilePath = Path.Combine(TheMaterialManager.ImageDirectory, tempTiletextureName);
+                PlainBmpTexture tempBmpTexture = new PlainBmpTexture(keyValuePair.Value.Name);
+
+                if (!File.Exists(tempFilePath))
+                {
+                    tempBmpTexture.Color = keyValuePair.Value.Color;
+                    tempBrush = new SolidBrush(tempBmpTexture.Color);
+                    tempBmp = BitmapHelper.CreatBitamp(aTextureSize, tempBrush);
+                 }
+                else
+                {
+                    tempBmp = (Bitmap) Bitmap.FromFile(tempFilePath); //Filename);
+                    tempBmp.RotateFlip(RotateFlipType.RotateNoneFlipY); // bitmaps read from bottom up, so flip it
+                }
+                tiletextureList.Add(keyValuePair.Key, tempBmp);
+            }
+
+            return tiletextureList;
+        }
+
+
         public static Dictionary<Tile.TileIds, PlainBmpTexture> CreateTileTextures(Size aTextureSize,
-                                                                                   ShaderProgram aProgram)
+            ShaderProgram aProgram)
         {
             Dictionary<Tile.TileIds, TileType> tileList = Tile.GetTileTypes();
             Dictionary<Tile.TileIds, PlainBmpTexture> tiletextureList =
@@ -57,7 +91,7 @@ namespace GameCore.Render.RenderObjects
         }
 
         public static Dictionary<GameObject.ObjcetIds, PlainBmpTexture> CreateGameObjectsTextures(Size aTextureSize,
-                                                                                                  ShaderProgram aProgram)
+            ShaderProgram aProgram)
         {
             Dictionary<GameObject.ObjcetIds, GameObjectType> objTypeList = GameObject.GetObjTypes();
             Dictionary<GameObject.ObjcetIds, PlainBmpTexture> objTextureList =
@@ -70,9 +104,9 @@ namespace GameCore.Render.RenderObjects
             foreach (KeyValuePair<GameObject.ObjcetIds, GameObjectType> keyValuePair in objTypeList)
             {
                 PlainBmpTexture tempBmpTexture = new PlainBmpTexture(keyValuePair.Value.Name)
-                    {
-                        Color = keyValuePair.Value.Color
-                    };
+                {
+                    Color = keyValuePair.Value.Color
+                };
                 tempBrush = new SolidBrush(tempBmpTexture.Color);
                 tempBmp = BitmapHelper.CreatBitamp(aTextureSize, tempBrush);
                 tempBmpTexture.TextureBmp = tempBmp;

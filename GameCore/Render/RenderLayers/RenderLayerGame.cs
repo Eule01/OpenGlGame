@@ -73,6 +73,8 @@ namespace GameCore.Render.RenderLayers
         /// </summary>
         private float ambientLighting = 0.4f;
 
+        private ObjMap objTileMap;
+
         public RenderLayerGame(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
             KeyBindings theKeyBindings, MaterialManager theMaterialManager)
             : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
@@ -177,13 +179,17 @@ namespace GameCore.Render.RenderLayers
             tempObjGroup.AddObject(tempObj);
             objMeshs.Add(tempObjGroup);
 
-            tempObjGroup = new ObjGroup(program);
-            theTileObjects = GetTileObjects();
-            tempObjGroup.AddObjects(theTileObjects);
-            objMeshs.Add(tempObjGroup);
 
+//            tempObjGroup = new ObjGroup(program);
+//            theTileObjects = GetTileObjects();
+//            tempObjGroup.AddObjects(theTileObjects);
+//            objMeshs.Add(tempObjGroup);
+//
 
             theRenderGameObjects = GetGameObjects();
+
+            objTileMap = new ObjMap(TheGameStatus.TheMap, Camera);
+
         }
 
 
@@ -268,6 +274,8 @@ namespace GameCore.Render.RenderLayers
                     renderGameObject.Draw(program);
                 }
             }
+
+            objTileMap.Draw();
         }
 
         public override void OnReshape(int width, int height)

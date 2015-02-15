@@ -45,6 +45,11 @@ namespace GameCore.Render.RenderObjects
             };
             return tempSVertex2D;
         }
+
+        public override string ToString()
+        {
+            return "" + x + "," + y + "," + z + "," + u + "," + v;
+        }
     };
 
 
@@ -62,11 +67,20 @@ namespace GameCore.Render.RenderObjects
         {
             return new[] {vertexCount, instanceCount, firstIndex, baseVertex, baseInstance};
         }
+
+        public override string ToString()
+        {
+            return "" + vertexCount + "," + instanceCount + "," + firstIndex + "," + baseVertex + "," + baseInstance;
+        }
+
     };
 
     /// <summary>
     ///     Based on:
     ///     https://ferransole.wordpress.com/2014/07/09/multidrawindirect/
+    /// 
+    /// 
+    ///     http://stackoverflow.com/questions/25497528/opentk-gl-drawelements-is-never-called
     /// </summary>
     public class ObjMap : IObjObject
     {
@@ -81,17 +95,37 @@ namespace GameCore.Render.RenderObjects
             SVertex2D.FromArray(new[] {0.0f, 0.0f, 0.0f, 0.0f, 0.0f}),
             SVertex2D.FromArray(new[] {1.0f, 0.0f, 0.0f, 1.0f, 0.0f}),
             SVertex2D.FromArray(new[] {0.0f, 0.0f, 1.0f, 0.0f, 1.0f}),
-            SVertex2D.FromArray(new[] {1.0f, 0.0f, 1.1f, 1.0f, 1.0f})
+            SVertex2D.FromArray(new[] {1.0f, 0.0f, 1.0f, 1.0f, 1.0f})
         };
 
-        private readonly UInt32[] gIndex = new UInt32[] {0, 1, 2, 1, 3, 2};
+        private readonly int[] gIndex = new int[] {0, 1, 2, 1, 3, 2};
 
         private VBO<float> gVertexBuffer;
-        private VBO<uint> gElementBuffer;
+        private VBO<int> gElementBuffer;
         private VBO<uint> gIndirectBuffer;
         private VBO<uint> gDrawIdBuffer;
 
         private static uint[] gArrayTexture = new uint[1] {0};
+
+        ///     The near clipping distance.
+        /// </summary>
+        private const float ZNear = 0.1f;
+
+        /// <summary>
+        ///     The far clipping distance.
+        /// </summary>
+        private const float ZFar = 1000f;
+
+        /// <summary>
+        ///     Field of view of the camera
+        /// </summary>
+        private const float Fov = 0.45f;
+
+        private Matrix4 projectionMatrix;
+
+        public int Width = 1280;
+        public int Height = 720;
+
 
         public ObjMap(Map.Map aMap, Camera aCamera)
         {
@@ -104,6 +138,9 @@ namespace GameCore.Render.RenderObjects
             Gl.UseProgram(program);
             program["view_matrix"].SetValue(theCamera.ViewMatrix);
 
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(Fov, (float)Width / Height, ZNear,
+    ZFar);
+            program["projection_matrix"].SetValue(projectionMatrix);
 
 
             GenerateGeometry();
@@ -118,16 +155,16 @@ namespace GameCore.Render.RenderObjects
             Stopwatch watch = Stopwatch.StartNew();
 
 
-            Dictionary<Tile.TileIds, PlainBmpTexture> tempTiletypeList =
-                RenderObjects.CreateTileTextures(new Size(256, 256), program);
+            Dictionary<Tile.TileIds, Bitmap> tempTiletypeList =
+                RenderObjects.CreateTileBitmaps(new Size(256, 256));
             List<ObjObject> tempObjList = new List<ObjObject>();
             List<Tile> tempTiles = theMap.Tiles;
 
-            int numberOfTiles = tempTiles.Count();
+            numberOfTiles = tempTiles.Count();
             int numberOfTextures = tempTiletypeList.Count;
             // Number of values in SVertex2D
             int stride = 5;
-            SVertex2D[] vVertex = new SVertex2D[numberOfTiles*stride];
+            SVertex2D[] vVertex = new SVertex2D[numberOfTiles*4];
 
 //            float xOffset = 0.0f;
 //            float yOffset =0.0f;
@@ -153,19 +190,28 @@ namespace GameCore.Render.RenderObjects
 //            }
 
 
+            // n tiles
+            // 4 SVertex2D vectors per tile
+            // 5 (stride) entries per SVertex2D
+
             int index = 0;
             foreach (Tile tempTile in tempTiles)
             {
                 Vector tempLoc = tempTile.Location;
-                vVertex[index].x = gQuad[0].x + tempLoc.X;
-                vVertex[index].y = gQuad[1].y;
-                vVertex[index].z = gQuad[2].z + tempLoc.Y;
-                vVertex[index].u = gQuad[3].u;
-                vVertex[index].v = gQuad[4].v;
+                for( int k=0; k!=4; ++k)
+                {
+                    vVertex[index].x = gQuad[k].x + tempLoc.X;
+                    vVertex[index].y = gQuad[k].y;
+                    vVertex[index].z = gQuad[k].z + tempLoc.Y;
+                    vVertex[index].u = gQuad[k].u;
+                    vVertex[index].v = gQuad[k].v;
+                    index++;
+
+                }
             }
 
             // Copy into float array
-            float[] verteses = new float[numberOfTiles*stride];
+            float[] verteses = new float[numberOfTiles*stride*4];
 
             index = 0;
             for (int i = 0; i < vVertex.Count(); i++)
@@ -182,15 +228,41 @@ namespace GameCore.Render.RenderObjects
             gVertexBuffer = new VBO<float>(verteses, BufferTarget.ArrayBuffer);
             Gl.BindBuffer(gVertexBuffer);
 
-            const uint loc0 = 0;
-            const uint loc1 = 1;
-            Gl.EnableVertexAttribArray(loc0);
-            Gl.VertexAttribPointer(loc0, 3, gVertexBuffer.PointerType, false, Marshal.SizeOf(typeof (float))*stride,
+//                in vec3 position;
+//              in vec2 texCoord;
+
+
+            uint location = (uint)Gl.GetAttribLocation(program.ProgramID, "position");
+//            int tempStride = stride;
+            int tempStride = sizeof(Single)*stride;
+//            int tempStride = sizeof(float)*stride;
+//            int tempStride = Marshal.SizeOf(typeof (float))*stride;
+            Gl.EnableVertexAttribArray(location);
+            Gl.BindBuffer(gVertexBuffer);
+            Gl.VertexAttribPointer(location, 3, VertexAttribPointerType.Float, false, tempStride,
                 IntPtr.Zero);
 
-            Gl.EnableVertexAttribArray(loc1);
-            Gl.VertexAttribPointer(loc1, 2, gVertexBuffer.PointerType, false, Marshal.SizeOf(typeof (float))*stride,
-                (IntPtr) (3*sizeof (float)));
+            location = (uint)Gl.GetAttribLocation(program.ProgramID, "texCoord");
+
+            Gl.EnableVertexAttribArray(location);
+            Gl.BindBuffer(gVertexBuffer);
+            Gl.VertexAttribPointer(location, 2, VertexAttribPointerType.Float, false, tempStride,
+//                (IntPtr)(3 ));
+//                (IntPtr)(3 * sizeof()));
+                new IntPtr(3 * sizeof(Single)));
+
+
+
+
+//            const uint loc0 = 0;
+//            const uint loc1 = 1;
+//            Gl.EnableVertexAttribArray(loc0);
+//            Gl.VertexAttribPointer(loc0, 3, gVertexBuffer.PointerType, false, Marshal.SizeOf(typeof (float))*stride,
+//                IntPtr.Zero);
+//
+//            Gl.EnableVertexAttribArray(loc1);
+//            Gl.VertexAttribPointer(loc1, 2, gVertexBuffer.PointerType, false, Marshal.SizeOf(typeof (float))*stride,
+//                (IntPtr) (3*sizeof (float)));
 
 
             //Specify vertex attributes for the shader
@@ -200,7 +272,8 @@ namespace GameCore.Render.RenderObjects
 //            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex2D), (GLvoid*)2);
 
 
-            gElementBuffer = new VBO<UInt32>(gIndex, BufferTarget.ElementArrayBuffer);
+
+            gElementBuffer = new VBO<int>(gIndex, BufferTarget.ElementArrayBuffer);
             Gl.BindBuffer(gElementBuffer);
 
 
@@ -211,12 +284,14 @@ namespace GameCore.Render.RenderObjects
                 vDrawCommand[i].vertexCount = 6;
                 vDrawCommand[i].instanceCount = 1;
                 vDrawCommand[i].firstIndex = 0;
+//                vDrawCommand[i].baseVertex = (uint) (i*4);
                 vDrawCommand[i].baseVertex = (uint) (i*stride);
                 vDrawCommand[i].baseInstance = i;
             }
 
 
             // Copy into float array
+            //Generate draw commands
             int vDrawCommanStride = 5;
             UInt32[] vDrawCommandArray = new UInt32[numberOfTiles*vDrawCommanStride];
 
@@ -231,15 +306,12 @@ namespace GameCore.Render.RenderObjects
                 index += vDrawCommanStride;
             }
 
-            gIndirectBuffer = new VBO<UInt32>(vDrawCommandArray, BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw);
+            gIndirectBuffer = new VBO<UInt32>(vDrawCommandArray, BufferTarget.DrawIndirectBuffer, BufferUsageHint.StaticDraw);
             Gl.BindBuffer(gIndirectBuffer);
 
 
             //Generate an instanced vertex array to identify each draw call in the shader
             UInt32[] vDrawId = new uint[numberOfTiles];
-            for (int i = 0; i < tempTiletypeList.Keys.Count; i++)
-            {
-            }
 
             index = 0;
             foreach (Tile aTile in tempTiles)
@@ -257,11 +329,24 @@ namespace GameCore.Render.RenderObjects
             gDrawIdBuffer = new VBO<UInt32>(vDrawId, BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw);
             Gl.BindBuffer(gDrawIdBuffer);
 
-            const uint loc2 = 2;
-            Gl.EnableVertexAttribArray(loc2);
-            Gl.VertexAttribPointer(loc0, 1, gDrawIdBuffer.PointerType, true, Marshal.SizeOf(typeof (UInt32)),
+
+            location = (uint)Gl.GetAttribLocation(program.ProgramID, "drawid");
+
+            Gl.EnableVertexAttribArray(location);
+            Gl.BindBuffer(gVertexBuffer);
+//            Gl.VertexAttribPointer(location, 1, VertexAttribPointerType.UnsignedInt, true, Marshal.SizeOf(typeof(UInt32)),
+//                IntPtr.Zero);
+            Gl.VertexAttribPointer(location, 1, VertexAttribPointerType.UnsignedInt, true, 0,
                 IntPtr.Zero);
-//  Gl.VertexAttribPointer(loc0, 1, gDrawIdBuffer.PointerType, true,0, IntPtr.Zero);
+            Gl.VertexAttribDivisor(2,1);
+
+
+
+//            const uint loc2 = 2;
+//            Gl.EnableVertexAttribArray(loc2);
+//            Gl.VertexAttribPointer(loc2, 1, gDrawIdBuffer.PointerType, true, Marshal.SizeOf(typeof (UInt32)),
+//                IntPtr.Zero);
+//            Gl.VertexAttribDivisor(2,1);
 
 //
 //  glGenBuffers( 1, &gDrawIdBuffer );
@@ -291,12 +376,10 @@ namespace GameCore.Render.RenderObjects
 
             Size textureSize = new Size(256, 256);
 
-            Dictionary<Tile.TileIds, PlainBmpTexture> tempTiletypeList =
-                RenderObjects.CreateTileTextures(new Size(256, 256), program);
-            List<ObjObject> tempObjList = new List<ObjObject>();
-            List<Tile> tempTiles = theMap.Tiles;
+            Dictionary<Tile.TileIds, Bitmap> tempTiletypeList =
+                RenderObjects.CreateTileBitmaps(new Size(256, 256));
 
-            int numberOfTiles = tempTiles.Count();
+//            int numberOfTiles = tempTiles.Count();
             int numberOfTextures = tempTiletypeList.Count;
 
             // replace glTexStorage3D with following code
@@ -331,14 +414,13 @@ namespace GameCore.Render.RenderObjects
 
                 //Specify i-essim image
 
-                PlainBmpTexture tempBmpTex = tempTiletypeList.Values.ToArray()[i];
+                Bitmap tempBmp = tempTiletypeList.Values.ToArray()[i];
 
-                Bitmap tempBmp = tempBmpTex.TextureBmp;
-
+ 
                 Size tempSize = tempBmp.Size;
 
                 // must be Format32bppArgb file format, so convert it if it isn't in that format
-                BitmapData bitmapData = tempBmp.LockBits(new Rectangle(0, 0, tempBmp.Width, tempBmp.Height),
+                BitmapData bitmapData = tempBmp.LockBits(new Rectangle(0, 0, tempSize.Width, tempSize.Height),
                     ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
 
@@ -387,21 +469,22 @@ namespace GameCore.Render.RenderObjects
             // apply our camera view matrix to the shader view matrix (this can be used for all objects in the scene)
             Gl.UseProgram(program);
             program["view_matrix"].SetValue(theCamera.ViewMatrix);
+            program["projection_matrix"].SetValue(projectionMatrix);
 
 
             // This needs to be implemented.
             // https://www.opengl.org/wiki/GLAPI/glMultiDrawElementsIndirect
 //  glClear( GL_COLOR_BUFFER_BIT );
 
-//            Gl.MultiDrawElementsIndirect();
-//            Gl.MultiDrawElements();
+//            Gl.MultiDrawElements(BeginMode.Triangles, );
 
+            Gl.MultiDrawElementsIndirect(BeginMode.Triangles, DrawElementsType.UnsignedInt, IntPtr.Zero, numberOfTiles, 0);
 //  glMultiDrawElementsIndirect( GL_TRIANGLES, 
 //			       GL_UNSIGNED_INT, 
 //			       (GLvoid*)0, 
 //			       100, 
 //			       0 );
- 
+
 //  glutSwapBuffers();
         }
 
@@ -413,17 +496,36 @@ namespace GameCore.Render.RenderObjects
 
         public static string vertexShaderSource = @"
 #version 430 core
-    layout (location = 0 ) in vec3 position;
-    layout (location = 1 ) in vec2 texCoord;
-    layout (location = 2 ) in uint drawid;
+    in vec3 position;
+    in vec2 texCoord;
+    in uint drawid;
+    uniform mat4 view_matrix;
+    uniform mat4 projection_matrix;
+
     out vec2 uv;
     flat out uint drawID;
     void main(void)
     {
-      gl_Position = vec4(position,1.0);
+      gl_Position = projection_matrix *view_matrix * vec4(position,1.0);
       uv = texCoord;
       drawID = drawid;
     }";
+//        public static string vertexShaderSource = @"
+//#version 430 core
+//    layout (location = 0 ) in vec3 position;
+//    layout (location = 1 ) in vec2 texCoord;
+//    layout (location = 2 ) in uint drawid;
+//    uniform mat4 view_matrix;
+//    uniform mat4 projection_matrix;
+//
+//    out vec2 uv;
+//    flat out uint drawID;
+//    void main(void)
+//    {
+//      gl_Position = projection_matrix *view_matrix * vec4(position,1.0);
+//      uv = texCoord;
+//      drawID = drawid;
+//    }";
 
         public static string fragmentShaderSource = @"
 #version 430 core
@@ -435,6 +537,7 @@ namespace GameCore.Render.RenderObjects
     {
       color = texture(textureArray, vec3(uv.x,uv.y,drawID) );
     }";
+        private int numberOfTiles;
 
         #endregion
     }

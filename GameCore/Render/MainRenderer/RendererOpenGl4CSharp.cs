@@ -201,9 +201,9 @@ namespace GameCore.Render.MainRenderer
                 Gl.Viewport(0, 0, width, height);
                 Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-                layerSky.OnRenderFrame(deltaTime);
+//                layerSky.OnRenderFrame(deltaTime);
                 layerGame.OnRenderFrame(deltaTime);
-                layerHud.OnRenderFrame(deltaTime);
+//                layerHud.OnRenderFrame(deltaTime);
                 layerInfo.OnRenderFrame(deltaTime);
 
                 Glut.glutSwapBuffers();

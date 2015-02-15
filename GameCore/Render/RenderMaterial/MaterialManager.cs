@@ -19,6 +19,11 @@ namespace GameCore.Render.RenderMaterial
 
         private string imageDirectory = @"./Resources/Images/";
 
+        public string ImageDirectory
+        {
+            get { return imageDirectory; }
+        }
+
         private void AddMaterial(string aName, ObjMaterial anObjMaterial)
         {
             anObjMaterial.Name = aName;
