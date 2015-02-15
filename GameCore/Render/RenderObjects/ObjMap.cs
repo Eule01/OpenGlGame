@@ -81,6 +81,14 @@ namespace GameCore.Render.RenderObjects
     /// 
     /// 
     ///     http://stackoverflow.com/questions/25497528/opentk-gl-drawelements-is-never-called
+    /// 
+    /// 
+    /// If this doesn't work on OpenGl 3.3 the use glMultiDrawArrays or glMultiDrawElements​
+    /// http://quabr.com/27607340/vbo-equivalent-of-display-list-with-multiple-primitives
+    /// 
+    /// 
+    /// http://www.arcsynthesis.org/gltut/Positioning/Tut05%20Optimization%20Base%20Vertex.html#d0e5179
+    /// 
     /// </summary>
     public class ObjMap : IObjObject
     {
