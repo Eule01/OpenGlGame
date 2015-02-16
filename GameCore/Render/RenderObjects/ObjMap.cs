@@ -327,7 +327,8 @@ namespace GameCore.Render.RenderObjects
 //                vDrawId[i] = i;
 //            }
 
-            gDrawIdBuffer = new VBO<UInt32>(vDrawId, BufferTarget.ArrayBuffer, BufferUsageHint.StaticDraw);
+            gDrawIdBuffer = new VBO<UInt32>(vDrawId, VertexAttribPointerType.UnsignedInt, BufferTarget.ArrayBuffer,
+                BufferUsageHint.StaticDraw);
             Gl.BindBuffer(gDrawIdBuffer);
 
 
@@ -512,7 +513,8 @@ namespace GameCore.Render.RenderObjects
             location = (uint) Gl.GetAttribLocation(program.ProgramID, "drawid");
             Gl.EnableVertexAttribArray(location);
             Gl.BindBuffer(gDrawIdBuffer);
-            Gl.VertexAttribPointer(location, 1, VertexAttribPointerType.UnsignedInt, true, Marshal.SizeOf(typeof(uint)), IntPtr.Zero);
+            Gl.VertexAttribPointer(location, 1, VertexAttribPointerType.UnsignedInt, true, Marshal.SizeOf(typeof (uint)),
+                IntPtr.Zero);
 //            Gl.VertexAttribPointer(location, 1, VertexAttribPointerType.UnsignedInt, true, 0, IntPtr.Zero);
             Gl.VertexAttribDivisor(location, 1);
 //            Gl.VertexAttribDivisor(2, 1);
@@ -539,8 +541,6 @@ namespace GameCore.Render.RenderObjects
             Gl.BindBuffer(BufferTarget.DrawIndirectBuffer, 0);
             Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             Gl.UseProgram(0);
-
-
         }
 
         void IDisposable.Dispose()
