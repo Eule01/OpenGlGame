@@ -73,6 +73,7 @@ namespace GameCore.Render.RenderLayers
         /// </summary>
         private float ambientLighting = 0.4f;
 
+        private bool UseObjMap;
         private ObjMap objTileMap;
 
         public RenderLayerGame(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
@@ -189,11 +190,13 @@ namespace GameCore.Render.RenderLayers
             theRenderGameObjects = GetGameObjects();
 
             Gl.UseProgram(0);
-            Gl.BindBuffer(BufferTarget.ElementArrayBuffer,0);
-            Gl.BindBuffer(BufferTarget.ArrayBuffer,0);
+            Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+            Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
-            objTileMap = new ObjMap(TheGameStatus.TheMap, Camera);
-
+            if (UseObjMap)
+            {
+                objTileMap = new ObjMap(TheGameStatus.TheMap, Camera);
+            }
         }
 
 
@@ -283,7 +286,10 @@ namespace GameCore.Render.RenderLayers
 //
 //            }
 
-            objTileMap.Draw();
+            if (UseObjMap)
+            {
+                objTileMap.Draw();
+            }
         }
 
         public override void OnReshape(int width, int height)

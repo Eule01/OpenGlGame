@@ -1,4 +1,4 @@
-
+﻿
 
 Version control:
 http://en.wikipedia.org/wiki/Comparison_of_revision_control_software
@@ -240,6 +240,14 @@ http://stackoverflow.com/questions/9726010/how-to-use-gl-texture-2d-array-on-ope
 http://www.gamedev.net/topic/660648-opengl-texture-array-difficulties/
 http://www.openglsuperbible.com/2013/10/16/the-road-to-one-million-draws/
 
+https://ferransole.wordpress.com/2014/07/09/multidrawindirect/
+http://stackoverflow.com/questions/25497528/opentk-gl-drawelements-is-never-called
+ 
+If this doesn't work on OpenGl 3.3 the use glMultiDrawArrays or glMultiDrawElements​
+http://quabr.com/27607340/vbo-equivalent-of-display-list-with-multiple-primitives
+http://www.arcsynthesis.org/gltut/Positioning/Tut05%20Optimization%20Base%20Vertex.html#d0e5179
+
+
 
 Example:
 https://ferransole.wordpress.com/2014/07/09/multidrawindirect/     *****
@@ -250,3 +258,24 @@ https://ferransole.wordpress.com/2014/06/09/array-textures/
 
 http://0fps.net/2012/07/07/meshing-minecraft-part-2/
 http://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
+
+
+# OpenGl debugging
+
+https://www.opengl.org/wiki/Debugging_Tools
+https://www.opengl.org/sdk/tools/gDEBugger/
+
+http://www.gamedev.net/topic/624625-gdebugger-with-c-and-opentk/
+
+
+http://stackoverflow.com/questions/27508044/gdebugger-doesnt-show-allocated-textures-with-opentk
+
+https://developer.nvidia.com/nvidia-nsight-visual-studio-edition
+http://www.opentk.com/node/3402
+
+
+http://apitrace.github.io/
+
+
+http://glsl-debugger.github.io/
+
