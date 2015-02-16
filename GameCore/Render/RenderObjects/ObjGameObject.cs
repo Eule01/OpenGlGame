@@ -48,6 +48,7 @@ namespace GameCore.Render.RenderObjects
             Gl.BindBuffer(triangles);
 
             Gl.DrawElements(BeginMode.Triangles, triangles.Count, DrawElementsType.UnsignedInt, IntPtr.Zero);
+
         }
     }
 }

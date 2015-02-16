@@ -8,6 +8,7 @@ using GameCore.Map;
 using GameCore.Render.RenderMaterial;
 using GameCore.Utils;
 using OpenGL;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 #endregion
 
@@ -46,6 +47,16 @@ namespace GameCore.Render.RenderObjects
                 {
                     tempBmp = (Bitmap) Bitmap.FromFile(tempFilePath); //Filename);
                     tempBmp.RotateFlip(RotateFlipType.RotateNoneFlipY); // bitmaps read from bottom up, so flip it
+                    if (tempBmp.PixelFormat != PixelFormat.Format32bppArgb)
+                    {
+                        Bitmap clone = new Bitmap(tempBmp.Width, tempBmp.Height,
+                            System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                        using (Graphics gr = Graphics.FromImage(clone))
+                        {
+                            gr.DrawImage(tempBmp, new Rectangle(0, 0, clone.Width, clone.Height));
+                        }
+                        tempBmp = clone;
+                    }
                 }
                 tiletextureList.Add(keyValuePair.Key, tempBmp);
             }

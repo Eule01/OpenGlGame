@@ -69,7 +69,7 @@ namespace GameCore.Render.MainRenderer
         {
             exit = false;
             Glut.glutInit();
-
+        
 
             Glut.glutInitDisplayMode(Glut.GLUT_DOUBLE | Glut.GLUT_DEPTH | Glut.GLUT_ALPHA | Glut.GLUT_STENCIL |
                                      Glut.GLUT_MULTISAMPLE);
@@ -204,7 +204,7 @@ namespace GameCore.Render.MainRenderer
 //                layerSky.OnRenderFrame(deltaTime);
                 layerGame.OnRenderFrame(deltaTime);
 //                layerHud.OnRenderFrame(deltaTime);
-                layerInfo.OnRenderFrame(deltaTime);
+//                layerInfo.OnRenderFrame(deltaTime);
 
                 Glut.glutSwapBuffers();
             }

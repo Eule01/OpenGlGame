@@ -188,6 +188,10 @@ namespace GameCore.Render.RenderLayers
 
             theRenderGameObjects = GetGameObjects();
 
+            Gl.UseProgram(0);
+            Gl.BindBuffer(BufferTarget.ElementArrayBuffer,0);
+            Gl.BindBuffer(BufferTarget.ArrayBuffer,0);
+
             objTileMap = new ObjMap(TheGameStatus.TheMap, Camera);
 
         }
@@ -238,7 +242,7 @@ namespace GameCore.Render.RenderLayers
             // Reset the model matrix
             program["model_matrix"].SetValue(Matrix4.Identity);
 
-            if (true)
+            if (false)
             {
                 // Draw a small test grid
                 double delta = 5;
@@ -267,13 +271,17 @@ namespace GameCore.Render.RenderLayers
                 vertices = null;
             }
 
-            if (theRenderGameObjects != null)
-            {
-                foreach (ObjGameObject renderGameObject in theRenderGameObjects)
-                {
-                    renderGameObject.Draw(program);
-                }
-            }
+//            if (theRenderGameObjects != null)
+//            {
+//                foreach (ObjGameObject renderGameObject in theRenderGameObjects)
+//                {
+//                    renderGameObject.Draw(program);
+//                }
+//                Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+//                Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
+//                Gl.UseProgram(0);
+//
+//            }
 
             objTileMap.Draw();
         }
@@ -288,6 +296,11 @@ namespace GameCore.Render.RenderLayers
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(Fov, (float) Width/Height, ZNear,
                 ZFar);
             program["projection_matrix"].SetValue(projectionMatrix);
+
+            Gl.UseProgram(0);
+            Gl.BindBuffer(BufferTarget.DrawIndirectBuffer, 0);
+            Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+            Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
 

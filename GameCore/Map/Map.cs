@@ -128,7 +128,7 @@ namespace GameCore.Map
 
         internal static Map GetTestMap()
         {
-            Map aMap = new Map {Tiles = CreatTestTiles(new Size(100, 100))};
+            Map aMap = new Map {Tiles = CreatTestTiles(new Size(10, 10))};
             return aMap;
         }
 
@@ -146,10 +146,14 @@ namespace GameCore.Map
                         tempTile = new Tile(Tile.TileIds.Grass) {Location = new Vector(x, y)};
                     }
                     else if (x == 5)
-                        {
-                            tempTile = new Tile(Tile.TileIds.Road) { Location = new Vector(x, y) };
-                        }
-                        else
+                    {
+                        tempTile = new Tile(Tile.TileIds.Road) {Location = new Vector(x, y)};
+                    }
+                    else if (x == 2)
+                    {
+                        tempTile = new Tile(Tile.TileIds.Water) {Location = new Vector(x, y)};
+                    }
+                    else
                     {
                         tempTile = new Tile(Tile.TileIds.Desert) {Location = new Vector(x, y)};
                     }
