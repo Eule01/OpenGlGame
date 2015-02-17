@@ -73,7 +73,7 @@ namespace GameCore.Render.RenderLayers
         /// </summary>
         private float ambientLighting = 0.4f;
 
-        private bool UseObjMap;
+        private bool UseObjMap = true;
         private ObjMap objTileMap;
 
         public RenderLayerGame(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,

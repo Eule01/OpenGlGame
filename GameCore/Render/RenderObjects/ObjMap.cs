@@ -103,7 +103,7 @@ namespace GameCore.Render.RenderObjects
         private VBO<float> gVertexBuffer;
         private VBO<int> gElementBuffer;
         private VBO<uint> gIndirectBuffer;
-        private VBO<uint> gDrawIdBuffer;
+        private VBO<int> gDrawIdBuffer;
 
 
         /// The near clipping distance.
@@ -125,6 +125,9 @@ namespace GameCore.Render.RenderObjects
         public int Width = 1280;
         public int Height = 720;
 
+        private int numberOfTiles;
+        private int stride;
+        private uint textureId;
 
         public ObjMap(Map.Map aMap, Camera aCamera)
         {
@@ -312,12 +315,12 @@ namespace GameCore.Render.RenderObjects
 
 
             //Generate an instanced vertex array to identify each draw call in the shader
-            UInt32[] vDrawId = new uint[numberOfTiles];
+            int[] vDrawId = new int[numberOfTiles];
 
             index = 0;
             foreach (Tile aTile in tempTiles)
             {
-                vDrawId[index] = (uint) aTile.TheTileId;
+                vDrawId[index] = (int) aTile.TheTileId;
                 index++;
             }
 
@@ -327,7 +330,7 @@ namespace GameCore.Render.RenderObjects
 //                vDrawId[i] = i;
 //            }
 
-            gDrawIdBuffer = new VBO<UInt32>(vDrawId, VertexAttribPointerType.UnsignedInt, BufferTarget.ArrayBuffer,
+            gDrawIdBuffer = new VBO<int>(vDrawId, VertexAttribPointerType.Int, BufferTarget.ArrayBuffer,
                 BufferUsageHint.StaticDraw);
             Gl.BindBuffer(gDrawIdBuffer);
 
@@ -513,7 +516,7 @@ namespace GameCore.Render.RenderObjects
             location = (uint) Gl.GetAttribLocation(program.ProgramID, "drawid");
             Gl.EnableVertexAttribArray(location);
             Gl.BindBuffer(gDrawIdBuffer);
-            Gl.VertexAttribPointer(location, 1, VertexAttribPointerType.UnsignedInt, true, Marshal.SizeOf(typeof (uint)),
+            Gl.VertexAttribPointer(location, 1, VertexAttribPointerType.Int, true, Marshal.SizeOf(typeof (int)),
                 IntPtr.Zero);
 //            Gl.VertexAttribPointer(location, 1, VertexAttribPointerType.UnsignedInt, true, 0, IntPtr.Zero);
             Gl.VertexAttribDivisor(location, 1);
@@ -537,6 +540,7 @@ namespace GameCore.Render.RenderObjects
 //  glutSwapBuffers();
             Gl.BindTexture(TextureTarget.Texture2DArray, 0);
 
+//            Gl.UnmapBuffer()
             Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
             Gl.BindBuffer(BufferTarget.DrawIndirectBuffer, 0);
             Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
@@ -553,18 +557,35 @@ namespace GameCore.Render.RenderObjects
 #version 430 core
     in vec3 position;
     in vec2 texCoord;
-    in uint drawid;
+    in int drawid;
     uniform mat4 view_matrix;
     uniform mat4 projection_matrix;
 
     out vec2 uv;
-    flat out uint drawID;
+    flat out int drawID;
     void main(void)
     {
       gl_Position = projection_matrix *view_matrix * vec4(position,1.0);
       uv = texCoord;
+//      drawID = 2;
       drawID = drawid;
     }";
+//       public static string vertexShaderSource = @"
+//#version 430 core
+//    in vec3 position;
+//    in vec2 texCoord;
+//    in uint drawid;
+//    uniform mat4 view_matrix;
+//    uniform mat4 projection_matrix;
+//
+//    out vec2 uv;
+//    flat out uint drawID;
+//    void main(void)
+//    {
+//      gl_Position = projection_matrix *view_matrix * vec4(position,1.0);
+//      uv = texCoord;
+//      drawID = drawid;
+//    }";
 //        public static string vertexShaderSource = @"
 //#version 430 core
 //    layout (location = 0 ) in vec3 position;
@@ -586,15 +607,24 @@ namespace GameCore.Render.RenderObjects
 #version 430 core
     out vec4 color;
     in vec2 uv;
-    flat in uint drawID;
+    flat in int drawID;
+//    in int drawID;
     layout (binding=0) uniform sampler2DArray textureArray;
     void main(void)
     {
       color = texture(textureArray, vec3(uv.x,uv.y,drawID) );
     }";
-        private int numberOfTiles;
-        private int stride;
-        private uint textureId;
+//
+//        public static string fragmentShaderSource = @"
+//#version 430 core
+//    out vec4 color;
+//    in vec2 uv;
+//    flat in uint drawID;
+//    layout (binding=0) uniform sampler2DArray textureArray;
+//    void main(void)
+//    {
+//      color = texture(textureArray, vec3(uv.x,uv.y,drawID) );
+//    }";
 
         #endregion
     }
