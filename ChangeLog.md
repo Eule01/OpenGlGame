@@ -1,4 +1,5 @@
 
+2015.02.18	FEATURE		Added a RenderLayerMap based on MultiDrawElementsIndirect (min OpenGl 4.3).
 2015.02.11	CHANGE		Made sure game engine status does not report to the console.
 2015.02.10	IMPROVEMENT Renamed ObjMesh into ObjGroup which is a much better description.
 2015.02.10	IMPROVEMENT ObjMesh now has a Location, Orientation and Scale.

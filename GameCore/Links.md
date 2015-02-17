@@ -279,3 +279,7 @@ http://apitrace.github.io/
 
 http://glsl-debugger.github.io/
 
+# Physic engine
+
+Fix Your Timestep!:
+http://gafferongames.com/game-physics/fix-your-timestep/

@@ -170,8 +170,7 @@ namespace GameCore.Render.RenderLayers
             tempObjGroup = new ObjGroup(program);
             tempObj =
                 new ObjObject(ObjectPrimitives.CreateSquareWithNormalsYorZ(new Vector3(5, 1, 1), new Vector3(4, 0, 1),
-                    true));
-            tempObj.Material = tempMaterial;
+                    true)) {Material = tempMaterial};
             tempObjGroup.AddObject(tempObj);
 
             tempObj =
