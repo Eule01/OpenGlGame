@@ -31,6 +31,8 @@ namespace GameCore.Render.MainRenderer
 
         private RenderLayerGame layerGame;
 
+        private RenderLayerMap layerMap;
+
         private RenderLayerTextInfo layerInfo;
 
         private RenderLayerHud layerHud;
@@ -121,10 +123,15 @@ namespace GameCore.Render.MainRenderer
                                             theMaterialManager);
             layerSky.OnLoad();
 
+            layerMap = new RenderLayerMap(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
+                                            theMaterialManager);
+//            layerMap.OnLoad();
+
             layerGame = new RenderLayerGame(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
                                             theMaterialManager);
             layerGame.OnLoad();
             layerSky.Camera = layerGame.Camera;
+            layerMap.Camera = layerGame.Camera;
 
             layerHud = new RenderLayerHud(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
                                           theMaterialManager);
@@ -203,6 +210,7 @@ namespace GameCore.Render.MainRenderer
 
 //                layerSky.OnRenderFrame(deltaTime);
                 layerGame.OnRenderFrame(deltaTime);
+//                layerMap.OnRenderFrame(deltaTime);
 //                layerHud.OnRenderFrame(deltaTime);
 //                layerInfo.OnRenderFrame(deltaTime);
 
@@ -243,6 +251,7 @@ namespace GameCore.Render.MainRenderer
             this.height = height;
 
             layerSky.OnReshape(width,height);
+            layerMap.OnReshape(width, height);
             layerGame.OnReshape(width, height);
             layerHud.OnReshape(width, height);
             layerInfo.OnReshape(width, height);
@@ -251,6 +260,7 @@ namespace GameCore.Render.MainRenderer
         private void OnClose()
         {
             layerSky.OnClose();
+            layerMap.OnClose();
             layerGame.OnClose();
             layerHud.OnClose();
             layerInfo.OnClose();
