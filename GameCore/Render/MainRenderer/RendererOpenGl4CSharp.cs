@@ -121,25 +121,26 @@ namespace GameCore.Render.MainRenderer
 
             layerSky = new RenderLayerSkyBox(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
                                             theMaterialManager);
-            layerSky.OnLoad();
+//            layerSky.OnLoad();
 
             layerMap = new RenderLayerMap(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
                                             theMaterialManager);
-//            layerMap.OnLoad();
+            layerMap.OnLoad();
 
             layerGame = new RenderLayerGame(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
                                             theMaterialManager);
-            layerGame.OnLoad();
+//            layerGame.OnLoad();
+            layerGame.SetupCamera();
             layerSky.Camera = layerGame.Camera;
             layerMap.Camera = layerGame.Camera;
 
             layerHud = new RenderLayerHud(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
                                           theMaterialManager);
-            layerHud.OnLoad();
+//            layerHud.OnLoad();
 
             layerInfo = new RenderLayerTextInfo(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
                                                 theMaterialManager);
-            layerInfo.OnLoad();
+//            layerInfo.OnLoad();
 
             watch = Stopwatch.StartNew();
 
@@ -209,8 +210,8 @@ namespace GameCore.Render.MainRenderer
                 Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
 //                layerSky.OnRenderFrame(deltaTime);
-                layerGame.OnRenderFrame(deltaTime);
-//                layerMap.OnRenderFrame(deltaTime);
+//                layerGame.OnRenderFrame(deltaTime);
+                layerMap.OnRenderFrame(deltaTime);
 //                layerHud.OnRenderFrame(deltaTime);
 //                layerInfo.OnRenderFrame(deltaTime);
 
@@ -250,11 +251,11 @@ namespace GameCore.Render.MainRenderer
             this.width = width;
             this.height = height;
 
-            layerSky.OnReshape(width,height);
+//            layerSky.OnReshape(width,height);
             layerMap.OnReshape(width, height);
-            layerGame.OnReshape(width, height);
-            layerHud.OnReshape(width, height);
-            layerInfo.OnReshape(width, height);
+//            layerGame.OnReshape(width, height);
+//            layerHud.OnReshape(width, height);
+//            layerInfo.OnReshape(width, height);
         }
 
         private void OnClose()

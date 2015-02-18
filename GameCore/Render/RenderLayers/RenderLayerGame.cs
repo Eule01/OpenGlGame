@@ -82,14 +82,14 @@ namespace GameCore.Render.RenderLayers
         {
         }
 
+
+
         public override void OnLoad()
         {
             // create our shader program
             program = new ShaderProgram(VertexShader, FragmentShader);
 
-            // create our camera
-            Camera = new Camera(new Vector3(0, 20, 10), Quaternion.Identity);
-            Camera.SetDirection(new Vector3(1, -3, -1));
+            SetupCamera();
 //            Camera.SetDirection(new Vector3(0, 0, -1));
 
             // set up the projection and view matrix
@@ -196,6 +196,13 @@ namespace GameCore.Render.RenderLayers
             {
                 objTileMap = new ObjMap(TheGameStatus.TheMap, Camera);
             }
+        }
+
+        public void SetupCamera()
+        {
+// create our camera
+            Camera = new Camera(new Vector3(0, 20, 10), Quaternion.Identity);
+            Camera.SetDirection(new Vector3(1, -3, -1));
         }
 
 
