@@ -279,6 +279,16 @@ http://apitrace.github.io/
 
 http://glsl-debugger.github.io/
 
+
+# Shader designer 
+https://www.opengl.org/sdk/tools/ShaderDesigner/
+http://sourceforge.net/projects/quickshader/
+http://developer.amd.com/tools-and-sdks/archive/legacy-cpu-gpu-tools/rendermonkey-toolsuite/
+https://developer.nvidia.com/fx-composer
+
+http://en.wikipedia.org/wiki/OpenGL_Shading_Language
+http://stackoverflow.com/questions/5358221/shader-ide-suggestion-for-glsl-or-hlsl
+
 # Physic engine
 
 Fix Your Timestep!:
