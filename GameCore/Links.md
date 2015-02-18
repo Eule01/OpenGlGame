@@ -247,7 +247,7 @@ If this doesn't work on OpenGl 3.3 the use glMultiDrawArrays or glMultiDrawEleme
 http://quabr.com/27607340/vbo-equivalent-of-display-list-with-multiple-primitives
 http://www.arcsynthesis.org/gltut/Positioning/Tut05%20Optimization%20Base%20Vertex.html#d0e5179
 
-
+https://www.opengl.org/wiki/Vertex_Specification    *****
 
 Example:
 https://ferransole.wordpress.com/2014/07/09/multidrawindirect/     *****
