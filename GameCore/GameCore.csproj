@@ -58,7 +58,9 @@
     <Compile Include="Render\RenderLayers\RenderLayerMapDrawArrays.cs" />
     <Compile Include="Render\RenderLayers\RenderLayerMapMultiDrawElementsIndirect.cs" />
     <Compile Include="Render\RenderLayers\RenderLayerSkyBox.cs" />
+    <Compile Include="Render\RenderLayers\SceneManager.cs" />
     <Compile Include="Render\RenderMaterial\MaterialManager.cs" />
+    <Compile Include="Render\RenderMaterial\TextureArray.cs" />
     <Compile Include="Render\RenderObjects\IObjGroup.cs" />
     <Compile Include="Render\RenderObjects\IObjObject.cs" />
     <Compile Include="Render\RenderObjects\ObjHudButton.cs" />

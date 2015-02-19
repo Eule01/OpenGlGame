@@ -27,15 +27,16 @@ namespace GameCore.Render.MainRenderer
         /// </summary>
         private int width = 1280, height = 720;
 
-        private RenderLayerSkyBox layerSky;
-
-        private RenderLayerGame layerGame;
-
-        private RenderLayerBase layerMap;
+        private SceneManager theSceneManager;
+//        private RenderLayerSkyBox layerSky;
+//
+//        private RenderLayerGame layerGame;
+//
+//        private RenderLayerBase layerMap;
 
         private RenderLayerTextInfo layerInfo;
 
-        private RenderLayerHud layerHud;
+//        private RenderLayerHud layerHud;
 
         private Stopwatch watch;
 
@@ -119,30 +120,48 @@ namespace GameCore.Render.MainRenderer
 
             RenderObjects.RenderObjects.TheMaterialManager = theMaterialManager;
 
-            layerSky = new RenderLayerSkyBox(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
+            theSceneManager = new SceneManager(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
                                             theMaterialManager);
-            layerSky.OnLoad();
 
-//            layerMap = new RenderLayerMapMultiDrawElementsIndirect(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
+            Camera camera = new Camera(new Vector3(0, 20, 10), Quaternion.Identity);
+            camera.SetDirection(new Vector3(1, -3, -1));
+
+            theSceneManager.AddCamera(camera);
+
+            theSceneManager.AddLayer(new RenderLayerSkyBox());
+            theSceneManager.AddLayer(new RenderLayerMapDrawArrays());
+            theSceneManager.AddLayer(new RenderLayerGame());
+            theSceneManager.AddLayer(new RenderLayerHud());
+            theSceneManager.AddLayer(layerInfo =new RenderLayerTextInfo());
+
+
+            theSceneManager.OnLoad();
+
+//            layerSky = new RenderLayerSkyBox(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
 //                                            theMaterialManager);
-            layerMap = new RenderLayerMapDrawArrays(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
-                                            theMaterialManager);
-            layerMap.OnLoad();
-
-            layerGame = new RenderLayerGame(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
-                                            theMaterialManager);
-            layerGame.OnLoad();
-//            layerGame.SetupCamera();
-            layerSky.Camera = layerGame.Camera;
-            ((RenderLayerMapDrawArrays)layerMap).Camera = layerGame.Camera;
-
-            layerHud = new RenderLayerHud(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
-                                          theMaterialManager);
-            layerHud.OnLoad();
-
-            layerInfo = new RenderLayerTextInfo(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
-                                                theMaterialManager);
-            layerInfo.OnLoad();
+//            layerSky.OnLoad();
+//
+////            layerMap = new RenderLayerMapMultiDrawElementsIndirect(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
+////                                            theMaterialManager);
+//            layerMap = new RenderLayerMapDrawArrays(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
+//                                            theMaterialManager);
+//            layerMap.OnLoad();
+//
+//            layerGame = new RenderLayerGame(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
+//                                            theMaterialManager);
+//            layerGame.OnLoad();
+////            layerGame.SetupCamera();
+//            layerSky.Camera = layerGame.TheCamera;
+//            ((RenderLayerMapDrawArrays)layerMap).TheCamera = layerGame.TheCamera;
+////            ((RenderLayerMapMultiDrawElementsIndirect)layerMap).Camera = layerGame.Camera;
+//
+//            layerHud = new RenderLayerHud(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
+//                                          theMaterialManager);
+//            layerHud.OnLoad();
+//
+//            layerInfo = new RenderLayerTextInfo(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
+//                                                theMaterialManager);
+//            layerInfo.OnLoad();
 
             watch = Stopwatch.StartNew();
 
@@ -175,6 +194,7 @@ namespace GameCore.Render.MainRenderer
 
         private void OnDisplay()
         {
+            theSceneManager.OnDisplay();
         }
 
         private void OnRenderFrame()
@@ -192,7 +212,7 @@ namespace GameCore.Render.MainRenderer
 
                 if (layerInfo.ShowInfo)
                 {
-                    Camera tempCam = layerGame.Camera;
+                    Camera tempCam = theSceneManager.theCamera;
                     Vector4 tempViewDir = tempCam.Orientation.ToAxisAngle();
                     string tempText = string.Format(
                         "FPS: {0:0.00}, Mouse: [({1:0},{2:0}),{3:0.0},{4:0.0},{5:0.0}], Camera: Pos[{6:0.0},{7:0.0},{8:0.0}]",
@@ -211,12 +231,15 @@ namespace GameCore.Render.MainRenderer
                 Gl.Viewport(0, 0, width, height);
                 Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-                layerSky.OnRenderFrame(deltaTime);
-                layerGame.OnRenderFrame(deltaTime);
-                layerMap.OnRenderFrame(deltaTime);
-                layerHud.OnRenderFrame(deltaTime);
-                layerInfo.OnRenderFrame(deltaTime);
 
+                theSceneManager.OnRenderFrame(deltaTime);
+
+//                layerSky.OnRenderFrame(deltaTime);
+//                layerGame.OnRenderFrame(deltaTime);
+//                layerMap.OnRenderFrame(deltaTime);
+//                layerHud.OnRenderFrame(deltaTime);
+//                layerInfo.OnRenderFrame(deltaTime);
+//
                 Glut.glutSwapBuffers();
             }
         }
@@ -253,22 +276,26 @@ namespace GameCore.Render.MainRenderer
             this.width = width;
             this.height = height;
 
-            layerSky.OnReshape(width,height);
-            layerMap.OnReshape(width, height);
-            layerGame.OnReshape(width, height);
-            layerHud.OnReshape(width, height);
-            layerInfo.OnReshape(width, height);
+            theSceneManager.OnReshape(width,height);
+//
+//            layerSky.OnReshape(width,height);
+//            layerMap.OnReshape(width, height);
+//            layerGame.OnReshape(width, height);
+//            layerHud.OnReshape(width, height);
+//            layerInfo.OnReshape(width, height);
         }
 
         private void OnClose()
         {
-            layerSky.OnClose();
-            layerMap.OnClose();
-            layerGame.OnClose();
-            layerHud.OnClose();
-            layerInfo.OnClose();
+            theSceneManager.OnClose();
 
-            theMaterialManager.Close();
+//            layerSky.OnClose();
+//            layerMap.OnClose();
+//            layerGame.OnClose();
+//            layerHud.OnClose();
+//            layerInfo.OnClose();
+//
+//            theMaterialManager.Close();
         }
 
         #region Controls
@@ -276,32 +303,40 @@ namespace GameCore.Render.MainRenderer
         private void OnMouse(int button, int state, int x, int y)
         {
             MouseCoord = new Vector2(x, y);
-            if (layerHud.OnMouse(button, state, x, y))
+            if (theSceneManager.OnMouse(button, state, x, y))
             {
-                MouseWorld = layerHud.MouseWorld;
+                MouseWorld = theSceneManager.MouseWorld;
             }
-            else
-            {
-                if (layerGame.OnMouse(button, state, x, y))
-                {
-                    MouseWorld = layerGame.MouseWorld;
-                }
-            }
+//
+//            if (layerHud.OnMouse(button, state, x, y))
+//            {
+//                MouseWorld = layerHud.MouseWorld;
+//            }
+//            else
+//            {
+//                if (layerGame.OnMouse(button, state, x, y))
+//                {
+//                    MouseWorld = layerGame.MouseWorld;
+//                }
+//            }
         }
 
         private void OnMove(int x, int y)
         {
-            layerGame.OnMove(x, y);
+            theSceneManager.OnMove(x,y);
+//            layerGame.OnMove(x, y);
         }
 
         private void OnSpecialKeyboardDown(int key, int x, int y)
         {
-            layerGame.OnSpecialKeyboardDown(key, x, y);
+            theSceneManager.OnSpecialKeyboardDown(key,x,y);
+//            layerGame.OnSpecialKeyboardDown(key, x, y);
         }
 
         private void OnSpecialKeyboardUp(int key, int x, int y)
         {
-            layerGame.OnSpecialKeyboardUp(key, x, y);
+             theSceneManager.OnSpecialKeyboardUp(key, x, y);
+//            layerGame.OnSpecialKeyboardUp(key, x, y);
         }
 
         private void OnKeyboardDown(byte key, int x, int y)
@@ -313,7 +348,8 @@ namespace GameCore.Render.MainRenderer
             }
             else
             {
-                layerGame.OnKeyboardDown(key, x, y);
+                theSceneManager.OnKeyboardDown(key, x, y);
+//                layerGame.OnKeyboardDown(key, x, y);
             }
 //            else
 //            {
@@ -339,8 +375,9 @@ namespace GameCore.Render.MainRenderer
                     Glut.glutReshapeWindow(formWidth, formHeight);
                 }
             }
-            layerGame.OnKeyboardUp(key, x, y);
-            layerInfo.OnKeyboardUp(key, x, y);
+            theSceneManager.OnKeyboardUp(key, x, y);
+//            layerGame.OnKeyboardUp(key, x, y);
+//            layerInfo.OnKeyboardUp(key, x, y);
         }
 
         #endregion

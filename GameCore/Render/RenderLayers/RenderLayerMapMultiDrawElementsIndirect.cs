@@ -77,6 +77,7 @@ namespace GameCore.Render.RenderLayers
     };
 
 
+
     public class RenderLayerMapMultiDrawElementsIndirect : RenderLayerBase
     {
         public Camera Camera;
@@ -114,12 +115,15 @@ namespace GameCore.Render.RenderLayers
         private VBO<float> gVertexBuffer;
         private VBO<int> gElementBuffer;
         private VBO<int> gIndirectBuffer;
-        private VBO<int> gDrawIdBuffer;
+        private VBO<float> gDrawIdBuffer;
 
         private int numberOfTiles;
         private int stride;
         private uint textureId;
 
+        public RenderLayerMapMultiDrawElementsIndirect()
+        {
+        }
 
         public RenderLayerMapMultiDrawElementsIndirect(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
             KeyBindings theKeyBindings, MaterialManager theMaterialManager)
@@ -249,7 +253,7 @@ namespace GameCore.Render.RenderLayers
 
 
             //Generate an instanced vertex array to identify each draw call in the shader
-            int[] vDrawId = new int[numberOfTiles];
+            float[] vDrawId = new float[numberOfTiles];
 
             index = 0;
             foreach (Tile aTile in tempTiles)
@@ -264,7 +268,7 @@ namespace GameCore.Render.RenderLayers
             //                vDrawId[i] = i;
             //            }
 
-            gDrawIdBuffer = new VBO<int>(vDrawId, VertexAttribPointerType.Int, BufferTarget.ArrayBuffer,
+            gDrawIdBuffer = new VBO<float>(vDrawId, VertexAttribPointerType.Float, BufferTarget.ArrayBuffer,
                 BufferUsageHint.StaticDraw);
             Gl.BindBuffer(gDrawIdBuffer);
 
@@ -353,20 +357,20 @@ namespace GameCore.Render.RenderLayers
                 //                     GL_UNSIGNED_BYTE,      //type
                 //                     color);                //pointer to data
             }
-
-            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter, TextureParameter.Nearest);
-            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter, TextureParameter.Nearest);//(int)TextureParam.Linear);   // linear filter
+//
+//            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter, TextureParameter.Nearest);
+//            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter, TextureParameter.Nearest);//(int)TextureParam.Linear);   // linear filter
 //            Gl.BindTexture(TextureTarget.Texture2DArray, 0);
 
 
-//            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter,
-//                TextureParameter.Linear);
-//            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter,
-//                TextureParameter.Linear);
-//            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapS,
-//                TextureParameter.ClampToEdge);
-//            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapT,
-//                TextureParameter.ClampToEdge);
+            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter,
+                TextureParameter.Linear);
+            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter,
+                TextureParameter.Linear);
+            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapS,
+                TextureParameter.ClampToEdge);
+            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapT,
+                TextureParameter.ClampToEdge);
         }
 
 
@@ -380,7 +384,6 @@ namespace GameCore.Render.RenderLayers
             //            Gl.UseProgram(program);
             program.Use();
             program["view_matrix"].SetValue(Camera.ViewMatrix);
-            program["projection_matrix"].SetValue(projectionMatrix);
             program["projection_matrix"].SetValue(projectionMatrix);
 //            program["textureArray"].SetValue(textureId);
 
@@ -407,8 +410,8 @@ namespace GameCore.Render.RenderLayers
             Gl.BindBuffer(gDrawIdBuffer);
 //            Gl.VertexAttribPointer(locationDrawid, 1, VertexAttribPointerType.Int, false, Marshal.SizeOf(typeof(int)),
 //                IntPtr.Zero);
-            Gl.VertexAttribPointer(locationDrawid, 1, VertexAttribPointerType.Int, false, 4,IntPtr.Zero);
-//            Gl.VertexAttribDivisor(locationDrawid, 1);
+            Gl.VertexAttribPointer(locationDrawid, 1, VertexAttribPointerType.Float, false, sizeof(Single), IntPtr.Zero);
+            Gl.VertexAttribDivisor(locationDrawid, 1);
             // This needs to be implemented.
             // https://www.opengl.org/wiki/GLAPI/glMultiDrawElementsIndirect
             //  glClear( GL_COLOR_BUFFER_BIT );
@@ -490,19 +493,19 @@ namespace GameCore.Render.RenderLayers
 #version 430 core
     in vec3 position;
     in vec2 texCoord;
-    in int drawTexId;
+    in float drawTexId;
     uniform mat4 view_matrix;
     uniform mat4 projection_matrix;
 
     out vec2 uv;
-    flat out int drawID;
+    flat out float drawID;
     void main(void)
     {
       gl_Position = projection_matrix *view_matrix * vec4(position,1.0);
       uv = texCoord;
      // drwaID = drawTexId;
      // int tempDrawId = drawTexId/1000000000;
-     drawID = 1;
+     drawID = drawTexId;
     }";
 
 
@@ -562,7 +565,7 @@ namespace GameCore.Render.RenderLayers
 #version 430 core
     out vec4 color;
     in vec2 uv;
-    flat in int drawID;
+    flat in float drawID;
 //    in int drawID;
     layout (binding=0) uniform sampler2DArray textureArray;
     void main(void)

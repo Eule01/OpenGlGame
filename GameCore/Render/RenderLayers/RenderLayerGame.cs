@@ -21,7 +21,6 @@ namespace GameCore.Render.RenderLayers
 {
     public class RenderLayerGame : RenderLayerBase
     {
-        public Camera Camera;
 
         private ShaderProgram program;
         private List<IObjGroup> objMeshs;
@@ -36,7 +35,6 @@ namespace GameCore.Render.RenderLayers
         private bool mouseDown;
         private int downX, downY;
         private int prevX, prevY;
-        public Vector3 MouseWorld = Vector3.Zero;
 
         private List<ObjObject> theTileObjects;
         private List<ObjGameObject> theRenderGameObjects;
@@ -76,6 +74,10 @@ namespace GameCore.Render.RenderLayers
         private const bool UseObjMap = false;
         private ObjMap objTileMap;
 
+        public RenderLayerGame()
+        {
+        }
+
         public RenderLayerGame(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
             KeyBindings theKeyBindings, MaterialManager theMaterialManager)
             : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
@@ -89,7 +91,7 @@ namespace GameCore.Render.RenderLayers
             // create our shader program
             program = new ShaderProgram(VertexShader, FragmentShader);
 
-            SetupCamera();
+//            SetupCamera();
 //            Camera.SetDirection(new Vector3(0, 0, -1));
 
             // set up the projection and view matrix
@@ -187,15 +189,15 @@ namespace GameCore.Render.RenderLayers
 
             if (UseObjMap)
             {
-                objTileMap = new ObjMap(TheGameStatus.TheMap, Camera);
+                objTileMap = new ObjMap(TheGameStatus.TheMap, TheCamera);
             }
         }
 
         public void SetupCamera()
         {
 // create our camera
-            Camera = new Camera(new Vector3(0, 20, 10), Quaternion.Identity);
-            Camera.SetDirection(new Vector3(1, -3, -1));
+            TheCamera = new Camera(new Vector3(0, 20, 10), Quaternion.Identity);
+            TheCamera.SetDirection(new Vector3(1, -3, -1));
         }
 
 
@@ -209,17 +211,17 @@ namespace GameCore.Render.RenderLayers
 //            else Gl.Disable(EnableCap.Multisample);
 
             // update our camera by moving it camForward to 5 units per second in each direction
-            if (camBack) Camera.MoveRelative(Vector3.UnitZ*deltaTime*5);
-            if (camForward) Camera.MoveRelative(-Vector3.UnitZ*deltaTime*5);
-            if (camLeft) Camera.MoveRelative(-Vector3.UnitX*deltaTime*5);
-            if (camRight) Camera.MoveRelative(Vector3.UnitX*deltaTime*5);
-            if (camUp) Camera.MoveRelative(Vector3.Up*deltaTime*3);
-            if (camDown) Camera.MoveRelative(-Vector3.Up*deltaTime*3);
+            if (camBack) TheCamera.MoveRelative(Vector3.UnitZ * deltaTime * 5);
+            if (camForward) TheCamera.MoveRelative(-Vector3.UnitZ * deltaTime * 5);
+            if (camLeft) TheCamera.MoveRelative(-Vector3.UnitX * deltaTime * 5);
+            if (camRight) TheCamera.MoveRelative(Vector3.UnitX * deltaTime * 5);
+            if (camUp) TheCamera.MoveRelative(Vector3.Up * deltaTime * 3);
+            if (camDown) TheCamera.MoveRelative(-Vector3.Up * deltaTime * 3);
 
 
             // apply our camera view matrix to the shader view matrix (this can be used for all objects in the scene)
             Gl.UseProgram(program);
-            program["view_matrix"].SetValue(Camera.ViewMatrix);
+            program["view_matrix"].SetValue(TheCamera.ViewMatrix);
 //            program["model_matrix"].SetValue(Matrix4.Identity);
             program["enable_lighting"].SetValue(lighting);
 
@@ -254,7 +256,7 @@ namespace GameCore.Render.RenderLayers
                 Gl.Enable(EnableCap.PointSmooth);
 
                 // shift the mouse point a bit toward the camera
-                Vector3 mousePoint = MouseWorld + ((Camera.Position - MouseWorld).Normalize())*0.01f;
+                Vector3 mousePoint = MouseWorld + ((TheCamera.Position - MouseWorld).Normalize()) * 0.01f;
 
                 Vector3[] vertexData = new[]
                 {
@@ -339,7 +341,7 @@ namespace GameCore.Render.RenderLayers
         {
             if (button == Glut.GLUT_LEFT_BUTTON && state == Glut.GLUT_DOWN)
             {
-                MouseWorld = ConvertScreenToWorldCoords(x, y, Camera.ViewMatrix, projectionMatrix, Camera.Position);
+                MouseWorld = ConvertScreenToWorldCoords(x, y, TheCamera.ViewMatrix, projectionMatrix, TheCamera.Position);
                 Vector2 playerMouseVec =
                     (new Vector2(MouseWorld.x, MouseWorld.z) -
                      new Vector2(TheGameStatus.ThePlayer.Location.X, TheGameStatus.ThePlayer.Location.Y)).Normalize();
@@ -376,10 +378,10 @@ namespace GameCore.Render.RenderLayers
             if (mouseDown)
             {
                 float yaw = (prevX - x)*0.002f;
-                Camera.Yaw(yaw);
+                TheCamera.Yaw(yaw);
 
                 float pitch = (prevY - y)*0.002f;
-                Camera.Pitch(pitch);
+                TheCamera.Pitch(pitch);
 
                 prevX = x;
                 prevY = y;
@@ -412,7 +414,7 @@ namespace GameCore.Render.RenderLayers
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraUp]) camUp = false;
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraDown]) camDown = false;
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtPlayer])
-                Camera.LookAt(new Vector3(playerObjObject.TheGameObject.Location.X, 0.0f,
+                TheCamera.LookAt(new Vector3(playerObjObject.TheGameObject.Location.X, 0.0f,
                     playerObjObject.TheGameObject.Location.Y));
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtField])
             {
@@ -420,7 +422,7 @@ namespace GameCore.Render.RenderLayers
                 Vector3 tempTopLeft = new Vector3(tempRec.Location.X, 0.0f, tempRec.Location.Y);
                 Vector3 tempBottomRight = new Vector3(tempRec.Right, 0.0f, tempRec.Bottom);
 
-                Camera.LookAtRectangle(tempTopLeft, tempBottomRight);
+                TheCamera.LookAtRectangle(tempTopLeft, tempBottomRight);
             }
         }
 
@@ -773,8 +775,6 @@ uniform bool enable_lighting;
 
 void main(void)
 {
-//    float ambient = 0.2;
-//    vec3 light_direction = normalize(vec3(1, 1, 0));
     float light = (enable_lighting ? max(ambient, dot(normal, light_direction)) : 1);
     vec4 sample = (useTexture ? texture2D(texture, uv) : vec4(1, 1, 1, 1));
     fragment = vec4(light * diffuse * sample.xyz, transparency * sample.a);

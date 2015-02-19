@@ -20,15 +20,16 @@ namespace GameCore.Render.RenderLayers
         private ShaderProgram hudProgram;
         private List<ObjHudPanel> theHudPanels = new List<ObjHudPanel>();
 
-        public Vector3 MouseWorld = Vector3.Zero;
         private Matrix4 projectionMatrix;
 
+        public RenderLayerHud()
+        {
+        }
 
         public RenderLayerHud(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
                               KeyBindings theKeyBindings, MaterialManager theMaterialManager)
             : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
         {
-
         }
 
         public override void OnLoad()

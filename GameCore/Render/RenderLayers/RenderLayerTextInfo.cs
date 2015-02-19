@@ -18,6 +18,9 @@ namespace GameCore.Render.RenderLayers
         private FontVAO information;
         public string GameInfo = "";
 
+        public RenderLayerTextInfo()
+        {
+        }
 
         public RenderLayerTextInfo(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
                                    KeyBindings theKeyBindings, MaterialManager theMaterialManager)
