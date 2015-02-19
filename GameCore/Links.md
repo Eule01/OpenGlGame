@@ -213,6 +213,19 @@ http://www.wenda.io/questions/4379561/opentk-multiple-textures-on-cube-dont-work
 
 http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-16-shadow-mapping/
 
+# Tile Map examples
+
+DrawArrays
+http://forum.lwjgl.org/index.php?topic=5374.0   *****
+
+
+
+http://stackoverflow.com/questions/17556093/opengl-es-cascade-2d-grid-tiling-with-texture
+
+# Lighting examples
+
+http://www.alcove-games.com/opengl-es-2-tutorials/lightmap-shader-fire-effect-glsl/
+
 
 # Quaternion and Rotations
 
@@ -248,6 +261,9 @@ http://quabr.com/27607340/vbo-equivalent-of-display-list-with-multiple-primitive
 http://www.arcsynthesis.org/gltut/Positioning/Tut05%20Optimization%20Base%20Vertex.html#d0e5179
 
 https://www.opengl.org/wiki/Vertex_Specification    *****
+
+Shows how to render like in minecraft with sourec:
+http://codeflow.org/entries/2010/dec/09/minecraft-like-rendering-experiments-in-opengl-4/ ********
 
 Example:
 https://ferransole.wordpress.com/2014/07/09/multidrawindirect/     *****
@@ -288,6 +304,9 @@ https://developer.nvidia.com/fx-composer
 
 http://en.wikipedia.org/wiki/OpenGL_Shading_Language
 http://stackoverflow.com/questions/5358221/shader-ide-suggestion-for-glsl-or-hlsl
+
+Online shader designer:
+http://www.kickjs.org/example/shader_editor/shader_editor.html  *****
 
 # Physic engine
 

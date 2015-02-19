@@ -131,13 +131,6 @@ namespace GameCore.Render.RenderLayers
             objMeshs.Add(tempObjMesh2);
 
 
-//            tempObjGroup = new ObjGroup(@"./Resources/Models/cube.obj",program);
-//            objMeshs.Add(tempObjGroup);
-
-
-//            objMeshs = new ObjGroup(program);
-            // objMeshs = new ObjGroup("enterprise.obj", program);
-
             ObjMaterial tempMaterial = TheMaterialManager.GetPlainColor(program, "GamePlainGreen", Color.Green);
 
             tileTextures = RenderObjects.RenderObjects.CreateTileTextures(new Size(20, 20), program);
@@ -251,7 +244,7 @@ namespace GameCore.Render.RenderLayers
             // Reset the model matrix
             program["model_matrix"].SetValue(Matrix4.Identity);
 
-            if (false)
+            if (true)
             {
                 // Draw a small test grid
                 double delta = 5;
@@ -280,17 +273,17 @@ namespace GameCore.Render.RenderLayers
                 vertices = null;
             }
 
-//            if (theRenderGameObjects != null)
-//            {
-//                foreach (ObjGameObject renderGameObject in theRenderGameObjects)
-//                {
-//                    renderGameObject.Draw(program);
-//                }
-//                Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-//                Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
-//                Gl.UseProgram(0);
-//
-//            }
+            if (theRenderGameObjects != null)
+            {
+                foreach (ObjGameObject renderGameObject in theRenderGameObjects)
+                {
+                    renderGameObject.Draw(program);
+                }
+                Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+                Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                Gl.UseProgram(0);
+
+            }
 
             if (UseObjMap)
             {

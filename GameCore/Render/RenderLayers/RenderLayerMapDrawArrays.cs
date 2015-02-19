@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Runtime.InteropServices;
 using GameCore.Map;
 using GameCore.Render.Cameras;
 using GameCore.Render.RenderMaterial;
@@ -20,64 +19,7 @@ using PixelFormat = OpenGL.PixelFormat;
 
 namespace GameCore.Render.RenderLayers
 {
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct SVertex2D
-    {
-        public float x, y, z; //Position
-        public float u, v; //Uv
-
-        public float[] ToArray()
-        {
-            return new[] {x, y, z, u, v};
-        }
-
-        public static SVertex2D FromArray(float[] anArray)
-        {
-            if (anArray.Length != 5)
-            {
-                throw new ArgumentException("Needs to be an array of length 5");
-            }
-            SVertex2D tempSVertex2D = new SVertex2D()
-            {
-                x = anArray[0],
-                y = anArray[1],
-                z = anArray[2],
-                u = anArray[3],
-                v = anArray[4]
-            };
-            return tempSVertex2D;
-        }
-
-        public override string ToString()
-        {
-            return "" + x + "," + y + "," + z + "," + u + "," + v;
-        }
-    };
-
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct SDrawElementsCommand
-    {
-        public UInt32 vertexCount;
-        public UInt32 instanceCount;
-        public UInt32 firstIndex;
-        public UInt32 baseVertex;
-        public UInt32 baseInstance;
-
-
-        public UInt32[] ToArray()
-        {
-            return new[] {vertexCount, instanceCount, firstIndex, baseVertex, baseInstance};
-        }
-
-        public override string ToString()
-        {
-            return "" + vertexCount + "," + instanceCount + "," + firstIndex + "," + baseVertex + "," + baseInstance;
-        }
-    };
-
-
-    public class RenderLayerMap : RenderLayerBase
+    public class RenderLayerMapDrawArrays : RenderLayerBase
     {
         public Camera Camera;
         private Map.Map theMap;
@@ -101,7 +43,7 @@ namespace GameCore.Render.RenderLayers
 
         private Matrix4 projectionMatrix;
 
-        private readonly SVertex2D[] gQuad = new SVertex2D[]
+        private readonly SVertex2D[] gQuadIndexed = new SVertex2D[]
         {
             SVertex2D.FromArray(new[] {0.0f, 0.0f, 0.0f, 0.0f, 0.0f}),
             SVertex2D.FromArray(new[] {1.0f, 0.0f, 0.0f, 1.0f, 0.0f}),
@@ -111,17 +53,27 @@ namespace GameCore.Render.RenderLayers
 
         private readonly int[] gIndex = new int[] {0, 1, 2, 1, 3, 2};
 
+        private readonly SVertex2D[] gQuad = new SVertex2D[]
+        {
+            SVertex2D.FromArray(new[] {0.0f, 0.0f, 0.0f, 0.0f, 0.0f}),
+            SVertex2D.FromArray(new[] {1.0f, 0.0f, 0.0f, 1.0f, 0.0f}),
+            SVertex2D.FromArray(new[] {0.0f, 0.0f, 1.0f, 0.0f, 1.0f}),
+            SVertex2D.FromArray(new[] {1.0f, 0.0f, 0.0f, 1.0f, 0.0f}),
+            SVertex2D.FromArray(new[] {1.0f, 0.0f, 1.0f, 1.0f, 1.0f}),
+            SVertex2D.FromArray(new[] {0.0f, 0.0f, 1.0f, 0.0f, 1.0f}),
+        };
+
+
         private VBO<float> gVertexBuffer;
-        private VBO<int> gElementBuffer;
-        private VBO<int> gIndirectBuffer;
-        private VBO<int> gDrawIdBuffer;
+        private VBO<float> gDrawIdBuffer;
+//        private VBO<int> gDrawIdBuffer;
 
         private int numberOfTiles;
         private int stride;
         private uint textureId;
 
 
-        public RenderLayerMap(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
+        public RenderLayerMapDrawArrays(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
             KeyBindings theKeyBindings, MaterialManager theMaterialManager)
             : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
         {
@@ -150,12 +102,65 @@ namespace GameCore.Render.RenderLayers
             GenerateArrayTexture();
 
             Gl.UseProgram(0);
-            Gl.BindBuffer(BufferTarget.DrawIndirectBuffer, 0);
-            Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
-
+        /// <summary>
+        /// http://forum.lwjgl.org/index.php?topic=5374.0
+        /// </summary>
+//        private void createVBO()
+//        {
+//            FloatBuffer texCoords = BufferUtils.createFloatBuffer(2 * 4 * numColMap * numRowMap);
+//            FloatBuffer vertices = BufferUtils.createFloatBuffer(2 * 4 * numColMap * numRowMap);
+//
+//            for (int row = 0; row < numRowMap; row++)
+//            {
+//                for (int col = 0; col < numColMap; col++)
+//                {
+//
+//                    currentTile = map[row][col];
+//
+//                    if (currentTile == 0) continue;
+//
+//
+//                    int index = Math.abs(currentTile);
+//
+//
+//
+//                    if (currentTile < 0)
+//                        flip = true;
+//                    else
+//                        flip = false;
+//
+//
+//
+//
+//                    texCoords.put(tilset[index].getTexCoords());
+//
+//                    vertices.put(new float[]
+//                        {
+//                        (float) (x + col * tileSize + (flip?tileSize:0)), (float) (y + row * tileSize),
+//                        (float) (x + col * tileSize + tileSize * (flip?-1:1) + (flip?tileSize:0)), (float) (y + row * tileSize),
+//                        (float) (x + col * tileSize + tileSize * (flip?-1:1) + (flip?tileSize:0)), (float) (y + row * tileSize + tileSize),
+//                        (float) (x + col * tileSize + (flip?tileSize:0)), (float) (y + row * tileSize + tileSize)
+//                        });
+//                }
+//            }
+//            texCoords.rewind();
+//            vertices.rewind();
+//
+//            //indexBuffer.rewind();
+//
+//            vboVertexID = glGenBuffers();
+//            glBindBuffer(GL_ARRAY_BUFFER, vboVertexID);
+//            glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+//            glBindBuffer(GL_ARRAY_BUFFER, 0);
+//
+//            vboTextureID = glGenBuffers();
+//            glBindBuffer(GL_ARRAY_BUFFER, vboTextureID);
+//            glBufferData(GL_ARRAY_BUFFER, texCoords, GL_STATIC_DRAW);
+//            glBindBuffer(GL_ARRAY_BUFFER, 0);
+//        }
         private void GenerateGeometry()
         {
             Stopwatch watch = Stopwatch.StartNew();
@@ -170,7 +175,7 @@ namespace GameCore.Render.RenderLayers
             int numberOfTextures = tempTiletypeList.Count;
             // Number of values in SVertex2D
             stride = 5;
-            SVertex2D[] vVertex = new SVertex2D[numberOfTiles*4];
+            SVertex2D[] vVertex = new SVertex2D[numberOfTiles*6];
 
             // n tiles
             // 4 SVertex2D vectors per tile
@@ -180,7 +185,7 @@ namespace GameCore.Render.RenderLayers
             foreach (Tile tempTile in tempTiles)
             {
                 Vector tempLoc = tempTile.Location;
-                for (int k = 0; k != 4; ++k)
+                for (int k = 0; k != 6; ++k)
                 {
                     vVertex[index].x = gQuad[k].x + tempLoc.X;
                     vVertex[index].y = gQuad[k].y;
@@ -192,7 +197,7 @@ namespace GameCore.Render.RenderLayers
             }
 
             // Copy into float array
-            float[] verteses = new float[numberOfTiles*stride*4];
+            float[] verteses = new float[numberOfTiles*stride*6];
 
             index = 0;
             for (int i = 0; i < vVertex.Count(); i++)
@@ -212,60 +217,39 @@ namespace GameCore.Render.RenderLayers
             locationPosition = (uint) Gl.GetAttribLocation(program.ProgramID, "position");
             locationTexCoord = (uint) Gl.GetAttribLocation(program.ProgramID, "texCoord");
 
-            gElementBuffer = new VBO<int>(gIndex, BufferTarget.ElementArrayBuffer);
-            Gl.BindBuffer(gElementBuffer);
-
-            //Generate draw commands
-            SDrawElementsCommand[] vDrawCommand = new SDrawElementsCommand[numberOfTiles];
-            for (uint i = 0; i < numberOfTiles; ++i)
-            {
-                vDrawCommand[i].vertexCount = 6;
-                vDrawCommand[i].instanceCount = 1;
-                vDrawCommand[i].firstIndex = 0;
-                vDrawCommand[i].baseVertex = (uint) (i*4); //****
-                vDrawCommand[i].baseInstance = i;
-            }
-
-
-            // Copy into float array
-            //Generate draw commands
-            int vDrawCommanStride = 5;
-            int[] vDrawCommandArray = new int[numberOfTiles*vDrawCommanStride];
-
-            index = 0;
-            for (int i = 0; i < vDrawCommand.Count(); i++)
-            {
-                vDrawCommandArray[index] = (int) vDrawCommand[i].vertexCount;
-                vDrawCommandArray[index + 1] = (int) vDrawCommand[i].instanceCount;
-                vDrawCommandArray[index + 2] = (int) vDrawCommand[i].firstIndex;
-                vDrawCommandArray[index + 3] = (int) vDrawCommand[i].baseVertex;
-                vDrawCommandArray[index + 4] = (int) vDrawCommand[i].baseInstance;
-                index += vDrawCommanStride;
-            }
-
-            gIndirectBuffer = new VBO<int>(vDrawCommandArray, BufferTarget.DrawIndirectBuffer,
-                BufferUsageHint.StaticDraw);
-            Gl.BindBuffer(gIndirectBuffer);
-
-
+//            int tempStride = sizeof(Single) * stride; // *****
+//
+//            Gl.EnableVertexAttribArray(locationPosition);
+//            Gl.VertexAttribPointer(locationPosition, 3, VertexAttribPointerType.Float, false, tempStride,
+//                IntPtr.Zero);
+//
+//            Gl.EnableVertexAttribArray(locationTexCoord);
+//            Gl.VertexAttribPointer(locationTexCoord, 2, VertexAttribPointerType.Float, false, tempStride,
+//                new IntPtr(3 * sizeof(Single)));
+//
+//
             //Generate an instanced vertex array to identify each draw call in the shader
-            int[] vDrawId = new int[numberOfTiles];
+            float[] vDrawId = new float[numberOfTiles*6];
+//            int[] vDrawId = new int[numberOfTiles*6];
 
-            index = 0;
-            foreach (Tile aTile in tempTiles)
+//            index = 0;
+//            foreach (Tile aTile in tempTiles)
+//            {
+//                vDrawId[index] = (int) aTile.TheTileId;
+//                index++;
+//            }
+
+
+            for (int i = 0; i < numberOfTiles*6; i++)
             {
-                vDrawId[index] = (int) aTile.TheTileId;
-                index++;
+                Tile aTile = tempTiles[i/6];
+                vDrawId[i] = (int) aTile.TheTileId;
             }
 
-
-            //            for (UInt32 i = 0; i < numberOfTiles; i++)
-            //            {
-            //                vDrawId[i] = i;
-            //            }
-
-            gDrawIdBuffer = new VBO<int>(vDrawId, VertexAttribPointerType.Int, BufferTarget.ArrayBuffer,
+            gDrawIdBuffer = new VBO<float>(vDrawId, VertexAttribPointerType.Float, BufferTarget.ArrayBuffer,
                 BufferUsageHint.StaticDraw);
+//            gDrawIdBuffer = new VBO<int>(vDrawId, VertexAttribPointerType.Int, BufferTarget.ArrayBuffer,
+//                BufferUsageHint.StaticDraw);
             Gl.BindBuffer(gDrawIdBuffer);
 
             locationDrawid = (uint) Gl.GetAttribLocation(program.ProgramID, "drawTexId");
@@ -354,8 +338,10 @@ namespace GameCore.Render.RenderLayers
                 //                     color);                //pointer to data
             }
 
-            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter, TextureParameter.Nearest);
-            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter, TextureParameter.Nearest);//(int)TextureParam.Linear);   // linear filter
+            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter,
+                TextureParameter.Nearest);
+            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter,
+                TextureParameter.Nearest); //(int)TextureParam.Linear);   // linear filter
 //            Gl.BindTexture(TextureTarget.Texture2DArray, 0);
 
 
@@ -381,7 +367,6 @@ namespace GameCore.Render.RenderLayers
             program.Use();
             program["view_matrix"].SetValue(Camera.ViewMatrix);
             program["projection_matrix"].SetValue(projectionMatrix);
-            program["projection_matrix"].SetValue(projectionMatrix);
 //            program["textureArray"].SetValue(textureId);
 
 
@@ -400,21 +385,50 @@ namespace GameCore.Render.RenderLayers
                 new IntPtr(3*sizeof (Single)));
 
 
-            Gl.BindBuffer(gIndirectBuffer);
+//            Gl.BindBuffer(gIndirectBuffer);
 
 
             Gl.EnableVertexAttribArray(locationDrawid);
             Gl.BindBuffer(gDrawIdBuffer);
 //            Gl.VertexAttribPointer(locationDrawid, 1, VertexAttribPointerType.Int, false, Marshal.SizeOf(typeof(int)),
 //                IntPtr.Zero);
-            Gl.VertexAttribPointer(locationDrawid, 1, VertexAttribPointerType.Int, false, 4,IntPtr.Zero);
+
+
+            Gl.VertexAttribPointer(locationDrawid, 1, VertexAttribPointerType.Float, false, sizeof(Single), IntPtr.Zero);
+//            Gl.VertexAttribPointer(locationDrawid, 1, VertexAttribPointerType.Int, false, 4, IntPtr.Zero);
+
+
 //            Gl.VertexAttribDivisor(locationDrawid, 1);
             // This needs to be implemented.
             // https://www.opengl.org/wiki/GLAPI/glMultiDrawElementsIndirect
             //  glClear( GL_COLOR_BUFFER_BIT );
 
 
-            Gl.MultiDrawElementsIndirect(BeginMode.Triangles, DrawElementsType.UnsignedInt, IntPtr.Zero, numberOfTiles,0);
+            //https://www.opengl.org/sdk/docs/man/html/glMultiDrawElementsIndirect.xhtml
+//             GLsizei n;
+//    for (n = 0; n < drawcount; n++) {
+//        const DrawElementsIndirectCommand *cmd;
+//        if (stride != 0) {
+//            cmd = (const DrawElementsIndirectCommand  *)((uintptr)indirect + n * stride);
+//        } else {
+//            cmd = (const DrawElementsIndirectCommand  *)indirect + n;
+//        }
+//
+//        glDrawElementsInstancedBaseVertexBaseInstance(mode,
+//                                                      cmd->count,
+//                                                      type,
+//                                                      cmd->firstIndex + size-of-type,
+//                                                      cmd->instanceCount,
+//                                                      cmd->baseVertex,
+//                                                      cmd->baseInstance);
+//    }
+
+
+            Gl.DrawArrays(BeginMode.Triangles, 0, numberOfTiles*6);
+
+//            Gl.DisableVertexAttribArray(0);
+//            Gl.Finish();
+//            Gl.MultiDrawElementsIndirect(BeginMode.Triangles, DrawElementsType.UnsignedInt, IntPtr.Zero, numberOfTiles,0);
             //  glMultiDrawElementsIndirect( GL_TRIANGLES, 
             //			       GL_UNSIGNED_INT, 
             //			       (GLvoid*)0, 
@@ -444,8 +458,6 @@ namespace GameCore.Render.RenderLayers
         public override void OnClose()
         {
             if (gVertexBuffer != null) gVertexBuffer.Dispose();
-            if (gElementBuffer != null) gElementBuffer.Dispose();
-            if (gIndirectBuffer != null) gIndirectBuffer.Dispose();
             if (gDrawIdBuffer != null) gDrawIdBuffer.Dispose();
             Gl.DeleteTextures(1, new uint[] {textureId});
         }
@@ -490,19 +502,25 @@ namespace GameCore.Render.RenderLayers
 #version 430 core
     in vec3 position;
     in vec2 texCoord;
-    in int drawTexId;
+    in float drawTexId;
+//    in int drawTexId;
     uniform mat4 view_matrix;
     uniform mat4 projection_matrix;
 
     out vec2 uv;
-    flat out int drawID;
+    flat out float drawID;
+//    flat out int drawID;
     void main(void)
     {
-      gl_Position = projection_matrix *view_matrix * vec4(position,1.0);
-      uv = texCoord;
-     // drwaID = drawTexId;
+//        int tempDrawId = int(drawTexId);
+//        drawID = tempDrawId;
+        drawID = drawTexId;
+     //   drwaID = float(tempDrawId);
+        gl_Position = projection_matrix *view_matrix * vec4(position,1.0);
+        uv = texCoord;
      // int tempDrawId = drawTexId/1000000000;
-     drawID = 1;
+     //int actual_layer = max(0, min(4 - 1, floor(drawTexId​ + 0.5)) )
+     //drwaID = actual_layer;
     }";
 
 
@@ -562,14 +580,16 @@ namespace GameCore.Render.RenderLayers
 #version 430 core
     out vec4 color;
     in vec2 uv;
-    flat in int drawID;
-//    in int drawID;
+//    flat in int drawID;
+    flat in float drawID;
     layout (binding=0) uniform sampler2DArray textureArray;
+
     void main(void)
     {
-    //    int actual_layer = max(0, min(d​ - 1, floor(drawID​ + 0.5)) )
-    //  color = texture(textureArray, vec3(uv.x,uv.y,actual_layer) );
-      color = texture(textureArray, vec3(uv.x,uv.y,drawID) );
+      //float actual_layer = max(0.0, min(4.0 - 1.0, floor(float(drawID)​ + 0.5)));
+        float actual_layer = max(0.0, min(4.0 - 1.0,floor(float(drawID) + 0.5)));
+    color = texture(textureArray, vec3(uv.x,uv.y,actual_layer) );
+    //  color = texture(textureArray, vec3(uv.x,uv.y,drawID) );
     }";
         private uint locationPosition;
         private uint locationDrawid;
