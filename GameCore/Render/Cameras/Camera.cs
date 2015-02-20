@@ -1,5 +1,8 @@
 #region
 
+using System.Drawing;
+using GameCore.Render.RenderLayers;
+using GameCore.UserInterface;
 using GameCore.Utils;
 using OpenGL;
 
@@ -7,12 +10,19 @@ using OpenGL;
 
 namespace GameCore.Render.Cameras
 {
-    public class Camera
+    public class Camera : RenderLayerBase
     {
         private Vector3 position;
         private Quaternion orientation;
         private Matrix4 viewMatrix; // a cached version of the view matrix
         private bool dirty = true; // true if the viewMatrix must be recalculated
+
+        private bool camLeft, camRight, camForward, camBack;
+
+        private bool camUp;
+        private bool camDown;
+        private Camera TheCamera;
+
 
         /// <summary>
         ///     Modify the position of the eye of the camera.
@@ -169,5 +179,86 @@ namespace GameCore.Render.Cameras
         }
 
 
+        public override void OnLoad()
+        {
+            
+        }
+
+        public override void OnDisplay()
+        {
+        }
+
+        public override void OnRenderFrame(float deltaTime)
+        {
+            // update our camera by moving it camForward to 5 units per second in each direction
+            if (camBack) TheCamera.MoveRelative(Vector3.UnitZ * deltaTime * 5);
+            if (camForward) TheCamera.MoveRelative(-Vector3.UnitZ * deltaTime * 5);
+            if (camLeft) TheCamera.MoveRelative(-Vector3.UnitX * deltaTime * 5);
+            if (camRight) TheCamera.MoveRelative(Vector3.UnitX * deltaTime * 5);
+            if (camUp) TheCamera.MoveRelative(Vector3.Up * deltaTime * 3);
+            if (camDown) TheCamera.MoveRelative(-Vector3.Up * deltaTime * 3);
+        }
+
+        public override void OnReshape(int width, int height)
+        {
+        }
+
+        public override void OnClose()
+        {
+        }
+
+        public override void ReInitialize()
+        {
+            TheCamera = TheGameStatus.TheCamera;
+        }
+
+
+        public override bool OnMouse(int button, int state, int x, int y)
+        {
+            return false;
+        }
+
+        public override void OnMove(int x, int y)
+        {
+        }
+
+
+        public override void OnSpecialKeyboardDown(int key, int x, int y)
+        {
+            //            Console.WriteLine("Key: " + key);
+            if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraForward]) camForward = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraBackward]) camBack = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraRight]) camRight = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraLeft]) camLeft = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraUp]) camUp = true;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraDown]) camDown = true;
+        }
+
+        public override void OnSpecialKeyboardUp(int key, int x, int y)
+        {
+            if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraForward]) camForward = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraBackward]) camBack = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraRight]) camRight = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraLeft]) camLeft = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraUp]) camUp = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraDown]) camDown = false;
+            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtField])
+            {
+                RectangleF tempRec = TheGameStatus.TheMap.TheBoundingBox;
+                Vector3 tempTopLeft = new Vector3(tempRec.Location.X, 0.0f, tempRec.Location.Y);
+                Vector3 tempBottomRight = new Vector3(tempRec.Right, 0.0f, tempRec.Bottom);
+
+                TheCamera.LookAtRectangle(tempTopLeft, tempBottomRight);
+            }
+        }
+
+
+        public override void OnKeyboardDown(byte key, int x, int y)
+        {
+        }
+
+        public override void OnKeyboardUp(byte key, int x, int y)
+        {
+        }
     }
 }

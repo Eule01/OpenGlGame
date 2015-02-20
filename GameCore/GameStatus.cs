@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.IO;
 using GameCore.GameObjects;
+using GameCore.Render.Cameras;
 using GameCore.Utils;
 
 #endregion
@@ -21,8 +22,13 @@ namespace GameCore
         /// </summary>
         internal List<GameObject> GameObjects;
 
-
+        /// <summary>
+        /// The player object.
+        /// </summary>
         internal ObjectPlayer ThePlayer;
+
+        internal Environment TheEnvironment;
+
 
         /// <summary>
         ///     The millisecond run from start for this status.
@@ -34,16 +40,18 @@ namespace GameCore
             Init();
         }
 
+        public Camera TheCamera;
+
         private void Init()
         {
             GameObjects = new List<GameObject>();
-            TheMap = Map.Map.GetTestMap();
+//            TheMap = Map.Map.CreateTestMap();
             theMilliSeconds = 0;
         }
 
         internal static GameStatus CreatTestGame()
         {
-            GameStatus tempGameStatus = new GameStatus {TheMap = Map.Map.GetTestMap()};
+            GameStatus tempGameStatus = new GameStatus {TheMap = Map.Map.CreateTestMap()};
             ObjectPlayer tempPlayer = new ObjectPlayer(GameObject.ObjcetIds.Player) {Location = new Vector(10.3, 5.6)};
             tempGameStatus.ThePlayer = tempPlayer;
             tempGameStatus.GameObjects.Add(tempPlayer);

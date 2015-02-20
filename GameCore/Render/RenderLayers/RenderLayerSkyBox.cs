@@ -34,17 +34,10 @@ namespace GameCore.Render.RenderLayers
 
         private Matrix4 projectionMatrix;
         private ObjGroupSkyBox skyBoxObjGroup;
+        private Camera theCamera;
 
 
-        public RenderLayerSkyBox()
-        {
-        }
-
-        public RenderLayerSkyBox(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
-                                 KeyBindings theKeyBindings, MaterialManager theMaterialManager)
-            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
-        {
-        }
+       
 
         public override void OnLoad()
         {
@@ -76,11 +69,11 @@ namespace GameCore.Render.RenderLayers
             Gl.Disable(EnableCap.DepthTest);
             Gl.DepthMask(false);
             Gl.Disable(EnableCap.DepthClamp);
-            Vector3 tempLoc = TheCamera.Position;
+            Vector3 tempLoc = theCamera.Position;
             skyBoxObjGroup.Location = tempLoc;
             Gl.UseProgram(program);
             // apply our camera view matrix to the shader view matrix (this can be used for all objects in the scene)
-            program["view_matrix"].SetValue(TheCamera.ViewMatrix);
+            program["view_matrix"].SetValue(theCamera.ViewMatrix);
 //            program["model_matrix"].SetValue(Matrix4.CreateScaling(new Vector3(0.7,0.7,0.7))*Matrix4.CreateTranslation(new Vector3(tempLoc.x, tempLoc.y, tempLoc.z)));
 
 
@@ -135,6 +128,11 @@ namespace GameCore.Render.RenderLayers
             }
             program.DisposeChildren = true;
             program.Dispose();
+        }
+
+        public override void ReInitialize()
+        {
+            theCamera = TheGameStatus.TheCamera;
         }
 
         public override bool OnMouse(int button, int state, int x, int y)

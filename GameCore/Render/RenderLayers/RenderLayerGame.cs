@@ -21,16 +21,9 @@ namespace GameCore.Render.RenderLayers
 {
     public class RenderLayerGame : RenderLayerBase
     {
-
         private ShaderProgram program;
         private List<IObjGroup> objMeshs;
         private bool wireframe;
-        private bool lighting = true;
-
-        private bool camLeft, camRight, camForward, camBack;
-
-        private bool camUp;
-        private bool camDown;
 
         private bool mouseDown;
         private int downX, downY;
@@ -40,50 +33,16 @@ namespace GameCore.Render.RenderLayers
         private List<ObjGameObject> theRenderGameObjects;
         private ObjGameObject playerObjObject = null;
 
-        /// <summary>
-        ///     The near clipping distance.
-        /// </summary>
-        private const float ZNear = 0.1f;
-
-        /// <summary>
-        ///     The far clipping distance.
-        /// </summary>
-        private const float ZFar = 1000f;
-
-        /// <summary>
-        ///     Field of view of the camera
-        /// </summary>
-        private const float Fov = 0.45f;
-
         private Matrix4 projectionMatrix;
 
         private ObjMaterial pointMaterial;
         private Dictionary<Tile.TileIds, PlainBmpTexture> tileTextures;
-        private bool lightMove = true;
-
-        /// <summary>
-        ///     The direction of the lighting.
-        /// </summary>
-        private Vector3 lightDirection = new Vector3(10, 10, 10).Normalize();
-
-        /// <summary>
-        ///     The ambient lighting level [0.0-1.0]
-        /// </summary>
-        private float ambientLighting = 0.4f;
 
         private const bool UseObjMap = false;
         private ObjMap objTileMap;
 
-        public RenderLayerGame()
-        {
-        }
-
-        public RenderLayerGame(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
-            KeyBindings theKeyBindings, MaterialManager theMaterialManager)
-            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
-        {
-        }
-
+        private Environment theEnvironment;
+        private Camera TheCamera;
 
 
         public override void OnLoad()
@@ -96,13 +55,14 @@ namespace GameCore.Render.RenderLayers
 
             // set up the projection and view matrix
             program.Use();
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(Fov, (float) Width/Height, ZNear,
-                ZFar);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(TheRenderStatus.Fov,
+                (float) TheRenderStatus.Width/TheRenderStatus.Height, TheRenderStatus.ZNear,
+                TheRenderStatus.ZFar);
             program["projection_matrix"].SetValue(projectionMatrix);
             program["model_matrix"].SetValue(Matrix4.Identity);
-            program["light_direction"].SetValue(lightDirection);
-            program["enable_lighting"].SetValue(lighting);
-            program["ambient"].SetValue(ambientLighting);
+            program["light_direction"].SetValue(theEnvironment.LightDirection);
+            program["enable_lighting"].SetValue(theEnvironment.Lighting);
+            program["ambient"].SetValue(theEnvironment.LightAmbient);
 
             pointMaterial = TheMaterialManager.GetPlainColor(program, "GamePlainRed", Color.Red);
 
@@ -193,14 +153,6 @@ namespace GameCore.Render.RenderLayers
             }
         }
 
-        public void SetupCamera()
-        {
-// create our camera
-            TheCamera = new Camera(new Vector3(0, 20, 10), Quaternion.Identity);
-            TheCamera.SetDirection(new Vector3(1, -3, -1));
-        }
-
-
         public override void OnDisplay()
         {
         }
@@ -210,25 +162,17 @@ namespace GameCore.Render.RenderLayers
 //            if (msaa) Gl.Enable(EnableCap.Multisample);
 //            else Gl.Disable(EnableCap.Multisample);
 
-            // update our camera by moving it camForward to 5 units per second in each direction
-            if (camBack) TheCamera.MoveRelative(Vector3.UnitZ * deltaTime * 5);
-            if (camForward) TheCamera.MoveRelative(-Vector3.UnitZ * deltaTime * 5);
-            if (camLeft) TheCamera.MoveRelative(-Vector3.UnitX * deltaTime * 5);
-            if (camRight) TheCamera.MoveRelative(Vector3.UnitX * deltaTime * 5);
-            if (camUp) TheCamera.MoveRelative(Vector3.Up * deltaTime * 3);
-            if (camDown) TheCamera.MoveRelative(-Vector3.Up * deltaTime * 3);
-
 
             // apply our camera view matrix to the shader view matrix (this can be used for all objects in the scene)
             Gl.UseProgram(program);
             program["view_matrix"].SetValue(TheCamera.ViewMatrix);
 //            program["model_matrix"].SetValue(Matrix4.Identity);
-            program["enable_lighting"].SetValue(lighting);
+            program["enable_lighting"].SetValue(theEnvironment.Lighting);
 
-            if (lightMove)
+            if (theEnvironment.LightMove)
             {
-                lightDirection = lightDirection*Matrix4.CreateRotationY(deltaTime);
-                program["light_direction"].SetValue(lightDirection);
+                theEnvironment.LightDirection = theEnvironment.LightDirection*Matrix4.CreateRotationY(deltaTime);
+                program["light_direction"].SetValue(theEnvironment.LightDirection);
             }
 
 
@@ -256,7 +200,7 @@ namespace GameCore.Render.RenderLayers
                 Gl.Enable(EnableCap.PointSmooth);
 
                 // shift the mouse point a bit toward the camera
-                Vector3 mousePoint = MouseWorld + ((TheCamera.Position - MouseWorld).Normalize()) * 0.01f;
+                Vector3 mousePoint = MouseWorld + ((TheCamera.Position - MouseWorld).Normalize())*0.01f;
 
                 Vector3[] vertexData = new[]
                 {
@@ -284,7 +228,6 @@ namespace GameCore.Render.RenderLayers
                 Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
                 Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
                 Gl.UseProgram(0);
-
             }
 
             if (UseObjMap)
@@ -300,8 +243,9 @@ namespace GameCore.Render.RenderLayers
 
 
             Gl.UseProgram(program.ProgramID);
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(Fov, (float) Width/Height, ZNear,
-                ZFar);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(TheRenderStatus.Fov,
+                (float) TheRenderStatus.Width/TheRenderStatus.Height, TheRenderStatus.ZNear,
+                TheRenderStatus.ZFar);
             program["projection_matrix"].SetValue(projectionMatrix);
 
             Gl.UseProgram(0);
@@ -340,11 +284,18 @@ namespace GameCore.Render.RenderLayers
             program.Dispose();
         }
 
+        public override void ReInitialize()
+        {
+            theEnvironment = TheGameStatus.TheEnvironment;
+            TheCamera = TheGameStatus.TheCamera;
+        }
+
         public override bool OnMouse(int button, int state, int x, int y)
         {
             if (button == Glut.GLUT_LEFT_BUTTON && state == Glut.GLUT_DOWN)
             {
-                MouseWorld = ConvertScreenToWorldCoords(x, y, TheCamera.ViewMatrix, projectionMatrix, TheCamera.Position);
+                MouseWorld = ConvertScreenToWorldCoords(x, y, TheCamera.ViewMatrix, projectionMatrix, TheCamera.Position,
+                    TheRenderStatus);
                 Vector2 playerMouseVec =
                     (new Vector2(MouseWorld.x, MouseWorld.z) -
                      new Vector2(TheGameStatus.ThePlayer.Location.X, TheGameStatus.ThePlayer.Location.Y)).Normalize();
@@ -399,34 +350,13 @@ namespace GameCore.Render.RenderLayers
 
         public override void OnSpecialKeyboardDown(int key, int x, int y)
         {
-            //            Console.WriteLine("Key: " + key);
-            if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraForward]) camForward = true;
-            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraBackward]) camBack = true;
-            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraRight]) camRight = true;
-            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraLeft]) camLeft = true;
-            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraUp]) camUp = true;
-            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraDown]) camDown = true;
         }
 
         public override void OnSpecialKeyboardUp(int key, int x, int y)
         {
-            if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraForward]) camForward = false;
-            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraBackward]) camBack = false;
-            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraRight]) camRight = false;
-            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraLeft]) camLeft = false;
-            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraUp]) camUp = false;
-            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraDown]) camDown = false;
-            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtPlayer])
+            if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtPlayer])
                 TheCamera.LookAt(new Vector3(playerObjObject.TheGameObject.Location.X, 0.0f,
                     playerObjObject.TheGameObject.Location.Y));
-            else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtField])
-            {
-                RectangleF tempRec = TheGameStatus.TheMap.TheBoundingBox;
-                Vector3 tempTopLeft = new Vector3(tempRec.Location.X, 0.0f, tempRec.Location.Y);
-                Vector3 tempBottomRight = new Vector3(tempRec.Right, 0.0f, tempRec.Bottom);
-
-                TheCamera.LookAtRectangle(tempTopLeft, tempBottomRight);
-            }
         }
 
         public override void OnKeyboardDown(byte key, int x, int y)
@@ -454,9 +384,9 @@ namespace GameCore.Render.RenderLayers
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.DisplayToggleRenderWireFrame])
                 wireframe = !wireframe;
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.DisplayToggleLighting])
-                lighting = !lighting;
+                theEnvironment.Lighting = !theEnvironment.Lighting;
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.DisplayToggleLightingRotate])
-                lightMove = !lightMove;
+                theEnvironment.LightMove = !theEnvironment.LightMove;
         }
 
         #region Game objects
@@ -601,8 +531,7 @@ namespace GameCore.Render.RenderLayers
         /// <param name="cameraPosition"></param>
         /// <returns></returns>
         public static Vector3 ConvertScreenToWorldCoordsNoDepth(int x, int y, Matrix4 modelViewMatrix,
-            Matrix4 projectionMatrix,
-            Vector3 cameraPosition)
+            Matrix4 projectionMatrix, Vector3 cameraPosition, RenderStatus renderStatus)
         {
             int[] viewport = new int[4];
             Gl.GetIntegerv(GetPName.Viewport, viewport);
@@ -622,7 +551,9 @@ namespace GameCore.Render.RenderLayers
             float z_n = 2.0f*z_b - 1.0f;
 
             // The distance to the camera plane in grid units.
-            float z_e = 2.0f*ZFar*ZNear/(ZFar + ZNear - (ZFar - ZNear)*(2.0f*z_b - 1.0f));
+            float z_e = 2.0f*renderStatus.ZFar*renderStatus.ZNear/
+                        (renderStatus.ZFar + renderStatus.ZNear -
+                         (renderStatus.ZFar - renderStatus.ZNear)*(2.0f*z_b - 1.0f));
 
             Vector3 mouse;
             //            mouse.y = viewport[3] - y;
@@ -635,10 +566,10 @@ namespace GameCore.Render.RenderLayers
             Vector4 vector = UnProject(projectionMatrix, modelViewMatrix, new Size(viewport[2], viewport[3]), mouse);
 
             Vector3 distanceVec = -cameraPosition + vector.Xyz;
-            if (distanceVec.Length > ZFar)
+            if (distanceVec.Length > renderStatus.ZFar)
             {
                 Vector3 distNormVec = distanceVec.Normalize();
-                vector.Xyz = cameraPosition + (distNormVec*ZFar*0.99f);
+                vector.Xyz = cameraPosition + (distNormVec*renderStatus.ZFar*0.99f);
             }
 
             Vector3 coords = new Vector3(vector.x, vector.y, vector.z);
@@ -658,7 +589,7 @@ namespace GameCore.Render.RenderLayers
         /// <param name="cameraPosition"></param>
         /// <returns></returns>
         public static Vector3 ConvertScreenToWorldCoords(int x, int y, Matrix4 modelViewMatrix, Matrix4 projectionMatrix,
-            Vector3 cameraPosition)
+            Vector3 cameraPosition, RenderStatus renderStatus)
         {
             int[] viewport = new int[4];
             Gl.GetIntegerv(GetPName.Viewport, viewport);
@@ -678,7 +609,9 @@ namespace GameCore.Render.RenderLayers
             float z_n = 2.0f*z_b - 1.0f;
 
             // The distance to the camera plane in grid units.
-            float z_e = 2.0f*ZFar*ZNear/(ZFar + ZNear - (ZFar - ZNear)*(2.0f*z_b - 1.0f));
+            float z_e = 2.0f*renderStatus.ZFar*renderStatus.ZNear/
+                        (renderStatus.ZFar + renderStatus.ZNear -
+                         (renderStatus.ZFar - renderStatus.ZNear)*(2.0f*z_b - 1.0f));
 
             Vector3 mouse;
             //            mouse.y = viewport[3] - y;
@@ -691,10 +624,10 @@ namespace GameCore.Render.RenderLayers
             Vector4 vector = UnProject(projectionMatrix, modelViewMatrix, new Size(viewport[2], viewport[3]), mouse);
 
             Vector3 distanceVec = -cameraPosition + vector.Xyz;
-            if (distanceVec.Length > ZFar)
+            if (distanceVec.Length > renderStatus.ZFar)
             {
                 Vector3 distNormVec = distanceVec.Normalize();
-                vector.Xyz = cameraPosition + (distNormVec*ZFar*0.99f);
+                vector.Xyz = cameraPosition + (distNormVec*renderStatus.ZFar*0.99f);
             }
 
             Vector3 coords = new Vector3(vector.x, vector.y, vector.z);

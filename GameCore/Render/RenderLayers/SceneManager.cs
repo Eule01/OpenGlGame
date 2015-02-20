@@ -12,9 +12,12 @@ namespace GameCore.Render.RenderLayers
 {
     public class SceneManager : IRenderLayer
     {
-        private List<IRenderLayer> theRenderLayers = new List<IRenderLayer>();
+        private readonly List<IRenderLayer> theRenderLayers = new List<IRenderLayer>();
         private List<IRenderLayer> theRenderLayersRevered = new List<IRenderLayer>();
-        public Camera theCamera;
+
+        public RenderStatus TheRenderStatus;
+
+        public Camera TheCamera;
 
         private int width = 1280;
         private int height = 720;
@@ -24,26 +27,33 @@ namespace GameCore.Render.RenderLayers
         private MaterialManager theMaterialManager;
         public Vector3 MouseWorld = Vector3.Zero;
 
-        public SceneManager(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
-            KeyBindings theKeyBindings, MaterialManager theMaterialManager)
+        public SceneManager(GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
+            KeyBindings theKeyBindings, MaterialManager theMaterialManager, RenderStatus theRenderStatus)
         {
-            this.width = width;
-            this.height = height;
+            this.width = theRenderStatus.Width;
+            this.height = theRenderStatus.Height;
             this.theGameStatus = theGameStatus;
             this.theUserInputPlayer = theUserInputPlayer;
             this.theKeyBindings = theKeyBindings;
             this.theMaterialManager = theMaterialManager;
+            this.TheRenderStatus = theRenderStatus;
+
+            ReInitialize();
         }
 
         public void AddCamera(Camera aCamera)
         {
-            theCamera = aCamera;
+            TheCamera = aCamera;
+            TheCamera.Width = width;
+            TheCamera.Height = height;
+            TheCamera.TheUserInputPlayer = theUserInputPlayer;
+
             foreach (IRenderLayer aRenderLayer in theRenderLayers)
             {
-                RenderLayerBase tempLayerBase = (RenderLayerBase)aRenderLayer;
-                tempLayerBase.TheCamera = theCamera;
+                RenderLayerBase tempLayerBase = (RenderLayerBase) aRenderLayer;
             }
-
+            theRenderLayers.Insert(0, TheCamera);
+            TheCamera.ReInitialize();
         }
 
 
@@ -52,11 +62,9 @@ namespace GameCore.Render.RenderLayers
             RenderLayerBase tempLayerBase = (RenderLayerBase) aRenderLayer;
             tempLayerBase.Width = width;
             tempLayerBase.Height = height;
-            tempLayerBase.TheGameStatus = theGameStatus;
             tempLayerBase.TheUserInputPlayer = theUserInputPlayer;
-            tempLayerBase.TheKeyBindings = theKeyBindings;
-            tempLayerBase.TheMaterialManager = theMaterialManager;
-            tempLayerBase.TheCamera = theCamera;
+
+            tempLayerBase.ReInitialize();
 
             theRenderLayers.Add(aRenderLayer);
 
@@ -70,7 +78,6 @@ namespace GameCore.Render.RenderLayers
             {
                 renderLayer.OnLoad();
             }
-
         }
 
         public void OnDisplay()
@@ -91,11 +98,13 @@ namespace GameCore.Render.RenderLayers
 
         public void OnReshape(int width, int height)
         {
+            TheRenderStatus.Width = width;
+            TheRenderStatus.Height = height;
             this.width = width;
             this.height = height;
             foreach (IRenderLayer renderLayer in theRenderLayers)
             {
-                renderLayer.OnReshape( width,  height);
+                renderLayer.OnReshape(width, height);
             }
         }
 
@@ -104,6 +113,21 @@ namespace GameCore.Render.RenderLayers
             foreach (IRenderLayer renderLayer in theRenderLayers)
             {
                 renderLayer.OnClose();
+            }
+        }
+
+        public void ReInitialize()
+        {
+            RenderLayerBase.TheGameStatus = theGameStatus;
+            RenderLayerBase.TheRenderStatus = TheRenderStatus;
+            RenderLayerBase.TheKeyBindings = theKeyBindings;
+            RenderLayerBase.TheMaterialManager = theMaterialManager;
+
+            foreach (IRenderLayer renderLayer in theRenderLayers)
+            {
+                renderLayer.ReInitialize();
+                width = TheRenderStatus.Width;
+                height = TheRenderStatus.Height;
             }
         }
 
@@ -126,7 +150,7 @@ namespace GameCore.Render.RenderLayers
         {
             foreach (IRenderLayer renderLayer in theRenderLayers)
             {
-                renderLayer.OnMove( x,  y);
+                renderLayer.OnMove(x, y);
             }
         }
 
@@ -134,7 +158,7 @@ namespace GameCore.Render.RenderLayers
         {
             foreach (IRenderLayer renderLayer in theRenderLayers)
             {
-                renderLayer.OnSpecialKeyboardDown( key,  x,  y);
+                renderLayer.OnSpecialKeyboardDown(key, x, y);
             }
         }
 
@@ -150,7 +174,7 @@ namespace GameCore.Render.RenderLayers
         {
             foreach (IRenderLayer renderLayer in theRenderLayers)
             {
-                renderLayer. OnKeyboardDown( key,  x,  y);
+                renderLayer.OnKeyboardDown(key, x, y);
             }
         }
 
@@ -158,8 +182,19 @@ namespace GameCore.Render.RenderLayers
         {
             foreach (IRenderLayer renderLayer in theRenderLayers)
             {
-                renderLayer.OnKeyboardUp( key,  x,  y);
+                renderLayer.OnKeyboardUp(key, x, y);
             }
+        }
+
+        public override string ToString()
+        {
+            string outStr = "";
+            foreach (IRenderLayer renderLayer in theRenderLayers)
+            {
+              outStr +=  renderLayer.ToString() + System.Environment.NewLine;
+            }
+            outStr += TheCamera.ToString() + System.Environment.NewLine;
+            return outStr;
         }
     }
 }

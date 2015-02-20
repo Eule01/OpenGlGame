@@ -9,7 +9,6 @@ using GameCore.Map;
 using GameCore.Render.Cameras;
 using GameCore.Render.RenderMaterial;
 using GameCore.Render.RenderObjects;
-using GameCore.UserInterface;
 using GameCore.Utils;
 using OpenGL;
 
@@ -23,32 +22,7 @@ namespace GameCore.Render.RenderLayers
 
         private ShaderProgram program;
 
-        /// <summary>
-        ///     The near clipping distance.
-        /// </summary>
-        private const float ZNear = 0.1f;
-
-        /// <summary>
-        ///     The far clipping distance.
-        /// </summary>
-        private const float ZFar = 1000f;
-
-        /// <summary>
-        ///     Field of view of the camera
-        /// </summary>
-        private const float Fov = 0.45f;
-
         private Matrix4 projectionMatrix;
-
-        private readonly SVertex2D[] gQuadIndexed = new SVertex2D[]
-        {
-            SVertex2D.FromArray(new[] {0.0f, 0.0f, 0.0f, 0.0f, 0.0f}),
-            SVertex2D.FromArray(new[] {1.0f, 0.0f, 0.0f, 1.0f, 0.0f}),
-            SVertex2D.FromArray(new[] {0.0f, 0.0f, 1.0f, 0.0f, 1.0f}),
-            SVertex2D.FromArray(new[] {1.0f, 0.0f, 1.0f, 1.0f, 1.0f})
-        };
-
-        private readonly int[] gIndex = new int[] {0, 1, 2, 1, 3, 2};
 
         private readonly SVertex2D[] gQuad = new SVertex2D[]
         {
@@ -73,35 +47,9 @@ namespace GameCore.Render.RenderLayers
         private uint locationDrawid;
         private uint locationTexCoord;
 
-        private bool lighting = true;
-
-        /// <summary>
-        ///     The ambient lighting level [0.0-1.0]
-        /// </summary>
-        private float ambientLighting = 0.4f;
-
         private TextureArray theTextureArray;
-
-        public RenderLayerMapDrawArrays()
-        {
-        }
-
-
-        /// <summary>
-        ///     http://forum.lwjgl.org/index.php?topic=5374.0
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="theGameStatus"></param>
-        /// <param name="theUserInputPlayer"></param>
-        /// <param name="theKeyBindings"></param>
-        /// <param name="theMaterialManager"></param>
-        public RenderLayerMapDrawArrays(int width, int height, GameStatus theGameStatus,
-            UserInputPlayer theUserInputPlayer,
-            KeyBindings theKeyBindings, MaterialManager theMaterialManager)
-            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
-        {
-        }
+        private Environment theEnvironment;
+        private Camera theCamera;
 
         public override void OnLoad()
         {
@@ -112,13 +60,14 @@ namespace GameCore.Render.RenderLayers
 
             // set up the projection and view matrix
             program.Use();
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(Fov, (float) Width/Height, ZNear,
-                ZFar);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(TheRenderStatus.Fov, (float) Width/Height,
+                TheRenderStatus.ZNear,
+                TheRenderStatus.ZFar);
             program["projection_matrix"].SetValue(projectionMatrix);
 //            program["model_matrix"].SetValue(Matrix4.Identity);
 //            program["light_direction"].SetValue(lightDirection);
-            program["enable_lighting"].SetValue(lighting);
-            program["ambient"].SetValue(ambientLighting);
+            program["enable_lighting"].SetValue(theEnvironment.Lighting);
+            program["ambient"].SetValue(theEnvironment.LightAmbient);
 
             GenerateGeometry();
             GenerateArrayTexture();
@@ -242,8 +191,9 @@ namespace GameCore.Render.RenderLayers
         {
             // apply our camera view matrix to the shader view matrix (this can be used for all objects in the scene)
             program.Use();
-            program["view_matrix"].SetValue(TheCamera.ViewMatrix);
+            program["view_matrix"].SetValue(theCamera.ViewMatrix);
             program["projection_matrix"].SetValue(projectionMatrix);
+            program["enable_lighting"].SetValue(theEnvironment.Lighting);
 
 
             theTextureArray.Use();
@@ -282,8 +232,9 @@ namespace GameCore.Render.RenderLayers
 
 
             Gl.UseProgram(program.ProgramID);
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(Fov, (float) Width/Height, ZNear,
-                ZFar);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(TheRenderStatus.Fov,
+                (float) TheRenderStatus.Width/TheRenderStatus.Height, TheRenderStatus.ZNear,
+                TheRenderStatus.ZFar);
             program["projection_matrix"].SetValue(projectionMatrix);
         }
 
@@ -292,6 +243,13 @@ namespace GameCore.Render.RenderLayers
             if (gVertexBuffer != null) gVertexBuffer.Dispose();
             if (gDrawIdBuffer != null) gDrawIdBuffer.Dispose();
             Gl.DeleteTextures(1, new uint[] {textureId});
+        }
+
+        public override void ReInitialize()
+        {
+            theEnvironment = TheGameStatus.TheEnvironment;
+            theMap = TheGameStatus.TheMap;
+            theCamera = TheGameStatus.TheCamera;
         }
 
         /// <summary>

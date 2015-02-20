@@ -42,7 +42,7 @@ namespace GameCore.Utils.Timers
 
         public void Start()
         {
-            lastStatusTime = Environment.TickCount;
+            lastStatusTime = System.Environment.TickCount;
             timerStatus.Start();
         }
 

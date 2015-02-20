@@ -45,11 +45,6 @@ namespace GameCore
         {
             TheGameEventHandler += GameCore_TheGameEventHandler;
             TheGameCore = this;
-            theGameEngine = new GameEngine();
-            theRendererManager = new RendererManager();
-
-//            TheGameStatus = new GameStatus();
-            theGameStatus = GameStatus.CreatTestGame();
         }
 
         public GameStatus TheGameStatus
@@ -105,6 +100,13 @@ namespace GameCore
 
         public void Start()
         {
+            theGameEngine = new GameEngine();
+            theRendererManager = new RendererManager();
+
+            //            TheGameStatus = new GameStatus();
+            theGameStatus = GameStatus.CreatTestGame();
+
+
             theGameEngine.Start();
             ChangeRenderer(0);
             ShowKeyboardBindingForm();

@@ -80,7 +80,7 @@ namespace GameCore.Render.RenderLayers
 
     public class RenderLayerMapMultiDrawElementsIndirect : RenderLayerBase
     {
-        public Camera Camera;
+        private Camera theCamera;
         private Map.Map theMap;
 
         private ShaderProgram program;
@@ -121,16 +121,7 @@ namespace GameCore.Render.RenderLayers
         private int stride;
         private uint textureId;
 
-        public RenderLayerMapMultiDrawElementsIndirect()
-        {
-        }
-
-        public RenderLayerMapMultiDrawElementsIndirect(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
-            KeyBindings theKeyBindings, MaterialManager theMaterialManager)
-            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
-        {
-        }
-
+       
         public override void OnLoad()
         {
             theMap = TheGameStatus.TheMap;
@@ -383,7 +374,7 @@ namespace GameCore.Render.RenderLayers
             // apply our camera view matrix to the shader view matrix (this can be used for all objects in the scene)
             //            Gl.UseProgram(program);
             program.Use();
-            program["view_matrix"].SetValue(Camera.ViewMatrix);
+            program["view_matrix"].SetValue(theCamera.ViewMatrix);
             program["projection_matrix"].SetValue(projectionMatrix);
 //            program["textureArray"].SetValue(textureId);
 
@@ -451,6 +442,12 @@ namespace GameCore.Render.RenderLayers
             if (gIndirectBuffer != null) gIndirectBuffer.Dispose();
             if (gDrawIdBuffer != null) gDrawIdBuffer.Dispose();
             Gl.DeleteTextures(1, new uint[] {textureId});
+        }
+
+        public override void ReInitialize()
+        {
+            theCamera = TheGameStatus.TheCamera;
+
         }
 
         /// <summary>

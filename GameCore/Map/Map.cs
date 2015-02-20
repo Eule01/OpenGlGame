@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Xml.Serialization;
 using GameCore.Utils;
@@ -126,9 +127,15 @@ namespace GameCore.Map
         {
         }
 
-        internal static Map GetTestMap()
+        internal static Map CreateTestMap()
         {
+            Stopwatch watch = Stopwatch.StartNew();
+
             Map aMap = new Map {Tiles = CreatTestTiles(new Size(500, 500))};
+            watch.Stop();
+            GameCore.TheGameCore.RaiseMessage(string.Format("CreateTestMap() took {0}ms", watch.ElapsedMilliseconds));
+
+
             return aMap;
         }
 

@@ -22,16 +22,7 @@ namespace GameCore.Render.RenderLayers
 
         private Matrix4 projectionMatrix;
 
-        public RenderLayerHud()
-        {
-        }
-
-        public RenderLayerHud(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
-                              KeyBindings theKeyBindings, MaterialManager theMaterialManager)
-            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
-        {
-        }
-
+       
         public override void OnLoad()
         {
             hudProgram = new ShaderProgram(VertexShader, FragmentShader);
@@ -177,13 +168,19 @@ namespace GameCore.Render.RenderLayers
             hudProgram.Dispose();
         }
 
+        public override void ReInitialize()
+        {
+            
+
+        }
+
         public override bool OnMouse(int button, int state, int x, int y)
         {
             if (button == Glut.GLUT_LEFT_BUTTON && (state == Glut.GLUT_DOWN || state == Glut.GLUT_UP))
             {
 //                MouseWorld = RenderLayerGame.ConvertScreenToWorldCoordsNoDepth(x, y, Camera.ViewMatrix, projectionMatrix, Vector3.Zero);
                 MouseWorld = RenderLayerGame.ConvertScreenToWorldCoordsNoDepth(x, y, Matrix4.Identity, projectionMatrix,
-                                                                               Vector3.Zero);
+                                                                               Vector3.Zero,TheRenderStatus);
 
                 foreach (ObjHudPanel aHudObject in theHudPanels)
                 {

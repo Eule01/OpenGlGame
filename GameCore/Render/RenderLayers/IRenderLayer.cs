@@ -7,6 +7,7 @@ namespace GameCore.Render.RenderLayers
         void OnRenderFrame(float deltaTime);
         void OnReshape(int width, int height);
         void OnClose();
+        void ReInitialize();
 
         #region UI
 

@@ -1,6 +1,5 @@
 #region
 
-using System;
 using System.Diagnostics;
 using System.Threading;
 using CodeToast;
@@ -29,7 +28,7 @@ namespace GameCore.Render.MainRenderer
 
 
         /// <summary>
-        /// The scene manager containing all the layers and the camera.
+        ///     The scene manager containing all the layers and the camera.
         /// </summary>
         private SceneManager theSceneManager;
 
@@ -37,10 +36,7 @@ namespace GameCore.Render.MainRenderer
 
         private Stopwatch watch;
 
-        private bool fullscreen;
-
         private bool exit;
-
 
         private float fps = 30;
 
@@ -59,17 +55,17 @@ namespace GameCore.Render.MainRenderer
             theKeyBindings.Initialise();
 
             theMaterialManager = new MaterialManager();
-            GameCore.TheGameCore.RaiseMessage("Loaded KeyBindings: " + Environment.NewLine + theKeyBindings);
+            GameCore.TheGameCore.RaiseMessage("Loaded KeyBindings: " + System.Environment.NewLine + theKeyBindings);
 
-           // StartOpenGl();
-                       Async.Do(delegate { StartOpenGl(); });
+            // StartOpenGl();
+            Async.Do(delegate { StartOpenGl(); });
         }
 
         private void StartOpenGl()
         {
             exit = false;
             Glut.glutInit();
-        
+
 
             Glut.glutInitDisplayMode(Glut.GLUT_DOUBLE | Glut.GLUT_DEPTH | Glut.GLUT_ALPHA | Glut.GLUT_STENCIL |
                                      Glut.GLUT_MULTISAMPLE);
@@ -117,11 +113,13 @@ namespace GameCore.Render.MainRenderer
 
             RenderObjects.RenderObjects.TheMaterialManager = theMaterialManager;
 
-            theSceneManager = new SceneManager(width, height, TheGameStatus, TheUserInputPlayer, theKeyBindings,
-                                            theMaterialManager);
-
             Camera camera = new Camera(new Vector3(0, 20, 10), Quaternion.Identity);
             camera.SetDirection(new Vector3(1, -3, -1));
+            TheGameStatus.TheEnvironment = new Environment();
+            TheGameStatus.TheCamera = camera;
+
+            theSceneManager = new SceneManager(TheGameStatus, TheUserInputPlayer, theKeyBindings,
+                theMaterialManager, new RenderStatus() {Width = width, Height = height});
 
             theSceneManager.AddCamera(camera);
 
@@ -129,7 +127,7 @@ namespace GameCore.Render.MainRenderer
             theSceneManager.AddLayer(new RenderLayerGame());
             theSceneManager.AddLayer(new RenderLayerMapDrawArrays());
             theSceneManager.AddLayer(new RenderLayerHud());
-            theSceneManager.AddLayer(layerInfo =new RenderLayerTextInfo());
+            theSceneManager.AddLayer(layerInfo = new RenderLayerTextInfo());
 
 
             theSceneManager.OnLoad();
@@ -183,7 +181,7 @@ namespace GameCore.Render.MainRenderer
 
                 if (layerInfo.ShowInfo)
                 {
-                    Camera tempCam = theSceneManager.theCamera;
+                    Camera tempCam = theSceneManager.TheCamera;
                     Vector4 tempViewDir = tempCam.Orientation.ToAxisAngle();
                     string tempText = string.Format(
                         "FPS: {0:0.00}, Mouse: [({1:0},{2:0}),{3:0.0},{4:0.0},{5:0.0}], Camera: Pos[{6:0.0},{7:0.0},{8:0.0}]",
@@ -241,7 +239,7 @@ namespace GameCore.Render.MainRenderer
             this.width = width;
             this.height = height;
 
-            theSceneManager.OnReshape(width,height);
+            theSceneManager.OnReshape(width, height);
         }
 
         private void OnClose()
@@ -262,17 +260,17 @@ namespace GameCore.Render.MainRenderer
 
         private void OnMove(int x, int y)
         {
-            theSceneManager.OnMove(x,y);
+            theSceneManager.OnMove(x, y);
         }
 
         private void OnSpecialKeyboardDown(int key, int x, int y)
         {
-            theSceneManager.OnSpecialKeyboardDown(key,x,y);
+            theSceneManager.OnSpecialKeyboardDown(key, x, y);
         }
 
         private void OnSpecialKeyboardUp(int key, int x, int y)
         {
-             theSceneManager.OnSpecialKeyboardUp(key, x, y);
+            theSceneManager.OnSpecialKeyboardUp(key, x, y);
         }
 
         private void OnKeyboardDown(byte key, int x, int y)
@@ -299,18 +297,23 @@ namespace GameCore.Render.MainRenderer
         {
             if (key == theKeyBindings.TheKeyLookUp[KeyBindings.Ids.DisplayToggleFullFrame])
             {
-                fullscreen = !fullscreen;
-                if (fullscreen)
-                {
-                    Glut.glutFullScreen();
-                }
-                else
-                {
-                    Glut.glutPositionWindow(0, 0);
-                    Glut.glutReshapeWindow(formWidth, formHeight);
-                }
+                theSceneManager.TheRenderStatus.Fullscreen = !theSceneManager.TheRenderStatus.Fullscreen;
+                UpdateFullscreen(theSceneManager.TheRenderStatus.Fullscreen);
             }
             theSceneManager.OnKeyboardUp(key, x, y);
+        }
+
+        private void UpdateFullscreen(bool fullscreen)
+        {
+            if (fullscreen)
+            {
+                Glut.glutFullScreen();
+            }
+            else
+            {
+                Glut.glutPositionWindow(0, 0);
+                Glut.glutReshapeWindow(formWidth, formHeight);
+            }
         }
 
         #endregion

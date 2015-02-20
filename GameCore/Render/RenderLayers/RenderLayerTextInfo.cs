@@ -18,15 +18,7 @@ namespace GameCore.Render.RenderLayers
         private FontVAO information;
         public string GameInfo = "";
 
-        public RenderLayerTextInfo()
-        {
-        }
-
-        public RenderLayerTextInfo(int width, int height, GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
-                                   KeyBindings theKeyBindings, MaterialManager theMaterialManager)
-            : base(width, height, theGameStatus, theUserInputPlayer, theKeyBindings, theMaterialManager)
-        {
-        }
+  
 
         public override void OnLoad()
         {
@@ -87,6 +79,12 @@ namespace GameCore.Render.RenderLayers
             fontProgram.Dispose();
             font.FontTexture.Dispose();
             information.Dispose();
+        }
+
+        public override void ReInitialize()
+        {
+            
+
         }
 
         public override bool OnMouse(int button, int state, int x, int y)

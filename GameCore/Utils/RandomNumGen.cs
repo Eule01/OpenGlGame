@@ -4,7 +4,7 @@ namespace GameCore.Utils
 {
     public static class RandomNumGen
     {
-        private static int seed = Environment.TickCount;
+        private static int seed = System.Environment.TickCount;
         private static Random ran = new Random(seed);
 
 

@@ -109,7 +109,7 @@ namespace GameCore.UserInterface
             string outStr = "";
             foreach (KeyBinding tempKeyBinding in theKeyBindings)
             {
-                outStr += tempKeyBinding + Environment.NewLine;
+                outStr += tempKeyBinding + System.Environment.NewLine;
             }
             return outStr;
         }
