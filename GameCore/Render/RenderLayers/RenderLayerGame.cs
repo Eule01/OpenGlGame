@@ -324,9 +324,12 @@ namespace GameCore.Render.RenderLayers
             {
                 aRenderGameObject.Dispose();
             }
-            foreach (ObjObject aObjObject in theTileObjects)
+            if (theTileObjects != null)
             {
-                aObjObject.Dispose();
+                foreach (ObjObject aObjObject in theTileObjects)
+                {
+                    aObjObject.Dispose();
+                }
             }
             if (pointMaterial != null) pointMaterial.Dispose();
             foreach (KeyValuePair<Tile.TileIds, PlainBmpTexture> plainBmpTexture in tileTextures)
