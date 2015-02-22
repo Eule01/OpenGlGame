@@ -65,7 +65,7 @@ namespace GameCore.Render.RenderLayers
                 TheRenderStatus.ZFar);
             program["projection_matrix"].SetValue(projectionMatrix);
 //            program["model_matrix"].SetValue(Matrix4.Identity);
-//            program["light_direction"].SetValue(lightDirection);
+            program["light_direction"].SetValue(theEnvironment.LightDirection);
             program["enable_lighting"].SetValue(theEnvironment.Lighting);
             program["ambient"].SetValue(theEnvironment.LightAmbient);
 
@@ -194,6 +194,10 @@ namespace GameCore.Render.RenderLayers
             program["view_matrix"].SetValue(theCamera.ViewMatrix);
             program["projection_matrix"].SetValue(projectionMatrix);
             program["enable_lighting"].SetValue(theEnvironment.Lighting);
+            if (theEnvironment.LightMove)
+            {
+                program["light_direction"].SetValue(theEnvironment.LightDirection);
+            }
 
 
             theTextureArray.Use();
@@ -316,6 +320,7 @@ namespace GameCore.Render.RenderLayers
     flat in float drawID;
     uniform float ambient;
     uniform bool enable_lighting;
+    uniform vec3 light_direction;
     bool useTexture = true;
     float transparency = 1.0;
 
@@ -323,7 +328,7 @@ namespace GameCore.Render.RenderLayers
 
     void main(void)
     {
-        float light = (enable_lighting ? ambient : 1.0);
+        float light = (enable_lighting ? max(ambient, dot(vec3(0, 1, 0), light_direction)) : 1.0);
         vec4 sampleTex = texture(textureArray, vec3(uv.x,uv.y,drawID) );
         fragment = vec4(light * sampleTex.xyz, transparency * sampleTex.a);
     }";

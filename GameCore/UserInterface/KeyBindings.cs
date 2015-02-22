@@ -34,8 +34,9 @@ namespace GameCore.UserInterface
             DisplayToggleLightingRotate,
             DisplayToggleFullFrame,
             DisplayToggleDisplayInfo,
+            DisplayCycleThroughSkyboxes,
 
-            GameExit
+            GameExit,
         }
 
         public KeyBindings()
@@ -82,6 +83,8 @@ namespace GameCore.UserInterface
                                    "r"),
                     new KeyBinding(Ids.DisplayToggleFullFrame, (byte) 'f', "Toggle full frame", "f"),
                     new KeyBinding(Ids.DisplayToggleDisplayInfo, (byte) 'i', "Toggle display info", "i"),
+
+                    new KeyBinding(Ids.DisplayCycleThroughSkyboxes, (byte) 'k', "Cycle through skyboxes", "k"),
 
                     new KeyBinding(Ids.PlayerForward, (byte) 'w', "Move player forward", "w"),
                     new KeyBinding(Ids.PlayerBackward, (byte) 's', "Move player backward", "s"),

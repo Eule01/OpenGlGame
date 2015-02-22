@@ -1,4 +1,7 @@
 
+2015.02.22	FEATURE		One can now cycle through different sky boxes using 'k'.
+2015.02.22	IMPROVEMENT	Fixed the SkyBox, now seams are visiable now.
+2015.02.21	IMPROVEMENT	Tidyed SceneManager and RenderLayers.
 2015.02.19	FEATURE		Added a SceneManager.
 2015.02.19	FEATURE		Added a RenderLayerMapDrawArrays which works.
 2015.02.18	FEATURE		Added a RenderLayerMap based on MultiDrawElementsIndirect (min OpenGl 4.3).

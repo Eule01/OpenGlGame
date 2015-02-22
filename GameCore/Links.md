@@ -207,7 +207,7 @@ http://www.mbsoftworks.sk/index.php?page=tutorials&series=1&tutorial=13
 https://code.google.com/p/severed-infinity/source/browse/trunk/SIEngine/Graphics/Skybox.cs?r=5
 https://sidvind.com/wiki/Skybox_tutorial
 http://www.wenda.io/questions/4379561/opentk-multiple-textures-on-cube-dont-work.html
-
+http://gamedev.stackexchange.com/questions/11931/skybox-texture-artifact-on-edge
 
 # Shadows
 
@@ -312,3 +312,12 @@ http://www.kickjs.org/example/shader_editor/shader_editor.html  *****
 
 Fix Your Timestep!:
 http://gafferongames.com/game-physics/fix-your-timestep/
+
+
+# Collision detection
+
+http://0fps.net/
+
+# Textures
+
+http://opengameart.org/content/explosion

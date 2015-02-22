@@ -1,8 +1,8 @@
 ﻿#region
 
 using System.Collections.Generic;
+using System.IO;
 using GameCore.Render.Cameras;
-using GameCore.Render.RenderMaterial;
 using GameCore.Render.RenderObjects;
 using GameCore.UserInterface;
 using OpenGL;
@@ -13,7 +13,6 @@ namespace GameCore.Render.RenderLayers
 {
     public class RenderLayerSkyBox : RenderLayerBase
     {
-
         private ShaderProgram program;
         private List<ObjGroup> objMeshs;
 
@@ -36,8 +35,9 @@ namespace GameCore.Render.RenderLayers
         private ObjGroupSkyBox skyBoxObjGroup;
         private Camera theCamera;
 
+        private List<ObjGroupSkyBox> skyBoxes = new List<ObjGroupSkyBox>();
 
-       
+        private string skypBoxFolder = "SkyBoxes";
 
         public override void OnLoad()
         {
@@ -46,17 +46,71 @@ namespace GameCore.Render.RenderLayers
             // set up the projection and view matrix
             program.Use();
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(Fov, (float) Width/Height, ZNear,
-                                                                    ZFar);
+                ZFar);
             program["projection_matrix"].SetValue(projectionMatrix);
             program["model_matrix"].SetValue(Matrix4.Identity);
 
 
             objMeshs = new List<ObjGroup>();
 
-            skyBoxObjGroup = new ObjGroupSkyBox(program);
+            AddAllSkyBoxes();
+            skyBoxObjGroup = skyBoxes[0];
+
+
+//            skyBoxObjGroup = ObjGroupSkyBox.GetNewSkyBoxTypeT(program, @".\SkyBoxes\grimmnight_large.jpg");
+//            skyBoxObjGroup = ObjGroupSkyBox.GetNewSkyBox2(program);
             skyBoxObjGroup.Scale = Vector3.UnitScale*0.7f;
 
+//            skyBoxObjGroup = new ObjGroupSkyBox(program) {Scale = Vector3.UnitScale*0.7f};
+
             objMeshs.Add(skyBoxObjGroup);
+        }
+
+        private void AddAllSkyBoxes()
+        {
+            skyBoxes.Clear();
+            string tempSkyBoxFolder = Path.Combine(TheMaterialManager.ImageDirectory, skypBoxFolder);
+            string[] files = Directory.GetFiles(tempSkyBoxFolder, "SkyBox_T*.*");
+            List<string> fileList = new List<string>();
+            foreach (string aFile in files)
+            {
+                string extension = Path.GetExtension(aFile);
+                if (extension != null)
+                {
+                    string tempExt = extension.ToLower();
+
+                    if (tempExt == ".jpg" || tempExt == ".png")
+                    {
+                        string tempRelPath = Path.Combine(skypBoxFolder,Path.GetFileName(aFile));
+                        fileList.Add(tempRelPath);
+                    }
+                }
+            }
+
+            foreach (string tempSkyBoxPath in fileList)
+            {
+                ObjGroupSkyBox tempSkyBoxGroup = ObjGroupSkyBox.GetNewSkyBoxTypeT(program, tempSkyBoxPath);
+                tempSkyBoxGroup.Name = Path.GetFileNameWithoutExtension(tempSkyBoxPath);
+                skyBoxes.Add(tempSkyBoxGroup);
+            }
+        }
+
+
+        private void CycleToNextSkyBox()
+        {
+            int tempCurrentIndex = skyBoxes.IndexOf(skyBoxObjGroup);
+            tempCurrentIndex++;
+            if (tempCurrentIndex >= skyBoxes.Count)
+            {
+                tempCurrentIndex = 0;
+            }
+            ChangeToSkyBox(skyBoxes[tempCurrentIndex]);
+        }
+
+        private void ChangeToSkyBox(ObjGroupSkyBox aObjGroupSkyBox)
+        {
+            skyBoxObjGroup = aObjGroupSkyBox;
+            objMeshs[0] = skyBoxObjGroup;
         }
 
         public override void OnDisplay()
@@ -65,7 +119,6 @@ namespace GameCore.Render.RenderLayers
 
         public override void OnRenderFrame(float deltaTime)
         {
-
             Gl.Disable(EnableCap.DepthTest);
             Gl.DepthMask(false);
             Gl.Disable(EnableCap.DepthClamp);
@@ -84,18 +137,6 @@ namespace GameCore.Render.RenderLayers
                 foreach (ObjGroup anObjMesh in objMeshs)
                 {
                     anObjMesh.Draw();
-//                    if (!string.IsNullOrEmpty(program.ProgramLog))
-//                    {
-//                        GameCore.TheGameCore.RaiseMessage(program.ProgramLog);
-//                    }
-//                    if (!string.IsNullOrEmpty(program.FragmentShader.ShaderLog))
-//                    {
-//                        GameCore.TheGameCore.RaiseMessage(program.FragmentShader.ShaderLog);
-//                    }
-//                    if (!string.IsNullOrEmpty(program.VertexShader.ShaderLog))
-//                    {
-//                        GameCore.TheGameCore.RaiseMessage(program.VertexShader.ShaderLog);
-//                    }
                 }
             }
 
@@ -113,7 +154,7 @@ namespace GameCore.Render.RenderLayers
             //            projection_matrix = Matrix4.CreatePerspectiveFieldOfView(0.45f, (float) Width/Height, 0.1f,
             //                                                                     1000f);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(Fov, (float) Width/Height, ZNear,
-                                                                    ZFar);
+                ZFar);
             program["projection_matrix"].SetValue(projectionMatrix);
         }
 
@@ -158,6 +199,7 @@ namespace GameCore.Render.RenderLayers
 
         public override void OnKeyboardUp(byte key, int x, int y)
         {
+            if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.DisplayCycleThroughSkyboxes]) CycleToNextSkyBox();
         }
 
 

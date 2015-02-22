@@ -11,10 +11,10 @@ namespace GameCore.Render.RenderObjects
 {
     public class ObjGroup : IObjGroup
     {
-        private List<IObjObject> objects = new List<IObjObject>();
+        protected List<IObjObject> objects = new List<IObjObject>();
         private Dictionary<string, ObjMaterial> materials = new Dictionary<string, ObjMaterial>();
 
-        private ShaderProgram defaultProgram;
+        protected ShaderProgram defaultProgram;
         private ObjMaterial defaultMaterial;
 
         public string Name;
@@ -39,12 +39,12 @@ namespace GameCore.Render.RenderObjects
         /// <summary>
         ///     The model matrix of the mesh object. Contains the Location, Orientation and Scale.
         /// </summary>
-        private Matrix4 modelMatrix = Matrix4.Identity;
+        protected Matrix4 modelMatrix = Matrix4.Identity;
 
         /// <summary>
         /// True if the model matrix needs updating.
         /// </summary>
-        private bool modelMatrixOld = false;
+        protected bool modelMatrixOld = false;
 
         public ObjGroup(ShaderProgram program)
         {
@@ -87,7 +87,7 @@ namespace GameCore.Render.RenderObjects
         }
 
 
-        private void UpdateModelMatrix()
+        protected void UpdateModelMatrix()
         {
 //            modelMatrix = Matrix4.CreateTranslation(location) * Matrix4.CreateScaling(scale) * orientation.Matrix4;
             modelMatrix = orientation.Matrix4 * Matrix4.CreateScaling(scale) * Matrix4.CreateTranslation(location);
@@ -95,6 +95,11 @@ namespace GameCore.Render.RenderObjects
 
         }
 
+
+        public void ClearObjects()
+        {
+            objects.Clear();
+        }
 
         public void AddObjects(List<ObjObject> aObjObjects)
         {
@@ -116,7 +121,7 @@ namespace GameCore.Render.RenderObjects
             AddObject(aObject);
         }
 
-        public void Draw()
+        public virtual void Draw()
         {
             if (modelMatrixOld)
             {

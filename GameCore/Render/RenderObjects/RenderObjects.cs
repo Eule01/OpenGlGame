@@ -22,6 +22,67 @@ namespace GameCore.Render.RenderObjects
         {
         }
 
+
+        public enum BoxSides
+        {
+            Top,
+            Front,
+            Left,
+            Right,
+            Back,
+            Bottom
+        }
+
+        public static Dictionary<BoxSides, Bitmap> GetBoxTextures(string anImagePath,int rows, int cols, BoxIndex[] anBoxIndix)
+        {
+            Dictionary<BoxSides, Bitmap> bitmapsList = new Dictionary<BoxSides, Bitmap>();
+            string tempFilePath = Path.Combine(TheMaterialManager.ImageDirectory, anImagePath);
+            Bitmap tempMainImage = (Bitmap) Bitmap.FromFile(tempFilePath);
+//            tempMainImage.RotateFlip(RotateFlipType.RotateNoneFlipY); // bitmaps read from bottom up, so flip it
+            if (tempMainImage.PixelFormat != PixelFormat.Format32bppArgb)
+            {
+                Bitmap clone = new Bitmap(tempMainImage.Width, tempMainImage.Height,
+                    System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                using (Graphics gr = Graphics.FromImage(clone))
+                {
+                    gr.DrawImage(tempMainImage, new Rectangle(0, 0, clone.Width, clone.Height));
+                }
+                tempMainImage = clone;
+            }
+            int width = tempMainImage.Width;
+            int height = tempMainImage.Height;
+
+            int detlaWidth = width/cols;
+            int detlaHeight = height/rows;
+
+            // X row
+            // Y col
+            // index = X + Y * cols;  
+            // X = index%cols
+            // Y = index/cols
+            //
+
+            int X;
+            int Y;
+            for (int i = 0; i < anBoxIndix.Length; i++)
+            {
+                BoxIndex tempBoxSide = anBoxIndix[i];
+                X = tempBoxSide.Index%cols;
+                Y = tempBoxSide.Index/cols;
+
+                Rectangle tempRectangle = new Rectangle(X * detlaWidth, Y * detlaHeight, detlaWidth, detlaHeight);
+                Bitmap tempBitmap = tempMainImage.Clone(tempRectangle, PixelFormat.Format32bppArgb);
+
+                bitmapsList.Add(tempBoxSide.BoxSide,tempBitmap);
+            }
+            tempMainImage.Dispose();
+            tempMainImage = null;
+
+            return bitmapsList;
+        }
+
+
+
         public static Dictionary<Tile.TileIds, Bitmap> CreateTileBitmaps(Size aTextureSize)
         {
             Dictionary<Tile.TileIds, TileType> tileList = Tile.GetTileTypes();
@@ -128,6 +189,28 @@ namespace GameCore.Render.RenderObjects
 
             return objTextureList;
         }
+    }
+
+    public class BoxIndex
+    {
+        public int Index;
+        public RenderObjects.BoxSides BoxSide;
+
+
+        public static BoxIndex[] GetTypeT()
+        {
+            BoxIndex[] anBoxIndix = new BoxIndex[]
+            {
+                new BoxIndex() {Index = 1, BoxSide = RenderObjects.BoxSides.Top},
+                new BoxIndex() {Index = 4, BoxSide = RenderObjects.BoxSides.Left},
+                new BoxIndex() {Index = 5, BoxSide = RenderObjects.BoxSides.Back},
+                new BoxIndex() {Index = 6, BoxSide = RenderObjects.BoxSides.Right},
+                new BoxIndex() {Index = 7, BoxSide = RenderObjects.BoxSides.Front},
+                new BoxIndex() {Index = 9, BoxSide = RenderObjects.BoxSides.Bottom},
+            };
+            return anBoxIndix;
+        }
+
     }
 
     public class PlainBmpTexture : TileType
