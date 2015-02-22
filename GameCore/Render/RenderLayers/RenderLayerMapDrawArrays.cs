@@ -53,6 +53,8 @@ namespace GameCore.Render.RenderLayers
 
         public override void OnLoad()
         {
+            GameCore.TheGameCore.TheGameEventHandler += TheGameCore_TheGameEventHandler;
+
             theMap = TheGameStatus.TheMap;
 
             // create our shader program
@@ -74,6 +76,22 @@ namespace GameCore.Render.RenderLayers
 
             Gl.UseProgram(0);
             Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        }
+
+        private void TheGameCore_TheGameEventHandler(object sender, GameEventArgs args)
+        {
+            if (args.TheType == GameEventArgs.Types.MapTileChanged)
+            {
+                ChangeTileType(args.TheTile);
+            }
+
+        }
+
+        private void ChangeTileType(Tile theTile)
+        {
+            List<Tile> tempTiles = theMap.Tiles;
+
+            CreateTileIdVbo(tempTiles);
         }
 
         private void GenerateGeometry()
@@ -145,7 +163,15 @@ namespace GameCore.Render.RenderLayers
 //                new IntPtr(3 * sizeof(Single)));
 //
 //
-            //Generate an instanced vertex array to identify each draw call in the shader
+            CreateTileIdVbo(tempTiles);
+
+            watch.Stop();
+            GameCore.TheGameCore.RaiseMessage(string.Format("CreateTiles() took {0}ms", watch.ElapsedMilliseconds));
+        }
+
+        private void CreateTileIdVbo(List<Tile> tempTiles)
+        {
+//Generate an instanced vertex array to identify each draw call in the shader
             float[] vDrawId = new float[numberOfTiles*numberOfVerticesPerTile];
 //            int[] vDrawId = new int[numberOfTiles*6];
 
@@ -170,9 +196,6 @@ namespace GameCore.Render.RenderLayers
             Gl.BindBuffer(gDrawIdBuffer);
 
             locationDrawid = (uint) Gl.GetAttribLocation(program.ProgramID, "drawTexId");
-
-            watch.Stop();
-            GameCore.TheGameCore.RaiseMessage(string.Format("CreateTiles() took {0}ms", watch.ElapsedMilliseconds));
         }
 
         private void GenerateArrayTexture()

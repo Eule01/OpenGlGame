@@ -26,5 +26,10 @@ namespace GameCore.UserInterface
         public bool Left;
 
         public PointF MousePosition;
+
+        public bool Ctrl;
+
+        public bool Shift;
+
     }
 }

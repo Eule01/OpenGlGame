@@ -4,7 +4,7 @@ Todo:
 - BUGFIX		Track down "VBO was not disposed of properly" message when exiting.
 - BUGFIX		Track down "VBO was not disposed of properly" message when displaying info.
 - IMPROVE		Improve lighting and shadows.
-- IMPROVE		Improve tile textures, load bitmaps from file if they exist.
 - IMPROVE		Use TextureArray for skybox.
+- IMPROVE		Improve HUD map editor.
 - FEATURE		Add form showing game stats.
 

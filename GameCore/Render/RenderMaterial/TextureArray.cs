@@ -18,7 +18,6 @@ namespace GameCore.Render.RenderMaterial
         public Size Size { get; private set; }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="aListOfBitmaps"></param>
         public static TextureArray CreateFromBitmaps(List<Bitmap> aListOfBitmaps)
@@ -39,7 +38,8 @@ namespace GameCore.Render.RenderMaterial
             // https://www.opengl.org/sdk/docs/man/html/glTexStorage3D.xhtml
             //http://stackoverflow.com/questions/17760193/correct-storage-allocation-for-textures-in-gl-texture-2d-array
             //No mipmaps as textures are 1x1
-            int levels = 1; // Specify the number of texture levels (mipmaps)
+            int levels = 4; // Specify the number of texture levels (mipmaps)
+//            int levels = 1; // Specify the number of texture levels (mipmaps)
 
             int width = tempTextureArray.Size.Width;
             int height = tempTextureArray.Size.Height;
@@ -49,8 +49,8 @@ namespace GameCore.Render.RenderMaterial
                 Gl.TexImage3D(TextureTarget.Texture2DArray, i, PixelInternalFormat.Rgba8, width, height,
                     numberOfTextures,
                     0, PixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
-                width = Math.Max(1, (width / 2));
-                height = Math.Max(1, (height / 2));
+                width = Math.Max(1, (width/2));
+                height = Math.Max(1, (height/2));
             }
 
             for (int i = 0; i != numberOfTextures; ++i)
@@ -76,16 +76,28 @@ namespace GameCore.Render.RenderMaterial
                 tempBmp.UnlockBits(bitmapData);
             }
 
-            //            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter,
-            //                TextureParameter.Nearest);
-            //            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter,
-            //                TextureParameter.Nearest); //(int)TextureParam.Linear);   // linear filter
+            Gl.GenerateMipmap(GenerateMipmapTarget.Texture2DArray);
 
-
-            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter,
-                TextureParameter.Linear);
             Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter,
-                TextureParameter.Linear);
+                TextureParameter.NearestMipMapLinear);
+            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter,
+                TextureParameter.NearestMipMapLinear); 
+            
+            //(int)TextureParam.Linear);   // linear filter
+//            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter,
+//                TextureParameter.NearestMipMapNearest);
+//            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter,
+//                TextureParameter.NearestMipMapNearest); //(int)TextureParam.Linear);   // linear filter
+//            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter,
+//                TextureParameter.Nearest);
+//            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter,
+//                TextureParameter.Nearest); //(int)TextureParam.Linear);   // linear filter
+
+//
+//            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter,
+//                TextureParameter.Linear);
+//            Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter,
+//                TextureParameter.Linear);
             Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapS,
                 TextureParameter.ClampToEdge);
             Gl.TexParameteri(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapT,

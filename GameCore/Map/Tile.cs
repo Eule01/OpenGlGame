@@ -19,7 +19,8 @@ namespace GameCore.Map
             Desert = 0,
             Grass = 1,
             Road = 2,
-            Water =3 
+            Water = 3,
+            Wall = 4,
         }
 
         public static Vector Size = new Vector(1, 1);
@@ -74,7 +75,9 @@ namespace GameCore.Map
                     case TileIds.Water:
                          tempType.Color = Color.Blue;
                         break;
-                   
+                    case TileIds.Wall:
+                         tempType.Color = Color.MidnightBlue;
+                        break;                 
                     default:
                         tempType.Color = Color.Gray;
                         break;

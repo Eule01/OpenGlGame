@@ -47,8 +47,6 @@ namespace OpenGlGame
                     theGameCore.Close();
                     waitForClose.Set();
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
     }

@@ -47,6 +47,9 @@ namespace GameCore.Render.RenderLayers
 
         public override void OnLoad()
         {
+            GameCore.TheGameCore.TheGameEventHandler += TheGameCore_TheGameEventHandler;
+
+
             // create our shader program
             program = new ShaderProgram(VertexShader, FragmentShader);
 
@@ -151,6 +154,10 @@ namespace GameCore.Render.RenderLayers
             {
                 objTileMap = new ObjMap(TheGameStatus.TheMap, TheCamera);
             }
+        }
+
+        private void TheGameCore_TheGameEventHandler(object sender, GameEventArgs args)
+        {
         }
 
         public override void OnDisplay()
@@ -301,6 +308,12 @@ namespace GameCore.Render.RenderLayers
                      new Vector2(TheGameStatus.ThePlayer.Location.X, TheGameStatus.ThePlayer.Location.Y)).Normalize();
 
                 TheGameStatus.ThePlayer.Orientation = new Vector(playerMouseVec.x, playerMouseVec.y);
+
+                int mod = Glut.glutGetModifiers();
+                if (mod == Glut.GLUT_ACTIVE_CTRL)
+                {
+                    TheSceneManager.TileSelected(MouseWorld);
+                }
             }
             else if (button == Glut.GLUT_RIGHT_BUTTON)
             {

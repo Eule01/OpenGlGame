@@ -1,10 +1,12 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Xml.Serialization;
 using GameCore.Utils;
+using OpenGL;
 
 #endregion
 
@@ -36,7 +38,7 @@ namespace GameCore.Map
         /// </summary>
         private void Init()
         {
-            Tiles = CreatTestTiles(new Size(20, 20));
+            Tiles = CreatTestTiles(new Point(-10, -10), new Size(20, 20));
             theBoundingBox = GetBoundingBox(theTiles);
         }
 
@@ -131,7 +133,7 @@ namespace GameCore.Map
         {
             Stopwatch watch = Stopwatch.StartNew();
 
-            Map aMap = new Map {Tiles = CreatTestTiles(new Size(500, 500))};
+            Map aMap = new Map {Tiles = CreatTestTiles(new Point(-250, -250), new Size(500, 500))};
             watch.Stop();
             GameCore.TheGameCore.RaiseMessage(string.Format("CreateTestMap() took {0}ms", watch.ElapsedMilliseconds));
 
@@ -140,13 +142,20 @@ namespace GameCore.Map
         }
 
 
-        private static List<Tile> CreatTestTiles(Size aSize)
+        private static List<Tile> CreatTestTiles(Point startPos, Size aSize)
         {
             List<Tile> tempTiles = new List<Tile>();
             Tile tempTile = null;
-            for (int x = 0; x < aSize.Width; x++)
+            int x0 = startPos.X;
+            int x1 = startPos.X + aSize.Width;
+
+            int y0 = startPos.Y;
+            int y1 = startPos.Y + aSize.Height;
+
+
+            for (int x = x0; x < x1; x++)
             {
-                for (int y = 0; y < aSize.Height; y++)
+                for (int y = y0; y < y1; y++)
                 {
                     if (x == 8)
                     {
@@ -160,6 +169,10 @@ namespace GameCore.Map
                     {
                         tempTile = new Tile(Tile.TileIds.Water) {Location = new Vector(x, y)};
                     }
+                    else if (x == 12)
+                    {
+                        tempTile = new Tile(Tile.TileIds.Wall) {Location = new Vector(x, y)};
+                    }
                     else
                     {
                         tempTile = new Tile(Tile.TileIds.Desert) {Location = new Vector(x, y)};
@@ -168,6 +181,15 @@ namespace GameCore.Map
                 }
             }
             return tempTiles;
+        }
+
+        public void SelectTile(Vector3 mouseWorld)
+        {
+            Tile tempSelectedTile = this[(int) Math.Floor(mouseWorld.x), (int) Math.Floor(mouseWorld.z)];
+            if (tempSelectedTile != null)
+            {
+                GameCore.TheGameCore.OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.MapTileSelected){TheTile = tempSelectedTile});
+            }
         }
     }
 }

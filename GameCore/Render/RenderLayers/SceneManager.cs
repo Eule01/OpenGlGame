@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Collections.Generic;
+using GameCore.Map;
 using GameCore.Render.Cameras;
 using GameCore.Render.RenderMaterial;
 using GameCore.UserInterface;
@@ -122,6 +123,7 @@ namespace GameCore.Render.RenderLayers
             RenderLayerBase.TheRenderStatus = TheRenderStatus;
             RenderLayerBase.TheKeyBindings = theKeyBindings;
             RenderLayerBase.TheMaterialManager = theMaterialManager;
+            RenderLayerBase.TheSceneManager = this;
 
             foreach (IRenderLayer renderLayer in theRenderLayers)
             {
@@ -164,6 +166,10 @@ namespace GameCore.Render.RenderLayers
 
         public void OnSpecialKeyboardUp(int key, int x, int y)
         {
+//            if (key == theKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtPlayer])
+//                TheCamera.LookAt(new Vector3(playerObjObject.TheGameObject.Location.X, 0.0f,
+//                    playerObjObject.TheGameObject.Location.Y));
+
             foreach (IRenderLayer renderLayer in theRenderLayers)
             {
                 renderLayer.OnSpecialKeyboardUp(key, x, y);
@@ -172,6 +178,7 @@ namespace GameCore.Render.RenderLayers
 
         public void OnKeyboardDown(byte key, int x, int y)
         {
+//            GameCore.TheGameCore.RaiseMessage("Key: [" + x + "," + y + "]: " + key + ".");
             foreach (IRenderLayer renderLayer in theRenderLayers)
             {
                 renderLayer.OnKeyboardDown(key, x, y);
@@ -191,10 +198,20 @@ namespace GameCore.Render.RenderLayers
             string outStr = "";
             foreach (IRenderLayer renderLayer in theRenderLayers)
             {
-              outStr +=  renderLayer.ToString() + System.Environment.NewLine;
+                outStr += renderLayer.ToString() + System.Environment.NewLine;
             }
             outStr += TheCamera.ToString() + System.Environment.NewLine;
             return outStr;
+        }
+
+        public void TileSelected(Vector3 mouseWorld)
+        {
+            Tile tempSelectedTile = theGameStatus.TheMap[(int) mouseWorld.x, (int) mouseWorld.z];
+            theGameStatus.TheMap.SelectTile(mouseWorld);
+
+
+
+            GameCore.TheGameCore.RaiseMessage("Tile: " + tempSelectedTile);
         }
     }
 }

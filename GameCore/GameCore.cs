@@ -82,8 +82,6 @@ namespace GameCore
                     break;
                 case GameEventArgs.Types.RendererExited:
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 

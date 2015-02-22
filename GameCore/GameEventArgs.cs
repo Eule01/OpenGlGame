@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using GameCore.Map;
 using GameCore.Utils.Timers;
 
 #endregion
@@ -27,12 +28,16 @@ namespace GameCore
             /// <summary>
             /// The render enigine exited.
             /// </summary>
-            RendererExited
+            RendererExited,
+            MapTileSelected,
+            MapTileChanged
         }
 
         private Types theType;
 
         public OpStatus TheOpStatus;
+
+        public Tile TheTile;
 
         public string Message = string.Empty;
 

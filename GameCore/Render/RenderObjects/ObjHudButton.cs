@@ -23,6 +23,8 @@ namespace GameCore.Render.RenderObjects
 
         private RectangleF theRectangle = new RectangleF(0, 0, 1, 1);
 
+        public object Tag;
+
         public enum Anchors
         {
             TopLeft,

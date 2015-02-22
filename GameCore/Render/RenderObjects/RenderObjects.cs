@@ -95,7 +95,7 @@ namespace GameCore.Render.RenderObjects
             {
                 string tempTiletextureName = "Tile_" + keyValuePair.Key.ToString() + ".png";
 
-                string tempFilePath = Path.Combine(TheMaterialManager.ImageDirectory, tempTiletextureName);
+                string tempFilePath = Path.Combine(TheMaterialManager.TileDirectory, tempTiletextureName);
                 PlainBmpTexture tempBmpTexture = new PlainBmpTexture(keyValuePair.Value.Name);
 
                 if (!File.Exists(tempFilePath))
@@ -142,7 +142,7 @@ namespace GameCore.Render.RenderObjects
                 string tempTiletextureName = "Tile_" + keyValuePair.Key.ToString() + ".png";
 
                 PlainBmpTexture tempBmpTexture = new PlainBmpTexture(keyValuePair.Value.Name);
-                tempMaterial = TheMaterialManager.GetFromFile(aProgram, tempTiletextureName);
+                tempMaterial = TheMaterialManager.GetFromFile(aProgram, tempTiletextureName,false,MaterialManager.ResourceTypes.Tile);
                 if (tempMaterial == null)
                 {
                     tempBmpTexture.Color = keyValuePair.Value.Color;

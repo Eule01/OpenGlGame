@@ -318,6 +318,10 @@ http://gafferongames.com/game-physics/fix-your-timestep/
 
 http://0fps.net/
 
-# Textures
+# Textures source
 
 http://opengameart.org/content/explosion
+
+
+Large collection of 32x32 textures:
+http://opengameart.org/content/dungeon-crawl-32x32-tiles   ***
