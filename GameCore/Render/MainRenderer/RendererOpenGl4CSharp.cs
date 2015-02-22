@@ -178,6 +178,8 @@ namespace GameCore.Render.MainRenderer
                 float deltaTime = (float) watch.ElapsedTicks/Stopwatch.Frequency;
                 float tempfps = 1.0f/deltaTime;
                 fps = fps*0.9f + tempfps*0.1f;
+                // linear interpolate retained fps with this frames fps with a strong weighting to former.
+                watch.Restart();
 
                 if (layerInfo.ShowInfo)
                 {
@@ -193,8 +195,6 @@ namespace GameCore.Render.MainRenderer
                     layerInfo.GameInfo = tempText;
                 }
 
-                // linear interpolate retained fps with this frames fps with a strong weighting to former.
-                watch.Restart();
 
                 // set camForward the viewport and clear the previous depth and color buffers
                 Gl.Viewport(0, 0, width, height);

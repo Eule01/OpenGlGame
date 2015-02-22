@@ -68,7 +68,7 @@
     <Compile Include="Render\RenderObjects\IObjObject.cs" />
     <Compile Include="Render\RenderObjects\ObjGroups\ObjGroupGameObject.cs" />
     <Compile Include="Render\RenderObjects\ObjGroups\ObjGroupGameObjectPlayer.cs" />
-    <Compile Include="Render\RenderObjects\ObjGroups\ObjGroupGameObjectTurrel.cs" />
+    <Compile Include="Render\RenderObjects\ObjGroups\ObjGroupGameObjectTurret.cs" />
     <Compile Include="Render\RenderObjects\ObjHudButton.cs" />
     <Compile Include="Render\RenderObjects\ObjHudPanel.cs" />
     <Compile Include="Render\RenderObjects\ObjGroups\ObjGroup.cs" />

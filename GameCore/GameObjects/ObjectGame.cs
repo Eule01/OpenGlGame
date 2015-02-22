@@ -47,6 +47,10 @@ namespace GameCore.GameObjects
             get { return theObjectId; }
         }
 
+        public void Move(float deltaTime)
+        {
+            
+        }
 
         public static Dictionary<ObjcetIds, GameObjectType> GetObjTypes()
         {

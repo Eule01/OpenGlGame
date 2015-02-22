@@ -1,5 +1,7 @@
 ﻿#region
 
+using System.Collections.Generic;
+using System.Diagnostics;
 using GameCore.GameObjects;
 using GameCore.UserInterface;
 using GameCore.Utils;
@@ -19,6 +21,8 @@ namespace GameCore.Engine
         private const int timerTickIntervalMs = 10;
 
         private UserInputPlayer theUserInputPlayer;
+
+        private Stopwatch watch;
 
         public GameEngine()
         {
@@ -55,6 +59,15 @@ namespace GameCore.Engine
         /// </summary>
         private void GameTick()
         {
+            watch.Stop();
+            float deltaTime = (float)watch.ElapsedTicks / Stopwatch.Frequency;
+            List<ObjectGame> theGameObjects = GameCore.TheGameCore.TheGameStatus.GameObjects;
+            foreach (ObjectGame aGameObject in theGameObjects)
+            {
+                aGameObject.Move(deltaTime);
+            }
+            watch.Restart();
+
             ObjectPlayer thePlayer = GameCore.TheGameCore.TheGameStatus.ThePlayer;
             if (theUserInputPlayer.Forward)
             {
@@ -86,6 +99,7 @@ namespace GameCore.Engine
         /// </summary>
         public void Start()
         {
+            watch = Stopwatch.StartNew();
             theTickEngine.Start();
         }
 
@@ -94,6 +108,7 @@ namespace GameCore.Engine
         /// </summary>
         public void Close()
         {
+            watch.Stop();
             theTickEngine.Close();
         }
 
@@ -102,6 +117,7 @@ namespace GameCore.Engine
         /// </summary>
         public void Pause()
         {
+            watch.Stop();
             theTickEngine.Pause();
         }
 
@@ -111,6 +127,7 @@ namespace GameCore.Engine
         /// </summary>
         public void Resume()
         {
+            watch.Start();
             theTickEngine.Resume();
         }
 

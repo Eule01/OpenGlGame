@@ -424,7 +424,7 @@ namespace GameCore.Render.RenderLayers
 
                         ObjGroup tempGroup1 = ObjLoader.LoadObjFileToObjMesh(program, @"./Resources/Models/Turret1.obj");
                         ObjectTurret tempTurret = (ObjectTurret) gameObject;
-                        tempGroup = new ObjGroupGameObjectTurrel(tempGroup1)
+                        tempGroup = new ObjGroupGameObjectTurret(tempGroup1)
                         {
                             Location = new Vector3(gameObject.Location.X, 0.0, gameObject.Location.Y),
                             Scale = Vector3.UnitScale*0.3f,
