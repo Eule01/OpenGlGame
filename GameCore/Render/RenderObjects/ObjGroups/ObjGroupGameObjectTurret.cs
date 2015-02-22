@@ -7,19 +7,19 @@ using OpenGL;
 
 namespace GameCore.Render.RenderObjects.ObjGroups
 {
-    public class ObjGroupGameObjectTurrel : ObjGroupGameObject
+    public class ObjGroupGameObjectTurret : ObjGroupGameObject
     {
         private ObjectTurret theObjectTurret;
-        private IObjObject objTurretBase;
-        private IObjObject objTurretTower;
+        private readonly IObjObject objTurretBase;
+        private readonly IObjObject objTurretTower;
 
 
-        public ObjGroupGameObjectTurrel(ShaderProgram program) : base(program)
+        public ObjGroupGameObjectTurret(ShaderProgram program) : base(program)
         {
 
         }
 
-        public ObjGroupGameObjectTurrel(ObjGroup objGroup) : base(objGroup)
+        public ObjGroupGameObjectTurret(ObjGroup objGroup) : base(objGroup)
         {
             objTurretTower = Objects[0];
             objTurretBase = Objects[1];
@@ -38,8 +38,7 @@ namespace GameCore.Render.RenderObjects.ObjGroups
         public override void Draw()
         {
             Location = new Vector3(theObjectGame.Location.X, 0.0, theObjectGame.Location.Y);
-            Orientation =
-                Quaternion.FromRotationMatrix(Matrix4.CreateFromAxisAngle(Vector3.Up,
+            Orientation = Quaternion.FromRotationMatrix(Matrix4.CreateFromAxisAngle(Vector3.Up,
                     -theObjectTurret.Orientation.Angle));
 
             if (modelMatrixOld)
@@ -48,8 +47,8 @@ namespace GameCore.Render.RenderObjects.ObjGroups
             }
             defaultProgram["model_matrix"].SetValue(modelMatrix);
             objTurretBase.Draw();
-            Matrix4 towermodelMatrix = Matrix4.CreateFromAxisAngle(Vector3.Up, -theObjectTurret.OrientationTower.Angle)*modelMatrix;
-            defaultProgram["model_matrix"].SetValue(towermodelMatrix);
+            Matrix4 towerModelMatrix = Matrix4.CreateFromAxisAngle(Vector3.Up, -theObjectTurret.OrientationTower.Angle)*modelMatrix;
+            defaultProgram["model_matrix"].SetValue(towerModelMatrix);
             objTurretTower.Draw();
         }
     }
