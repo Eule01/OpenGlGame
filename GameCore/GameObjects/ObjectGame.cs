@@ -9,15 +9,16 @@ using GameCore.Utils;
 
 namespace GameCore.GameObjects
 {
-    public class GameObject
+    public class ObjectGame
     {
-        public bool changed = true;
+        public bool Changed = true;
 
         public enum ObjcetIds
         {
             Player,
             Zork,
             Gustav,
+            Turret,
         }
 
         public float Diameter = 0.4f;
@@ -30,13 +31,13 @@ namespace GameCore.GameObjects
             set
             {
                 location = value;
-                changed = true;
+                Changed = true;
             }
         }
 
         private ObjcetIds theObjectId = ObjcetIds.Player;
 
-        public GameObject(ObjcetIds aObjectId)
+        public ObjectGame(ObjcetIds aObjectId)
         {
             theObjectId = aObjectId;
         }

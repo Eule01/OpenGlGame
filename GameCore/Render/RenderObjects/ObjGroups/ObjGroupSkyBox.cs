@@ -8,14 +8,13 @@ using OpenGL;
 
 #endregion
 
-namespace GameCore.Render.RenderObjects
+namespace GameCore.Render.RenderObjects.ObjGroups
 {
     public class ObjGroupSkyBox : ObjGroup
     {
         public ObjGroupSkyBox(ShaderProgram program)
             : base(program)
         {
- 
         }
 
 
@@ -82,7 +81,7 @@ namespace GameCore.Render.RenderObjects
                 new Vector2(0.0, 0.0),
             };
 
-             tempMat = GetObjMaterial(program, aBmpList[RenderObjects.BoxSides.Left]);
+            tempMat = GetObjMaterial(program, aBmpList[RenderObjects.BoxSides.Left]);
 
             tempObj = new ObjObject(tempVectors) {Material = tempMat};
             tempObjGroupSkyBox.AddObject(tempObj);
@@ -142,7 +141,7 @@ namespace GameCore.Render.RenderObjects
             };
 
             tempMat = GetObjMaterial(program, aBmpList[RenderObjects.BoxSides.Right]);
-            
+
             tempObj = new ObjObject(tempVectors) {Material = tempMat};
             tempObjGroupSkyBox.AddObject(tempObj);
 
@@ -173,7 +172,7 @@ namespace GameCore.Render.RenderObjects
 
             tempMat = GetObjMaterial(program, aBmpList[RenderObjects.BoxSides.Front]);
 
-            
+
             tempObj = new ObjObject(tempVectors) {Material = tempMat};
             tempObjGroupSkyBox.AddObject(tempObj);
 
@@ -237,13 +236,13 @@ namespace GameCore.Render.RenderObjects
         public static ObjGroupSkyBox GetNewSkyBoxTypeT(ShaderProgram program, string aFilePath)
         {
             BoxIndex[] anBoxIndix = BoxIndex.GetTypeT();
-                
+
             Dictionary<RenderObjects.BoxSides, Bitmap> tempBmpList =
 //                RenderObjects.GetBoxTextures(@".\SkyBoxes\Above_The_Sea.jpg", 3, 4, anBoxIndix);
 //                RenderObjects.GetBoxTextures(@".\SkyBoxes\2226.jpg", 3, 4, anBoxIndix);
 //            RenderObjects.GetBoxTextures(@".\SkyBoxes\interstellar_large.jpg", 3, 4, anBoxIndix);
 //            RenderObjects.GetBoxTextures(@".\SkyBoxes\grimmnight_large.jpg", 3, 4, anBoxIndix);
-            RenderObjects.GetBoxTextures(aFilePath, 3, 4, anBoxIndix);
+                RenderObjects.GetBoxTextures(aFilePath, 3, 4, anBoxIndix);
 
             ObjGroupSkyBox tempObjGroupSkyBox = GetTexturedBox3(program, tempBmpList);
 

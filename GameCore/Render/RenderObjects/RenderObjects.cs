@@ -162,18 +162,18 @@ namespace GameCore.Render.RenderObjects
             return tiletextureList;
         }
 
-        public static Dictionary<GameObject.ObjcetIds, PlainBmpTexture> CreateGameObjectsTextures(Size aTextureSize,
+        public static Dictionary<ObjectGame.ObjcetIds, PlainBmpTexture> CreateGameObjectsTextures(Size aTextureSize,
             ShaderProgram aProgram)
         {
-            Dictionary<GameObject.ObjcetIds, GameObjectType> objTypeList = GameObject.GetObjTypes();
-            Dictionary<GameObject.ObjcetIds, PlainBmpTexture> objTextureList =
-                new Dictionary<GameObject.ObjcetIds, PlainBmpTexture>();
+            Dictionary<ObjectGame.ObjcetIds, GameObjectType> objTypeList = ObjectGame.GetObjTypes();
+            Dictionary<ObjectGame.ObjcetIds, PlainBmpTexture> objTextureList =
+                new Dictionary<ObjectGame.ObjcetIds, PlainBmpTexture>();
 
             SolidBrush tempBrush;
             Bitmap tempBmp;
             ObjMaterial tempMaterial;
 
-            foreach (KeyValuePair<GameObject.ObjcetIds, GameObjectType> keyValuePair in objTypeList)
+            foreach (KeyValuePair<ObjectGame.ObjcetIds, GameObjectType> keyValuePair in objTypeList)
             {
                 PlainBmpTexture tempBmpTexture = new PlainBmpTexture(keyValuePair.Value.Name)
                 {

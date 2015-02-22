@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameCore.Render.RenderMaterial;
 using OpenGL;
 
-namespace GameCore.Render.RenderObjects
+namespace GameCore.Render.RenderObjects.ObjGroups
 {
     public interface IObjGroup : IDisposable
     {

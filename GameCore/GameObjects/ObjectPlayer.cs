@@ -6,7 +6,7 @@ using GameCore.Utils;
 
 namespace GameCore.GameObjects
 {
-    public class ObjectPlayer : GameObject
+    public class ObjectPlayer : ObjectGame
     {
         public ObjectPlayer(ObjcetIds aObjectId) : base(aObjectId)
         {
@@ -23,7 +23,7 @@ namespace GameCore.GameObjects
             set
             {
                 orientation = value;
-                changed = true;
+                Changed = true;
             }
         }
     }

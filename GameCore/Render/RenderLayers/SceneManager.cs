@@ -167,8 +167,8 @@ namespace GameCore.Render.RenderLayers
         public void OnSpecialKeyboardUp(int key, int x, int y)
         {
 //            if (key == theKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtPlayer])
-//                TheCamera.LookAt(new Vector3(playerObjObject.TheGameObject.Location.X, 0.0f,
-//                    playerObjObject.TheGameObject.Location.Y));
+//                TheCamera.LookAt(new Vector3(playerObjObject.theObjectGame.Location.X, 0.0f,
+//                    playerObjObject.theObjectGame.Location.Y));
 
             foreach (IRenderLayer renderLayer in theRenderLayers)
             {

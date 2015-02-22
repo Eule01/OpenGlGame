@@ -10,6 +10,7 @@ using GameCore.Render.Cameras;
 using GameCore.Render.OpenGlHelper;
 using GameCore.Render.RenderMaterial;
 using GameCore.Render.RenderObjects;
+using GameCore.Render.RenderObjects.ObjGroups;
 using GameCore.UserInterface;
 using GameCore.Utils;
 using OpenGL;
@@ -30,8 +31,8 @@ namespace GameCore.Render.RenderLayers
         private int prevX, prevY;
 
         private List<ObjObject> theTileObjects;
-        private List<ObjGameObject> theRenderGameObjects;
-        private ObjGameObject playerObjObject = null;
+//        private List<ObjGameObject> theRenderGameObjects;
+        private ObjGroupGameObject playerObjObject = null;
 
         private Matrix4 projectionMatrix;
 
@@ -71,30 +72,10 @@ namespace GameCore.Render.RenderLayers
 
             objMeshs = new List<IObjGroup>();
 
-
-//            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/cube.obj");
-//            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/Monkey.obj");
-//            ObjMaterial tempMat = TheMaterialManager.GetFromFile(program, "Material.001 Normal.001.png");
-//            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/MikeTest1.obj");
-//            ObjMaterial tempMat = TheMaterialManager.GetFromFile(program, "MikeTest1.png");
-//            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/Sphere1.obj");
-//            ObjMaterial tempMat = TheMaterialManager.GetFromFile(program, "Sphere1.png");
-//            MeshData tempMesh3 = ObjLoader.LoadFile(@"./Resources/Models/Cube1.obj");
-//            ObjMaterial tempMat3 = TheMaterialManager.GetFromFile(program, "Cube1.png");
-//            MeshData tempMesh1 = ObjLoader.LoadFile(@"./Resources/Models/Cube2.obj");
-//            ObjMaterial tempMat = TheMaterialManager.GetFromFile(program, "Cube1.png");
-//            ObjObject tempObj3 = tempMesh3.ToObjObject();
-
-//            ObjObject tempObj2 = tempMesh1.ToObjObject();
-//            tempObj2.Material = tempMat;
-//            tempObjGroup.AddObject(tempObj2);
-
-
             ObjGroup tempObjMesh2 = ObjLoader.LoadObjFileToObjMesh(program, @"./Resources/Models/Turret1.obj");
             tempObjMesh2.Location = new Vector3(10, 0, 10);
             tempObjMesh2.Scale = Vector3.UnitScale*0.3f;
             objMeshs.Add(tempObjMesh2);
-
 
             ObjMaterial tempMaterial = TheMaterialManager.GetPlainColor(program, "GamePlainGreen", Color.Green);
 
@@ -144,7 +125,7 @@ namespace GameCore.Render.RenderLayers
 //            objMeshs.Add(tempObjGroup);
 //
 
-            theRenderGameObjects = GetGameObjects();
+            objMeshs.AddRange(GetGameObjects());
 
             Gl.UseProgram(0);
             Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
@@ -226,16 +207,16 @@ namespace GameCore.Render.RenderLayers
                 vertices = null;
             }
 
-            if (theRenderGameObjects != null)
-            {
-                foreach (ObjGameObject renderGameObject in theRenderGameObjects)
-                {
-                    renderGameObject.Draw(program);
-                }
-                Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-                Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
-                Gl.UseProgram(0);
-            }
+//            if (theRenderGameObjects != null)
+//            {
+//                foreach (ObjGameObject renderGameObject in theRenderGameObjects)
+//                {
+//                    renderGameObject.Draw(program);
+//                }
+//                Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+//                Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
+//                Gl.UseProgram(0);
+//            }
 
             if (UseObjMap)
             {
@@ -271,10 +252,10 @@ namespace GameCore.Render.RenderLayers
                     anObjMesh.Dispose();
                 }
             }
-            foreach (ObjGameObject aRenderGameObject in theRenderGameObjects)
-            {
-                aRenderGameObject.Dispose();
-            }
+//            foreach (ObjGameObject aRenderGameObject in theRenderGameObjects)
+//            {
+//                aRenderGameObject.Dispose();
+//            }
             if (theTileObjects != null)
             {
                 foreach (ObjObject aObjObject in theTileObjects)
@@ -368,8 +349,8 @@ namespace GameCore.Render.RenderLayers
         public override void OnSpecialKeyboardUp(int key, int x, int y)
         {
             if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtPlayer])
-                TheCamera.LookAt(new Vector3(playerObjObject.TheGameObject.Location.X, 0.0f,
-                    playerObjObject.TheGameObject.Location.Y));
+                TheCamera.LookAt(new Vector3(playerObjObject.TheObjectGame.Location.X, 0.0f,
+                    playerObjObject.TheObjectGame.Location.Y));
         }
 
         public override void OnKeyboardDown(byte key, int x, int y)
@@ -404,44 +385,72 @@ namespace GameCore.Render.RenderLayers
 
         #region Game objects
 
-        private List<ObjGameObject> GetGameObjects()
+        private List<ObjGroup> GetGameObjects()
         {
-            List<ObjGameObject> tempTileObj = CreateRenderGameObjects();
+            List<ObjGroup> tempTileObj = CreateRenderGameObjects();
             return tempTileObj;
         }
 
-        private List<ObjGameObject> CreateRenderGameObjects()
+        private List<ObjGroup> CreateRenderGameObjects()
         {
-            Dictionary<GameObject.ObjcetIds, PlainBmpTexture> gameObjectsTextures =
+            Dictionary<ObjectGame.ObjcetIds, PlainBmpTexture> gameObjectsTextures =
                 RenderObjects.RenderObjects.CreateGameObjectsTextures(new Size(20, 20), program);
-            List<ObjGameObject> tempObjList = new List<ObjGameObject>();
-            List<GameObject> gameObjects = TheGameStatus.GameObjects;
+            List<ObjGroup> tempObjList = new List<ObjGroup>();
+            List<ObjectGame> gameObjects = TheGameStatus.GameObjects;
 
-
-            foreach (GameObject gameObject in gameObjects)
+            foreach (ObjectGame gameObject in gameObjects)
             {
-                Vector tempLoc = new Vector(0.0f, 0.0f);
-                tempLoc -= new Vector(gameObject.Diameter*0.5f, gameObject.Diameter*0.5f);
-                ObjGameObject tempObjObject =
-                    new ObjGameObject(ObjectPrimitives.CreateCube(new Vector3(tempLoc.X, 0, tempLoc.Y),
-                        new Vector3(tempLoc.X + gameObject.Diameter, gameObject.Diameter,
-                            tempLoc.Y + gameObject.Diameter),
-                        true));
-
-                tempObjObject.TheGameObject = gameObject;
-                if (gameObject.TheObjectId == GameObject.ObjcetIds.Player)
+                Vector tempLoc;
+                ObjGroupGameObject tempGroup = null;
+                ObjGameObject tempObjObject;
+                switch (gameObject.TheObjectId)
                 {
-                    playerObjObject = tempObjObject;
+                    case ObjectGame.ObjcetIds.Player:
+                        tempGroup = new ObjGroupGameObjectPlayer(program){TheObjectGame = gameObject};
+                        tempLoc = new Vector(0.0f, 0.0f);
+                        tempLoc -= new Vector(gameObject.Diameter*0.5f, gameObject.Diameter*0.5f);
+                        tempObjObject =
+                            new ObjGameObject(ObjectPrimitives.CreateCube(new Vector3(tempLoc.X, 0, tempLoc.Y),
+                                new Vector3(tempLoc.X + gameObject.Diameter, gameObject.Diameter,
+                                    tempLoc.Y + gameObject.Diameter),
+                                true));
+                        ObjMaterial tempMaterial = TheMaterialManager.GetFromFile(program, "tileTestMike200x200.png");
+                        tempObjObject.Material = tempMaterial;
+                        tempGroup.AddObject(tempObjObject);
+                        playerObjObject = tempGroup;
+                       tempGroup.Location = new Vector3(gameObject.Location.X,0.0,gameObject.Location.Y);
+                        break;
+                    case ObjectGame.ObjcetIds.Turret:
 
-                    ObjMaterial tempMaterial = TheMaterialManager.GetFromFile(program, "tileTestMike200x200.png");
+                        ObjGroup tempGroup1 = ObjLoader.LoadObjFileToObjMesh(program, @"./Resources/Models/Turret1.obj");
+                        ObjectTurret tempTurret = (ObjectTurret) gameObject;
+                        tempGroup = new ObjGroupGameObjectTurrel(tempGroup1)
+                        {
+                            Location = new Vector3(gameObject.Location.X, 0.0, gameObject.Location.Y),
+                            Scale = Vector3.UnitScale*0.3f,
+                            TheObjectGame = tempTurret
+                        };
+                        //                        tempGroup.Orientation = tempTurret.Orientation;
 
-                    playerObjObject.Material = tempMaterial;
+                        break;
+                    default:
+                        tempLoc = new Vector(0.0f, 0.0f);
+                        tempLoc -= new Vector(gameObject.Diameter*0.5f, gameObject.Diameter*0.5f);
+                        tempObjObject =
+                            new ObjGameObject(ObjectPrimitives.CreateCube(new Vector3(tempLoc.X, 0, tempLoc.Y),
+                                new Vector3(tempLoc.X + gameObject.Diameter, gameObject.Diameter,
+                                    tempLoc.Y + gameObject.Diameter),
+                                true))
+                            {
+                                Material = gameObjectsTextures[gameObject.TheObjectId].Material
+                            };
+
+                        tempGroup.AddObject(tempObjObject);
+                        tempGroup.TheObjectGame = gameObject;
+                        break;
                 }
-                else
-                {
-                    tempObjObject.Material = gameObjectsTextures[gameObject.TheObjectId].Material;
-                }
-                tempObjList.Add(tempObjObject);
+
+                tempObjList.Add(tempGroup);
             }
             return tempObjList;
         }

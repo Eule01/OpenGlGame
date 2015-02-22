@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using GameCore.Render.RenderMaterial;
 using GameCore.Render.RenderObjects;
+using GameCore.Render.RenderObjects.ObjGroups;
 using OpenGL;
 
 #endregion

@@ -20,7 +20,7 @@ namespace GameCore
         /// <summary>
         ///     This contains all the game objects.
         /// </summary>
-        internal List<GameObject> GameObjects;
+        internal List<ObjectGame> GameObjects;
 
         /// <summary>
         /// The player object.
@@ -44,7 +44,7 @@ namespace GameCore
 
         private void Init()
         {
-            GameObjects = new List<GameObject>();
+            GameObjects = new List<ObjectGame>();
 //            TheMap = Map.Map.CreateTestMap();
             theMilliSeconds = 0;
         }
@@ -52,9 +52,13 @@ namespace GameCore
         internal static GameStatus CreatTestGame()
         {
             GameStatus tempGameStatus = new GameStatus {TheMap = Map.Map.CreateTestMap()};
-            ObjectPlayer tempPlayer = new ObjectPlayer(GameObject.ObjcetIds.Player) {Location = new Vector(10.3, 5.6)};
+            ObjectPlayer tempPlayer = new ObjectPlayer(ObjectGame.ObjcetIds.Player) {Location = new Vector(10.3, 5.6)};
             tempGameStatus.ThePlayer = tempPlayer;
             tempGameStatus.GameObjects.Add(tempPlayer);
+
+            ObjectTurret tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret){Location = new Vector(20,20),Orientation = new Vector(0.0,1.0),OrientationTower = new Vector(0.5,0.5)};
+            tempGameStatus.GameObjects.Add(tempTurret);
+
             return tempGameStatus;
         }
 

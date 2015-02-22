@@ -7,14 +7,13 @@ using OpenGL;
 
 #endregion
 
-namespace GameCore.Render.RenderObjects
+namespace GameCore.Render.RenderObjects.ObjGroups
 {
     public class ObjGroup : IObjGroup
     {
-        protected List<IObjObject> objects = new List<IObjObject>();
-        private Dictionary<string, ObjMaterial> materials = new Dictionary<string, ObjMaterial>();
+        protected List<IObjObject> Objects = new List<IObjObject>();
 
-        protected ShaderProgram defaultProgram;
+        protected internal ShaderProgram defaultProgram;
         private ObjMaterial defaultMaterial;
 
         public string Name;
@@ -26,9 +25,10 @@ namespace GameCore.Render.RenderObjects
 
         /// <summary>
         ///     The orientation of the Mesh object.
-        /// This migh be faster implemented by three vectors Right, Up and Dir
+        ///     This migh be faster implemented by three vectors Right, Up and Dir
         /// </summary>
-        private Quaternion orientation = new Quaternion(0,0,0,1);
+        private Quaternion orientation = new Quaternion(0, 0, 0, 1);
+
 //        private Quaternion orientation = Quaternion.Zero;
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace GameCore.Render.RenderObjects
         protected Matrix4 modelMatrix = Matrix4.Identity;
 
         /// <summary>
-        /// True if the model matrix needs updating.
+        ///     True if the model matrix needs updating.
         /// </summary>
         protected bool modelMatrixOld = false;
 
@@ -86,19 +86,16 @@ namespace GameCore.Render.RenderObjects
             }
         }
 
-
         protected void UpdateModelMatrix()
         {
-//            modelMatrix = Matrix4.CreateTranslation(location) * Matrix4.CreateScaling(scale) * orientation.Matrix4;
-            modelMatrix = orientation.Matrix4 * Matrix4.CreateScaling(scale) * Matrix4.CreateTranslation(location);
+            modelMatrix = orientation.Matrix4*Matrix4.CreateScaling(scale)*Matrix4.CreateTranslation(location);
             modelMatrixOld = false;
-
         }
 
 
-        public void ClearObjects()
+        protected void ClearObjects()
         {
-            objects.Clear();
+            Objects.Clear();
         }
 
         public void AddObjects(List<ObjObject> aObjObjects)
@@ -111,7 +108,7 @@ namespace GameCore.Render.RenderObjects
 
         public void AddObject(ObjObject aObject)
         {
-            objects.Add(aObject);
+            Objects.Add(aObject);
             if (aObject.Material == null) aObject.Material = defaultMaterial;
         }
 
@@ -132,18 +129,17 @@ namespace GameCore.Render.RenderObjects
 
             if (false)
             {
-                foreach (IObjObject anObj in objects)
+                foreach (IObjObject anObj in Objects)
                 {
                     anObj.Draw();
                 }
-
             }
             else
             {
                 // Make sure that the transparent objects are drawn last.
                 List<IObjObject> transparentObjects = new List<IObjObject>();
 
-                foreach (IObjObject anObj in objects)
+                foreach (IObjObject anObj in Objects)
                 {
                     if (anObj.Material.Transparency < 1f) transparentObjects.Add(anObj);
                     else anObj.Draw();
@@ -158,9 +154,14 @@ namespace GameCore.Render.RenderObjects
 
         public void Dispose()
         {
-            for (int i = 0; i < objects.Count; i++) objects[i].Dispose();
+            for (int i = 0; i < Objects.Count; i++) Objects[i].Dispose();
             defaultMaterial.Dispose();
 //            if (defaultProgram != null) defaultProgram.Dispose();
+        }
+
+        public List<IObjObject> GetObjects()
+        {
+            return Objects;
         }
     }
 }

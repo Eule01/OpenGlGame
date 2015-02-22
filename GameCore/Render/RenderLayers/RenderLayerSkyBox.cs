@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.IO;
 using GameCore.Render.Cameras;
-using GameCore.Render.RenderObjects;
+using GameCore.Render.RenderObjects.ObjGroups;
 using GameCore.UserInterface;
 using OpenGL;
 
@@ -14,7 +14,7 @@ namespace GameCore.Render.RenderLayers
     public class RenderLayerSkyBox : RenderLayerBase
     {
         private ShaderProgram program;
-        private List<ObjGroup> objMeshs;
+        private List<ObjGroup> objGroups;
 
         /// <summary>
         ///     The near clipping distance.
@@ -51,25 +51,22 @@ namespace GameCore.Render.RenderLayers
             program["model_matrix"].SetValue(Matrix4.Identity);
 
 
-            objMeshs = new List<ObjGroup>();
+            objGroups = new List<ObjGroup>();
 
+            // Add all skyBoxes to the list.           
             AddAllSkyBoxes();
+
+            // Use the first one in the list.
             skyBoxObjGroup = skyBoxes[0];
+//            skyBoxObjGroup.Scale = Vector3.UnitScale*0.7f;
 
-
-//            skyBoxObjGroup = ObjGroupSkyBox.GetNewSkyBoxTypeT(program, @".\SkyBoxes\grimmnight_large.jpg");
-//            skyBoxObjGroup = ObjGroupSkyBox.GetNewSkyBox2(program);
-            skyBoxObjGroup.Scale = Vector3.UnitScale*0.7f;
-
-//            skyBoxObjGroup = new ObjGroupSkyBox(program) {Scale = Vector3.UnitScale*0.7f};
-
-            objMeshs.Add(skyBoxObjGroup);
+            objGroups.Add(skyBoxObjGroup);
         }
 
         private void AddAllSkyBoxes()
         {
             skyBoxes.Clear();
-            string tempSkyBoxFolder = Path.Combine(TheMaterialManager.ImageDirectory, skypBoxFolder);
+            string tempSkyBoxFolder = TheMaterialManager.SkyBoxDirectory;
             string[] files = Directory.GetFiles(tempSkyBoxFolder, "SkyBox_T*.*");
             List<string> fileList = new List<string>();
             foreach (string aFile in files)
@@ -81,7 +78,7 @@ namespace GameCore.Render.RenderLayers
 
                     if (tempExt == ".jpg" || tempExt == ".png")
                     {
-                        string tempRelPath = Path.Combine(skypBoxFolder,Path.GetFileName(aFile));
+                        string tempRelPath = Path.Combine(skypBoxFolder, Path.GetFileName(aFile));
                         fileList.Add(tempRelPath);
                     }
                 }
@@ -110,7 +107,7 @@ namespace GameCore.Render.RenderLayers
         private void ChangeToSkyBox(ObjGroupSkyBox aObjGroupSkyBox)
         {
             skyBoxObjGroup = aObjGroupSkyBox;
-            objMeshs[0] = skyBoxObjGroup;
+            objGroups[0] = skyBoxObjGroup;
         }
 
         public override void OnDisplay()
@@ -132,9 +129,9 @@ namespace GameCore.Render.RenderLayers
 
             // now draw the object file
 //            if (wireframe) Gl.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-            if (objMeshs != null)
+            if (objGroups != null)
             {
-                foreach (ObjGroup anObjMesh in objMeshs)
+                foreach (ObjGroup anObjMesh in objGroups)
                 {
                     anObjMesh.Draw();
                 }
@@ -148,11 +145,8 @@ namespace GameCore.Render.RenderLayers
         public override void OnReshape(int width, int height)
         {
             Height = height;
-
-
+            Width = width;
             Gl.UseProgram(program.ProgramID);
-            //            projection_matrix = Matrix4.CreatePerspectiveFieldOfView(0.45f, (float) Width/Height, 0.1f,
-            //                                                                     1000f);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(Fov, (float) Width/Height, ZNear,
                 ZFar);
             program["projection_matrix"].SetValue(projectionMatrix);
@@ -160,9 +154,9 @@ namespace GameCore.Render.RenderLayers
 
         public override void OnClose()
         {
-            if (objMeshs != null)
+            if (objGroups != null)
             {
-                foreach (ObjGroup anObjMesh in objMeshs)
+                foreach (ObjGroup anObjMesh in objGroups)
                 {
                     anObjMesh.Dispose();
                 }
