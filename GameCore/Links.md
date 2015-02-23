@@ -320,9 +320,19 @@ http://0fps.net/
 
 tree search
 https://www.youtube.com/watch?v=Lg0kOoiCI80
+http://www.videotutorialsrock.com/opengl_tutorial/collision_detection/text.php
 
 
 http://nehe.gamedev.net/tutorial/collision_detection/17005/
+http://studiofreya.com/3d-math-and-physics/simple-aabb-vs-aabb-collision-detection/
+http://stackoverflow.com/questions/99796/when-to-use-binary-space-partitioning-quadtree-octree
+http://ubuntuforums.org/showthread.php?t=830781
+
+
+
+List of physics engines
+http://www.gamedev.net/topic/475753-list-of-physics-engines-and-reference-material-updated-7-march-2011/
+
 # Textures source
 
 http://opengameart.org/content/explosion
