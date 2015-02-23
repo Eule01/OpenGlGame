@@ -318,6 +318,11 @@ http://gafferongames.com/game-physics/fix-your-timestep/
 
 http://0fps.net/
 
+tree search
+https://www.youtube.com/watch?v=Lg0kOoiCI80
+
+
+http://nehe.gamedev.net/tutorial/collision_detection/17005/
 # Textures source
 
 http://opengameart.org/content/explosion

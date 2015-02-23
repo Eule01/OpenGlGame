@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using CodeToast;
 using GameCore.Engine;
+using GameCore.GameObjects;
 using GameCore.GuiHelpers;
 using GameCore.Render.MainRenderer;
 using GameCore.UserInterface;
@@ -103,6 +104,7 @@ namespace GameCore
 
             //            TheGameStatus = new GameStatus();
             theGameStatus = GameStatus.CreatTestGame();
+            ObjectGame.TheGameStatus = theGameStatus;
 
 
             theGameEngine.Start();

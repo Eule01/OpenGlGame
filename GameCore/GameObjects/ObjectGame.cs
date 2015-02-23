@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using GameCore.UserInterface;
 using GameCore.Utils;
 
 #endregion
@@ -12,6 +13,9 @@ namespace GameCore.GameObjects
     public class ObjectGame
     {
         public bool Changed = true;
+
+        public static GameStatus TheGameStatus;
+        public static UserInputPlayer TheUserInputPlayer;
 
         public enum ObjcetIds
         {
@@ -47,7 +51,7 @@ namespace GameCore.GameObjects
             get { return theObjectId; }
         }
 
-        public void Move(float deltaTime)
+        public virtual void Move(float deltaTime)
         {
             
         }

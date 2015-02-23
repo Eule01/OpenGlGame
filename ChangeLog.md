@@ -1,4 +1,5 @@
 
+2015.02.23	IMPROVEMENT	The turrets can now turn their tower. For test purposes the tower will point at the player once he gets within 10m.
 2015.02.22	IMPROVEMENT	The map can now be changed by holding CTRL and clicking on a tile (this is a very basic implementation).
 2015.02.22	IMPROVEMENT	A material can now be selected in the creative HUD.
 2015.02.22	IMPROVEMENT	Majorly improved the map render by using MipMap in the texture array.

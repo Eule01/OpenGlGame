@@ -26,5 +26,32 @@ namespace GameCore.GameObjects
                 Changed = true;
             }
         }
+
+        public override void Move(float deltaTime)
+        {
+            if (TheUserInputPlayer.Forward)
+            {
+                Location += Orientation * 0.1f;
+            }
+            else if (TheUserInputPlayer.Backward)
+            {
+                Location -= Orientation * 0.1f;
+            }
+            if (TheUserInputPlayer.Right)
+            {
+                Location -= (Orientation.Perpendicular()) * 0.1f;
+            }
+            else if (TheUserInputPlayer.Left)
+            {
+                Location += (Orientation.Perpendicular()) * 0.1f;
+            }
+            if (!TheUserInputPlayer.MousePosition.IsEmpty)
+            {
+                Vector gameMousePos = TheUserInputPlayer.MousePosition;
+                Vector playerMouseVec = gameMousePos - Location;
+                playerMouseVec.Normalize();
+                Orientation = playerMouseVec;
+            }
+        }
     }
 }

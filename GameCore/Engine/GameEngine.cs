@@ -35,6 +35,7 @@ namespace GameCore.Engine
         private void Init()
         {
             theUserInputPlayer = new UserInputPlayer();
+            ObjectGame.TheUserInputPlayer = theUserInputPlayer;
             theTickEngine = new TickEngineThread();
             theTickEngine.Setup("GameEngine", GameTick, StatusTick, timerTickIntervalMs);
         }
@@ -67,31 +68,6 @@ namespace GameCore.Engine
                 aGameObject.Move(deltaTime);
             }
             watch.Restart();
-
-            ObjectPlayer thePlayer = GameCore.TheGameCore.TheGameStatus.ThePlayer;
-            if (theUserInputPlayer.Forward)
-            {
-                thePlayer.Location += thePlayer.Orientation*0.1f;
-            }
-            else if (theUserInputPlayer.Backward)
-            {
-                thePlayer.Location -= thePlayer.Orientation*0.1f;
-            }
-            if (theUserInputPlayer.Right)
-            {
-                thePlayer.Location -= (thePlayer.Orientation.Perpendicular())*0.1f;
-            }
-            else if (theUserInputPlayer.Left)
-            {
-                thePlayer.Location += (thePlayer.Orientation.Perpendicular()) * 0.1f;
-            }
-            if (!theUserInputPlayer.MousePosition.IsEmpty)
-            {
-                Vector gameMousePos = theUserInputPlayer.MousePosition;
-                Vector playerMouseVec = gameMousePos - thePlayer.Location;
-                playerMouseVec.Normalize();
-                thePlayer.Orientation = playerMouseVec;
-            }
         }
 
         /// <summary>

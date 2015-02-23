@@ -42,5 +42,15 @@ namespace GameCore.GameObjects
                 Changed = true;
             }
         }
+
+        public override void Move(float deltaTime)
+        {
+            Vector tempVect = Location - TheGameStatus.ThePlayer.Location;
+            if (tempVect.Magnitude < 10)
+            {
+                tempVect.Normalize();
+                OrientationTower = -tempVect;
+            }
+        }
     }
 }

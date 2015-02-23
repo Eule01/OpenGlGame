@@ -59,6 +59,16 @@ namespace GameCore
             ObjectTurret tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret){Location = new Vector(20,20),Orientation = new Vector(0.0,1.0),OrientationTower = new Vector(0.5,0.5)};
             tempGameStatus.GameObjects.Add(tempTurret);
 
+
+            tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret){Location = new Vector(30,25),Orientation = new Vector(0.0,1.0),OrientationTower = new Vector(0.5,0.5)};
+            tempGameStatus.GameObjects.Add(tempTurret);
+
+            tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret){Location = new Vector(31,22),Orientation = new Vector(0.0,1.0),OrientationTower = new Vector(0.5,0.5)};
+            tempGameStatus.GameObjects.Add(tempTurret);
+
+            tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret){Location = new Vector(27,18),Orientation = new Vector(0.0,1.0),OrientationTower = new Vector(0.5,0.5)};
+            tempGameStatus.GameObjects.Add(tempTurret);
+
             return tempGameStatus;
         }
 
