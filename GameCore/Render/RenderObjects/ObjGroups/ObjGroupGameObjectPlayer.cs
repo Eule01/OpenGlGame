@@ -1,6 +1,7 @@
 ﻿#region
 
 using GameCore.GameObjects;
+using GameCore.Render.OpenGlHelper;
 using OpenGL;
 
 #endregion
@@ -31,10 +32,12 @@ namespace GameCore.Render.RenderObjects.ObjGroups
 
         public override void Draw()
         {
-            Location = new Vector3(theObjectGame.Location.X, 0.0, theObjectGame.Location.Y);
-            Orientation =
-                Quaternion.FromRotationMatrix(Matrix4.CreateFromAxisAngle(Vector3.Up,
-                    -theObjectPlayer.Orientation.Angle));
+            Location = theObjectGame.Location;
+//            Orientation = RotationHelper.GetQuaternionFromDiretion(theObjectPlayer.Orientation);
+            Orientation = RotationHelper.ReverseQuaternion(RotationHelper.GetQuaternionFromDiretion(theObjectPlayer.Orientation));
+//            Orientation = Quaternion.FromAxis(theObjectPlayer.Orientation, Vector3.Zero, Vector3.Zero);
+//            Orientation = Quaternion.FromRotationMatrix(Matrix4.CreateFromAxisAngle(Vector3.Up,
+//                theObjectPlayer.Orientation.CalculateAngle(Vector3.Forward)));
 
             base.Draw();
         }

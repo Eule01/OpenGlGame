@@ -34,23 +34,17 @@ namespace GameCore.Render.RenderObjects.ObjGroups
 
         public override void Draw()
         {
-            Location = new Vector3(theObjectGame.Location.X, 0.0, theObjectGame.Location.Y);
+            Location =theObjectGame.Location;
             switch (theObjectGame.TheObjectId)
             {
-//                case ObjectGame.ObjcetIds.Player:
-//                    Orientation =
-//                        Quaternion.FromRotationMatrix(Matrix4.CreateFromAxisAngle(Vector3.Up,
-//                            -((ObjectPlayer) theObjectGame).Orientation.Angle));
-//
-//                    break;
                 case ObjectGame.ObjcetIds.Zork:
                     break;
                 case ObjectGame.ObjcetIds.Gustav:
                     break;
                 case ObjectGame.ObjcetIds.Turret:
-                    Orientation =
-                        Quaternion.FromRotationMatrix(Matrix4.CreateFromAxisAngle(Vector3.Up,
-                            -((ObjectTurret) theObjectGame).Orientation.Angle));
+//                    Orientation =
+//                        Quaternion.FromRotationMatrix(Matrix4.CreateFromAxisAngle(Vector3.Up,
+//                            ((ObjectTurret) theObjectGame).Orientation.CalculateAngle(Vector3.Forward)));
                     break;
             }
 

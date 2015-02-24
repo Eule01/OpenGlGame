@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using GameCore.GameObjects;
 using GameCore.Render.Cameras;
-using GameCore.Utils;
+using OpenGL;
 
 #endregion
 
@@ -23,7 +23,7 @@ namespace GameCore
         internal List<ObjectGame> GameObjects;
 
         /// <summary>
-        /// The player object.
+        ///     The player object.
         /// </summary>
         internal ObjectPlayer ThePlayer;
 
@@ -52,21 +52,44 @@ namespace GameCore
         internal static GameStatus CreatTestGame()
         {
             GameStatus tempGameStatus = new GameStatus {TheMap = Map.Map.CreateTestMap()};
-            ObjectPlayer tempPlayer = new ObjectPlayer(ObjectGame.ObjcetIds.Player) {Location = new Vector(10.3, 5.6)};
+            ObjectPlayer tempPlayer = new ObjectPlayer(ObjectGame.ObjcetIds.Player)
+            {
+                Location = new Vector3(10.3f, 0.0f, 5.6f)
+            };
             tempGameStatus.ThePlayer = tempPlayer;
             tempGameStatus.GameObjects.Add(tempPlayer);
 
-            ObjectTurret tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret){Location = new Vector(20,20),Orientation = new Vector(0.0,1.0),OrientationTower = new Vector(0.5,0.5)};
+            ObjectTurret tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret)
+            {
+                Location = new Vector3(20.0f, 0.0f, 20.0f),
+                Orientation = new Vector3(0.0, 0.0f, 1.0),
+                OrientationTower = new Vector3(0.5, 0.0f, 0.5)
+            };
             tempGameStatus.GameObjects.Add(tempTurret);
 
 
-            tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret){Location = new Vector(30,25),Orientation = new Vector(0.0,1.0),OrientationTower = new Vector(0.5,0.5)};
+            tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret)
+            {
+                Location = new Vector3(30.0f, 0.0f, 25.0f),
+                Orientation = new Vector3(0.0f, 0.0f, 1.0f),
+                OrientationTower = new Vector3(0.5f, 0.0f, 0.5f)
+            };
             tempGameStatus.GameObjects.Add(tempTurret);
 
-            tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret){Location = new Vector(31,22),Orientation = new Vector(0.0,1.0),OrientationTower = new Vector(0.5,0.5)};
+            tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret)
+            {
+                Location = new Vector3(31, 0.0f, 22),
+                Orientation = new Vector3(0.0, 0.0f, 1.0),
+                OrientationTower = new Vector3(0.5, 0.0f, 0.5)
+            };
             tempGameStatus.GameObjects.Add(tempTurret);
 
-            tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret){Location = new Vector(27,18),Orientation = new Vector(0.0,1.0),OrientationTower = new Vector(0.5,0.5)};
+            tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret)
+            {
+                Location = new Vector3(27, 0.0f, 18),
+                Orientation = new Vector3(0.0, 0.0f, 1.0),
+                OrientationTower = new Vector3(0.5, 0.0f, 0.5)
+            };
             tempGameStatus.GameObjects.Add(tempTurret);
 
             return tempGameStatus;

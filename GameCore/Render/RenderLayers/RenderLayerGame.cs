@@ -284,11 +284,11 @@ namespace GameCore.Render.RenderLayers
             {
                 MouseWorld = ConvertScreenToWorldCoords(x, y, TheCamera.ViewMatrix, projectionMatrix, TheCamera.Position,
                     TheRenderStatus);
-                Vector2 playerMouseVec =
-                    (new Vector2(MouseWorld.x, MouseWorld.z) -
-                     new Vector2(TheGameStatus.ThePlayer.Location.X, TheGameStatus.ThePlayer.Location.Y)).Normalize();
+                Vector3 playerMouseVec =
+                    (new Vector3(MouseWorld.x, 0.0, MouseWorld.z) - TheGameStatus.ThePlayer.Location).Normalize();
 
-                TheGameStatus.ThePlayer.Orientation = new Vector(playerMouseVec.x, playerMouseVec.y);
+                TheGameStatus.ThePlayer.Orientation = playerMouseVec;
+//                TheGameStatus.ThePlayer.Orientation = new Vector(playerMouseVec.x, playerMouseVec.y);
 
                 int mod = Glut.glutGetModifiers();
                 if (mod == Glut.GLUT_ACTIVE_CTRL)
@@ -349,8 +349,9 @@ namespace GameCore.Render.RenderLayers
         public override void OnSpecialKeyboardUp(int key, int x, int y)
         {
             if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtPlayer])
-                TheCamera.LookAt(new Vector3(playerObjObject.TheObjectGame.Location.X, 0.0f,
-                    playerObjObject.TheObjectGame.Location.Y));
+                TheCamera.LookAt(playerObjObject.TheObjectGame.Location);
+//                TheCamera.LookAt(new Vector3(playerObjObject.TheObjectGame.Location.x, 0.0f,
+//                    playerObjObject.TheObjectGame.Location.Y));
         }
 
         public override void OnKeyboardDown(byte key, int x, int y)
@@ -406,7 +407,7 @@ namespace GameCore.Render.RenderLayers
                 switch (gameObject.TheObjectId)
                 {
                     case ObjectGame.ObjcetIds.Player:
-                        tempGroup = new ObjGroupGameObjectPlayer(program){TheObjectGame = gameObject};
+                        tempGroup = new ObjGroupGameObjectPlayer(program) {TheObjectGame = gameObject};
                         tempLoc = new Vector(0.0f, 0.0f);
                         tempLoc -= new Vector(gameObject.Diameter*0.5f, gameObject.Diameter*0.5f);
                         tempObjObject =
@@ -418,7 +419,7 @@ namespace GameCore.Render.RenderLayers
                         tempObjObject.Material = tempMaterial;
                         tempGroup.AddObject(tempObjObject);
                         playerObjObject = tempGroup;
-                       tempGroup.Location = new Vector3(gameObject.Location.X,0.0,gameObject.Location.Y);
+                        tempGroup.Location = gameObject.Location;
                         break;
                     case ObjectGame.ObjcetIds.Turret:
 
@@ -426,7 +427,7 @@ namespace GameCore.Render.RenderLayers
                         ObjectTurret tempTurret = (ObjectTurret) gameObject;
                         tempGroup = new ObjGroupGameObjectTurret(tempGroup1)
                         {
-                            Location = new Vector3(gameObject.Location.X, 0.0, gameObject.Location.Y),
+                            Location = gameObject.Location,
                             Scale = Vector3.UnitScale*0.3f,
                             TheObjectGame = tempTurret
                         };

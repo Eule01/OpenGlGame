@@ -229,7 +229,7 @@ http://www.alcove-games.com/opengl-es-2-tutorials/lightmap-shader-fire-effect-gl
 
 # Quaternion and Rotations
 
-http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/
+http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/   *****
 
 # Texture
 

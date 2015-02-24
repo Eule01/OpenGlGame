@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using GameCore.UserInterface;
 using GameCore.Utils;
+using OpenGL;
 
 #endregion
 
@@ -27,9 +28,9 @@ namespace GameCore.GameObjects
 
         public float Diameter = 0.4f;
 
-        private Vector location = new Vector(0, 0);
+        private Vector3 location = new Vector3(0, 0,0);
 
-        public Vector Location
+        public Vector3 Location
         {
             get { return location; }
             set

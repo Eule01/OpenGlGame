@@ -1,6 +1,6 @@
 ﻿#region
 
-using GameCore.Utils;
+using OpenGL;
 
 #endregion
 
@@ -16,14 +16,14 @@ namespace GameCore.GameObjects
         /// <summary>
         ///     The orientation of the player given by a vector.
         /// </summary>
-        private Vector orientation = new Vector(1.0f, 0.0f);
+        private Vector3 orientation = new Vector3(1.0f, 0.0f, 0.0f);
 
         /// <summary>
         ///     The orientation of the player given by a vector.
         /// </summary>
-        private Vector orientationTower = new Vector(1.0f, 0.0f);
+        private Vector3 orientationTower = new Vector3(1.0f, 0.0f, 0.0f);
 
-        public Vector Orientation
+        public Vector3 Orientation
         {
             get { return orientation; }
             set
@@ -33,7 +33,7 @@ namespace GameCore.GameObjects
             }
         }
 
-        public Vector OrientationTower
+        public Vector3 OrientationTower
         {
             get { return orientationTower; }
             set
@@ -45,11 +45,10 @@ namespace GameCore.GameObjects
 
         public override void Move(float deltaTime)
         {
-            Vector tempVect = Location - TheGameStatus.ThePlayer.Location;
-            if (tempVect.Magnitude < 10)
+            Vector3 tempVect = TheGameStatus.ThePlayer.Location - Location;
+            if (tempVect.SquaredLength < 100)
             {
-                tempVect.Normalize();
-                OrientationTower = -tempVect;
+                OrientationTower = tempVect.Normalize();
             }
         }
     }

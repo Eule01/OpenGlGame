@@ -1,6 +1,7 @@
 ﻿#region
 
 using GameCore.GameObjects;
+using GameCore.Render.OpenGlHelper;
 using OpenGL;
 
 #endregion
@@ -37,9 +38,13 @@ namespace GameCore.Render.RenderObjects.ObjGroups
 
         public override void Draw()
         {
-            Location = new Vector3(theObjectGame.Location.X, 0.0, theObjectGame.Location.Y);
-            Orientation = Quaternion.FromRotationMatrix(Matrix4.CreateFromAxisAngle(Vector3.Up,
-                    -theObjectTurret.Orientation.Angle));
+            Location = theObjectGame.Location;
+//            Orientation = Quaternion.FromRotationMatrix(Matrix4.CreateFromAxisAngle(Vector3.Up,
+//                    -theObjectTurret.Orientation.Angle));
+            Orientation = RotationHelper.ReverseQuaternion(RotationHelper.GetQuaternionFromDiretion(theObjectTurret.Orientation));
+//
+//            Orientation = Quaternion.FromRotationMatrix(Matrix4.CreateFromAxisAngle(Vector3.Up,
+//                theObjectTurret.Orientation.CalculateAngle(Vector3.Forward)));
 
             if (modelMatrixOld)
             {
@@ -47,7 +52,9 @@ namespace GameCore.Render.RenderObjects.ObjGroups
             }
             defaultProgram["model_matrix"].SetValue(modelMatrix);
             objTurretBase.Draw();
-            Matrix4 towerModelMatrix = Matrix4.CreateFromAxisAngle(Vector3.Up, -theObjectTurret.OrientationTower.Angle)*modelMatrix;
+            Matrix4 towerModelMatrix = (RotationHelper.ReverseQuaternion(RotationHelper.GetQuaternionFromDiretion(-theObjectTurret.OrientationTower))).Matrix4 * modelMatrix;
+//            Matrix4 towerModelMatrix = Matrix4.CreateFromAxisAngle(Vector3.Up, theObjectTurret.OrientationTower.CalculateAngle(Vector3.Forward)) * modelMatrix;
+//            Matrix4 towerModelMatrix = Matrix4.CreateFromAxisAngle(Vector3.Up, theObjectTurret.OrientationTower.CalculateAngle(Vector3.Forward)) * modelMatrix;
             defaultProgram["model_matrix"].SetValue(towerModelMatrix);
             objTurretTower.Draw();
         }

@@ -57,6 +57,7 @@
     <Compile Include="Render\Cameras\Camera.cs" />
     <Compile Include="Render\OpenGlHelper\MeshData.cs" />
     <Compile Include="Render\OpenGlHelper\ObjLoader.cs" />
+    <Compile Include="Render\OpenGlHelper\RotationHelper.cs" />
     <Compile Include="Render\RenderLayers\RenderLayerMapDrawArrays.cs" />
     <Compile Include="Render\RenderLayers\RenderLayerMapMultiDrawElementsIndirect.cs" />
     <Compile Include="Render\RenderLayers\RenderLayerSkyBox.cs" />
