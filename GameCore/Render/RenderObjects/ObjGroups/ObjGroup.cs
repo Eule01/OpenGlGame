@@ -21,7 +21,7 @@ namespace GameCore.Render.RenderObjects.ObjGroups
         /// <summary>
         ///     The location of the Mesh object.
         /// </summary>
-        private Vector3 location = Vector3.Zero;
+        internal Vector3 location = Vector3.Zero;
 
         /// <summary>
         ///     The orientation of the Mesh object.
@@ -34,7 +34,7 @@ namespace GameCore.Render.RenderObjects.ObjGroups
         /// <summary>
         ///     The scale in all three dimensions.
         /// </summary>
-        private Vector3 scale = Vector3.UnitScale;
+        internal Vector3 scale = Vector3.UnitScale;
 
         /// <summary>
         ///     The model matrix of the mesh object. Contains the Location, Orientation and Scale.

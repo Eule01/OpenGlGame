@@ -63,7 +63,8 @@ namespace GameCore
             {
                 Location = new Vector3(20.0f, 0.0f, 20.0f),
                 Orientation = new Vector3(0.0, 0.0f, 1.0),
-                OrientationTower = new Vector3(0.5, 0.0f, 0.5)
+                OrientationTower = 0.5f
+//                OrientationTower = new Vector3(0.5, 0.0f, 0.5)
             };
             tempGameStatus.GameObjects.Add(tempTurret);
 
@@ -72,7 +73,8 @@ namespace GameCore
             {
                 Location = new Vector3(30.0f, 0.0f, 25.0f),
                 Orientation = new Vector3(0.0f, 0.0f, 1.0f),
-                OrientationTower = new Vector3(0.5f, 0.0f, 0.5f)
+                OrientationTower = 0.1f
+//                OrientationTower = new Vector3(0.5f, 0.0f, 0.5f)
             };
             tempGameStatus.GameObjects.Add(tempTurret);
 
@@ -80,7 +82,8 @@ namespace GameCore
             {
                 Location = new Vector3(31, 0.0f, 22),
                 Orientation = new Vector3(0.0, 0.0f, 1.0),
-                OrientationTower = new Vector3(0.5, 0.0f, 0.5)
+                OrientationTower = 1.0f
+//                OrientationTower = new Vector3(0.5, 0.0f, 0.5)
             };
             tempGameStatus.GameObjects.Add(tempTurret);
 
@@ -88,7 +91,8 @@ namespace GameCore
             {
                 Location = new Vector3(27, 0.0f, 18),
                 Orientation = new Vector3(0.0, 0.0f, 1.0),
-                OrientationTower = new Vector3(0.5, 0.0f, 0.5)
+                OrientationTower = 2.7f
+//                OrientationTower = new Vector3(0.5, 0.0f, 0.5)
             };
             tempGameStatus.GameObjects.Add(tempTurret);
 
