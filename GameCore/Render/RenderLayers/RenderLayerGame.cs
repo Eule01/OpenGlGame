@@ -421,6 +421,20 @@ namespace GameCore.Render.RenderLayers
                         playerObjObject = tempGroup;
                         tempGroup.Location = gameObject.Location;
                         break;
+                   case ObjectGame.ObjcetIds.Enemy:
+                        tempGroup = new ObjGroupGameObjectEnemy(program) {TheObjectGame = gameObject};
+                        tempLoc = new Vector(0.0f, 0.0f);
+                        tempLoc -= new Vector(gameObject.Diameter*0.5f, gameObject.Diameter*0.5f);
+                        tempObjObject =
+                            new ObjGameObject(ObjectPrimitives.CreateCube(new Vector3(tempLoc.X, 0, tempLoc.Y),
+                                new Vector3(tempLoc.X + gameObject.Diameter, gameObject.Diameter,
+                                    tempLoc.Y + gameObject.Diameter),
+                                true));
+                        ObjMaterial tempMaterial1 = TheMaterialManager.GetFromFile(program, "tileTestMike200x200.png");
+                        tempObjObject.Material = tempMaterial1;
+                        tempGroup.AddObject(tempObjObject);
+                        tempGroup.Location = gameObject.Location;
+                        break;
                     case ObjectGame.ObjcetIds.Turret:
 
                         ObjGroup tempGroup1 = ObjLoader.LoadObjFileToObjMesh(program, @"./Resources/Models/Turret1.obj");

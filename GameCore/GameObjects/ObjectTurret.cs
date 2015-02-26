@@ -27,6 +27,11 @@ namespace GameCore.GameObjects
 //        public Quaternion TargetOrientationTower =  new Quaternion(0.0f,0.0f,0.0f,1.0f);
         public float TargetOrientationTower = 0.0f;
 
+        /// <summary>
+        /// radiens per second (3.14 is half a rotation per second)
+        /// </summary>
+        private double OrientationTowerMaxSpeed = 1.0;
+
 //        public Quaternion OrientQuaternion = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 
 
@@ -69,10 +74,10 @@ namespace GameCore.GameObjects
                 TargetOrientationTower = RotationHelper.AngleFromVectorAroundY(tempVect);
 
 //                TargetOrientationTower = tempVect.CalculateAngle(Vector3.Backward);
-                orientationTower = TargetOrientationTower;
+//                orientationTower = TargetOrientationTower;
 
                 // This is not quite optimal:
-//                orientationTower = RotationHelper.RotateTowards(orientationTower, TargetOrientationTower, 0.6 * deltaTime);
+                orientationTower = RotationHelper.RotateTowards(orientationTower, TargetOrientationTower, OrientationTowerMaxSpeed * deltaTime);
 
 //                TargetOrientationTower = RotationHelper.ReverseQuaternion(RotationHelper.GetQuaternionFromDiretion(-tempVect));
 //                Quaternion curentQuat = RotationHelper.ReverseQuaternion(RotationHelper.GetQuaternionFromDiretion(-orientation));

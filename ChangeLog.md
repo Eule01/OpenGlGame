@@ -1,4 +1,5 @@
 
+2015.02.26	FEATURE		The turret towers will now rotate at a maximum speed.
 2015.02.24	IMPROVEMENT	Made game object locations and direction Vector3 and tydied up.
 2015.02.23	IMPROVEMENT	The turrets can now turn their tower. For test purposes the tower will point at the player once he gets within 10m.
 2015.02.22	IMPROVEMENT	The map can now be changed by holding CTRL and clicking on a tile (this is a very basic implementation).

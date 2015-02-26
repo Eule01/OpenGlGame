@@ -24,6 +24,7 @@ namespace GameCore.GameObjects
             Zork,
             Gustav,
             Turret,
+            Enemy
         }
 
         public float Diameter = 0.4f;

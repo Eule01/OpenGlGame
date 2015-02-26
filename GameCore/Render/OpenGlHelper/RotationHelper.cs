@@ -97,47 +97,38 @@ namespace GameCore.Render.OpenGlHelper
         }
 
         /// <summary>
-        /// Angles are between 0 and pi.
+        /// Angles are in radiens.
+        /// 
+        /// Should put some hysteresis into this so that the direction does not instantly change if the turn the other way around is slightly shorter.
         /// </summary>
         /// <param name="currentOrientation"></param>
-        /// <param name="targetOrientationTower"></param>
+        /// <param name="targetOrientation"></param>
         /// <param name="maxAngle"></param>
         /// <returns></returns>
-        public static float RotateTowards(float currentOrientation, float targetOrientationTower, double maxAngle)
+        public static float RotateTowards(float currentOrientation, float targetOrientation, double maxAngle)
         {
-            double deltaAngle = targetOrientationTower - currentOrientation;
+            double deltaAngle = targetOrientation - currentOrientation;
+            // Remove all multiples of 2*pi;
             deltaAngle = deltaAngle%(Math.PI*2);
-            if (Math.Abs(deltaAngle) < maxAngle)
+            double delsaAbs = Math.Abs(deltaAngle);
+            // If we are nearly there just return the target orientation.
+            if (delsaAbs < maxAngle)
             {
-                return targetOrientationTower;
+                return targetOrientation;
             }
 
             int deltaSign = Math.Sign(deltaAngle);
 
+            // Make sure to go the other way if it is shorter.
+            if (delsaAbs > Math.PI)
+            {
+                delsaAbs = (Math.PI * 2 - deltaAngle);
+                deltaSign = -deltaSign;
+            }
+            delsaAbs = Math.Min(maxAngle, delsaAbs);
 
-            if (deltaAngle > Math.PI)
-            {
-                deltaAngle = -(Math.PI * 2 - deltaAngle);
-            }
-            else if (deltaAngle < Math.PI)
-            {
-                deltaAngle = (Math.PI * 2 + deltaAngle);                
-            }
-            if (Math.Abs(deltaAngle) < maxAngle)
-            {
-                return targetOrientationTower;
-            }
-
-            if (deltaAngle < 0)
-            {
-                deltaAngle = - Math.Max(maxAngle, deltaAngle);
-            }
-            else
-            {
-                deltaAngle =  Math.Min(maxAngle, deltaAngle);
-            }
-
-            return (float) (currentOrientation + deltaAngle);
+            double newDelta = delsaAbs*deltaSign;
+            return (float)(currentOrientation + newDelta);
         }
 
         /// <summary>

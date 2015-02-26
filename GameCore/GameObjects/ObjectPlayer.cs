@@ -1,5 +1,6 @@
 ﻿#region
 
+using GameCore.Render.OpenGlHelper;
 using GameCore.Utils;
 using OpenGL;
 
@@ -18,6 +19,8 @@ namespace GameCore.GameObjects
         /// </summary>
         private Vector3 orientation = new Vector3(1.0f, 0.0f, 0.0f);
 
+        private float moveSpeed = 0.1f;
+
         public Vector3 Orientation
         {
             get { return orientation; }
@@ -32,19 +35,19 @@ namespace GameCore.GameObjects
         {
             if (TheUserInputPlayer.Forward)
             {
-                Location += Orientation * 0.1f;
+                Location += Orientation * moveSpeed;
             }
             else if (TheUserInputPlayer.Backward)
             {
-                Location -= Orientation * 0.1f;
+                Location -= Orientation * moveSpeed;
             }
             if (TheUserInputPlayer.Right)
             {
-                Location += PerpendicularInXZ(Orientation) * 0.1f;
+                Location += RotationHelper.PerpendicularInXZ(Orientation) * moveSpeed;
             }
             else if (TheUserInputPlayer.Left)
             {
-                Location -= PerpendicularInXZ(Orientation) * 0.1f;
+                Location -= RotationHelper.PerpendicularInXZ(Orientation) * moveSpeed;
             }
             if (!TheUserInputPlayer.MousePosition.IsEmpty)
             {
@@ -55,9 +58,6 @@ namespace GameCore.GameObjects
             }
         }
 
-        private Vector3 PerpendicularInXZ(Vector3 aVector3)
-        {
-            return new Vector3(-aVector3.z,0.0f,aVector3.x);
-        }
+        
     }
 }

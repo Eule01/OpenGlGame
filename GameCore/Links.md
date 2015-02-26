@@ -313,8 +313,13 @@ http://www.kickjs.org/example/shader_editor/shader_editor.html  *****
 Fix Your Timestep!:
 http://gafferongames.com/game-physics/fix-your-timestep/
 
+## Motion
+http://stackoverflow.com/questions/667034/simple-physics-based-movement
+http://gafferongames.com/game-physics/
+http://buildnewgames.com/gamephysics/
 
-# Collision detection
+
+## Collision detection
 
 http://0fps.net/
 
@@ -332,6 +337,23 @@ http://ubuntuforums.org/showthread.php?t=830781
 
 List of physics engines
 http://www.gamedev.net/topic/475753-list-of-physics-engines-and-reference-material-updated-7-march-2011/
+
+## Pathfinding
+
+http://www.codeproject.com/Articles/5758/Path-finding-in-C
+
+Comparing multiple path finding algorithms in C#
+http://www.codeproject.com/Articles/638777/A-Complex-Yet-Quite-Intelligible-Pathfinding-in-Cs ****
+
+http://blogs.msdn.com/b/ericlippert/archive/tags/astar/
+
+Good complete A* tutorial in C#:
+https://www.youtube.com/watch?v=fXh2tO0s1-g      ***
+http://www.aggror.com/projects/88/A*-in-Leadwerks
+
+
+https://www.youtube.com/watch?v=Kw8AMmyc6vg
+
 
 # Textures source
 

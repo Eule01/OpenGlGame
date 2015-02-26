@@ -59,6 +59,10 @@ namespace GameCore
             tempGameStatus.ThePlayer = tempPlayer;
             tempGameStatus.GameObjects.Add(tempPlayer);
 
+            ObjectEnemy tempEnemy = new ObjectEnemy(ObjectGame.ObjcetIds.Enemy) {Location = new Vector3(15.0, 0.0, 20.0)};
+            tempGameStatus.GameObjects.Add(tempEnemy);
+
+
             ObjectTurret tempTurret = new ObjectTurret(ObjectGame.ObjcetIds.Turret)
             {
                 Location = new Vector3(20.0f, 0.0f, 20.0f),
