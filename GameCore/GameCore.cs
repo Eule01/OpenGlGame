@@ -32,6 +32,8 @@ namespace GameCore
 
         private KeyboardBindingsForm theKeyboardBindingsForm;
 
+        private MenuForm theMenuForm;
+
         /// <summary>
         ///     This is holding the game core so it can be seen from all other classes. This is not best practice I guess.
         /// </summary>
@@ -104,12 +106,17 @@ namespace GameCore
 
             //            TheGameStatus = new GameStatus();
             theGameStatus = GameStatus.CreatTestGame();
+            SaveMap("test1");
+//
+//            LoadMap("test1");
+//
             ObjectGame.TheGameStatus = theGameStatus;
 
 
             theGameEngine.Start();
             ChangeRenderer(0);
             ShowKeyboardBindingForm();
+            ShowMenuForm();
 
         }
 
@@ -138,6 +145,10 @@ namespace GameCore
             if (theKeyboardBindingsForm != null)
             {
                 Async.UI(delegate { theKeyboardBindingsForm.Close(); }, theKeyboardBindingsForm, false);
+            }
+            if (theMenuForm != null)
+            {
+                Async.UI(delegate { theMenuForm.Close(); }, theMenuForm, false);
             }
             theGameEngine.Close();
             theRendererManager.Close();
@@ -180,31 +191,32 @@ namespace GameCore
         }
 
 
+        private void ShowMenuForm()
+        {
+            theMenuForm = new MenuForm(this);
+            Async.Do(delegate
+            {
+                Application.Run(theMenuForm);
+            });
+
+            theMenuForm.Shown += delegate
+            {
+                FormPositioner.PlaceNextToForm(theMenuForm, theKeyboardBindingsForm,FormPositioner.Locations.Left);
+            };
+        }
+
+
         private void ShowKeyboardBindingForm()
         {
             theKeyboardBindingsForm = new KeyboardBindingsForm(theRenderer.TheKeyBindings);
-//            theKeyboardBindingsForm.Show();
-//            Application.Run();
             Async.Do(delegate
             {
                 Application.Run(theKeyboardBindingsForm); 
-//                Application.Run();
-//                theKeyboardBindingsForm.ShowDialog();
             });
 
             // Wait for the form to start up.
             Thread.Sleep(200);
             FormPositioner.PlaceOnSecondScreenIfPossible(theKeyboardBindingsForm, FormPositioner.Locations.TopRight);
-
-
-//            Async.UI(delegate
-//            {
-//                theKeyboardBindingsForm.SetKeyBindingsAsync(theRenderer.TheKeyBindings);
-
-                
-//
-//            }, theKeyboardBindingsForm, false);
-//            theKeyboardBindingsForm.Show();
         }
 
         #region Game Events

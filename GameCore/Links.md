@@ -347,13 +347,26 @@ http://www.codeproject.com/Articles/638777/A-Complex-Yet-Quite-Intelligible-Path
 
 http://blogs.msdn.com/b/ericlippert/archive/tags/astar/
 
+Good tutorial on A*
+http://blog.two-cats.com/2014/06/a-star-example/
+
+
+Some very good optimization suggestions:
+http://codereview.stackexchange.com/questions/30243/how-can-i-improve-upon-my-a-pathfinding-code
+
+
 Good complete A* tutorial in C#:
 https://www.youtube.com/watch?v=fXh2tO0s1-g      ***
 http://www.aggror.com/projects/88/A*-in-Leadwerks
 
+A fast C# A* version
+http://roy-t.nl/index.php/2011/09/24/another-faster-version-of-a-2d3d-in-c/
+
 
 https://www.youtube.com/watch?v=Kw8AMmyc6vg
 
+General A* tutorial:
+http://www.policyalmanac.org/games/aStarTutorial.htm
 
 # Textures source
 

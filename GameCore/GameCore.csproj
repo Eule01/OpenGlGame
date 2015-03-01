@@ -55,6 +55,12 @@
     <Compile Include="GuiHelpers\KeyboardBindingsForm.Designer.cs">
       <DependentUpon>KeyboardBindingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GuiHelpers\MenuForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GuiHelpers\MenuForm.Designer.cs">
+      <DependentUpon>MenuForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Render\Cameras\Camera.cs" />
     <Compile Include="Render\OpenGlHelper\MeshData.cs" />
     <Compile Include="Render\OpenGlHelper\ObjLoader.cs" />
@@ -107,6 +113,7 @@
     <Compile Include="UserInterface\UserInputPlayer.cs" />
     <Compile Include="Utils\BitmapHelper.cs" />
     <Compile Include="Utils\FormPositioner.cs" />
+    <Compile Include="Utils\PathFinder\AStarPathFinder.cs" />
     <Compile Include="Utils\PhysiscTest.cs" />
     <Compile Include="Utils\RandomNumGen.cs" />
     <Compile Include="Utils\SaveObjects.cs" />
@@ -245,6 +252,9 @@
   <ItemGroup>
     <EmbeddedResource Include="GuiHelpers\KeyboardBindingsForm.resx">
       <DependentUpon>KeyboardBindingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GuiHelpers\MenuForm.resx">
+      <DependentUpon>MenuForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

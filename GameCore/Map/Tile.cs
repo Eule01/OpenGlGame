@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Xml.Serialization;
 using GameCore.Utils;
 
 #endregion

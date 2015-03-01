@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿#region
+
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CodeToast;
 using GameCore.UserInterface;
+
+#endregion
 
 namespace GameCore.GuiHelpers
 {
@@ -22,7 +19,7 @@ namespace GameCore.GuiHelpers
         public KeyboardBindingsForm(KeyBindings theKeyBindings)
         {
             InitializeComponent();
-          
+
             SetKeyBindings(theKeyBindings);
         }
 
@@ -39,15 +36,14 @@ namespace GameCore.GuiHelpers
 
                 this.flowLayoutPanel1.Controls.Add(tempPanel);
             }
-
         }
 
         private Panel GetKeyBindingPanel(KeyBinding aKeyBinding)
         {
             Panel tempPanel = new Panel();
-            tempPanel.Width = this.flowLayoutPanel1.ClientSize.Width-5;
+            tempPanel.Width = this.flowLayoutPanel1.ClientSize.Width - 5;
             tempPanel.Height = 30;
-            tempPanel.BorderStyle  = BorderStyle.FixedSingle;
+            tempPanel.BorderStyle = BorderStyle.FixedSingle;
             Label tempLabel = new Label();
             tempLabel.Text = aKeyBinding.Description;
             tempPanel.Controls.Add(tempLabel);
@@ -57,7 +53,7 @@ namespace GameCore.GuiHelpers
             tempGroupBox.Width = 100;
             tempGroupBox.Height = 25;
             tempGroupBox.Text = aKeyBinding.KeyName;
-            tempGroupBox.Location = new Point(tempPanel.ClientSize.Width - tempGroupBox.Width-5,0);
+            tempGroupBox.Location = new Point(tempPanel.ClientSize.Width - tempGroupBox.Width - 5, 0);
             tempPanel.Controls.Add(tempGroupBox);
             return tempPanel;
         }

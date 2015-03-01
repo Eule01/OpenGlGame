@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using GameCore.Map;
 using GameCore.Render.Cameras;
@@ -31,6 +32,8 @@ namespace GameCore.Render.RenderLayers
         public SceneManager(GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
             KeyBindings theKeyBindings, MaterialManager theMaterialManager, RenderStatus theRenderStatus)
         {
+            GameCore.TheGameCore.TheGameEventHandler += TheGameCore_TheGameEventHandler;
+
             this.width = theRenderStatus.Width;
             this.height = theRenderStatus.Height;
             this.theGameStatus = theGameStatus;
@@ -40,6 +43,28 @@ namespace GameCore.Render.RenderLayers
             this.TheRenderStatus = theRenderStatus;
 
             ReInitialize();
+        }
+
+        void TheGameCore_TheGameEventHandler(object sender, GameEventArgs args)
+        {
+            switch (args.TheType)
+            {
+                case GameEventArgs.Types.StatusGameEngine:
+                    break;
+                case GameEventArgs.Types.Message:
+                    break;
+                case GameEventArgs.Types.MapLoaded:
+//                    NewMapLoaded();
+                    break;
+                case GameEventArgs.Types.MapSaved:
+                    break;
+                case GameEventArgs.Types.RendererExited:
+                    break;
+                case GameEventArgs.Types.MapTileSelected:
+                    break;
+                case GameEventArgs.Types.MapTileChanged:
+                    break;
+            }
         }
 
         public void AddCamera(Camera aCamera)

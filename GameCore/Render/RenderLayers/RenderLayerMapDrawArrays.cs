@@ -50,6 +50,7 @@ namespace GameCore.Render.RenderLayers
         private TextureArray theTextureArray;
         private Environment theEnvironment;
         private Camera theCamera;
+        private bool updateMap;
 
         public override void OnLoad()
         {
@@ -80,11 +81,25 @@ namespace GameCore.Render.RenderLayers
 
         private void TheGameCore_TheGameEventHandler(object sender, GameEventArgs args)
         {
-            if (args.TheType == GameEventArgs.Types.MapTileChanged)
+            switch (args.TheType)
             {
-                ChangeTileType(args.TheTile);
+                case GameEventArgs.Types.StatusGameEngine:
+                    break;
+                case GameEventArgs.Types.Message:
+                    break;
+                case GameEventArgs.Types.MapLoaded:
+                    updateMap = true;
+                    break;
+                case GameEventArgs.Types.MapSaved:
+                    break;
+                case GameEventArgs.Types.RendererExited:
+                    break;
+                case GameEventArgs.Types.MapTileSelected:
+                    break;
+                case GameEventArgs.Types.MapTileChanged:
+                  ChangeTileType(args.TheTile);
+                  break;
             }
-
         }
 
         private void ChangeTileType(Tile theTile)
@@ -208,10 +223,25 @@ namespace GameCore.Render.RenderLayers
 
         public override void OnDisplay()
         {
+
         }
 
         public override void OnRenderFrame(float deltaTime)
         {
+            if (updateMap)
+            {
+                gVertexBuffer.Dispose();
+                gDrawIdBuffer.Dispose();
+                theMap = TheGameStatus.TheMap;
+                GenerateGeometry();
+                GenerateArrayTexture();
+
+                Gl.UseProgram(0);
+                Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+                updateMap = false;
+            }
+
             // apply our camera view matrix to the shader view matrix (this can be used for all objects in the scene)
             program.Use();
             program["view_matrix"].SetValue(theCamera.ViewMatrix);

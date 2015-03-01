@@ -80,6 +80,7 @@ namespace GameCore.Render.MainRenderer
 
             Glut.glutIdleFunc(OnRenderFrame);
             Glut.glutDisplayFunc(OnDisplay);
+            Glut.glutDisplayFunc(OnDisplay);
 
             Glut.glutKeyboardFunc(OnKeyboardDown);
             Glut.glutSpecialFunc(OnSpecialKeyboardDown);
@@ -151,14 +152,14 @@ namespace GameCore.Render.MainRenderer
 
         public override void MapLoaded()
         {
-            Close();
+//            Close();
 
 //            foreach (ObjObject aObjObject in theTileObjects)
 //            {
 //                aObjObject.Dispose();
 //            }
 //            theTileObjects = GetTileObjects();
-            Start();
+//            Start();
         }
 
         private void OnDisplay()

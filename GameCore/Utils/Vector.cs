@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace GameCore.Utils
 {
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public struct Vector
     {
         public static readonly Vector Empty = new Vector(0, 0, true);
         public float X;
         public float Y;
-
 
         public Vector(float x, float y, bool isEmpty)
         {

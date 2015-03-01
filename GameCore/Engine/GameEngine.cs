@@ -23,6 +23,7 @@ namespace GameCore.Engine
         private UserInputPlayer theUserInputPlayer;
 
         private Stopwatch watch;
+        private string saveMapName = string.Empty;
 
         public GameEngine()
         {
@@ -108,5 +109,7 @@ namespace GameCore.Engine
         }
 
         #endregion
+
+        
     }
 }
