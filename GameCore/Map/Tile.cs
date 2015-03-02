@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Xml.Serialization;
 using GameCore.Utils;
 
 #endregion
@@ -74,13 +73,14 @@ namespace GameCore.Map
                         tempType.Color = Color.DarkSlateGray;
                         break;
                     case TileIds.Water:
-                         tempType.Color = Color.Blue;
+                        tempType.Color = Color.Blue;
                         break;
                     case TileIds.Wall:
-                         tempType.Color = Color.MidnightBlue;
-                        break;                 
+                        tempType.Color = Color.MidnightBlue;
+                        break;
                     default:
-                        tempType.Color = Color.Gray;
+                        throw new Exception("Tile has now color assigned.");
+//                        tempType.Color = Color.Gray;
                         break;
                 }
                 tempList.Add(aTileType, tempType);

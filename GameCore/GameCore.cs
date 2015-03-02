@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -158,6 +159,8 @@ namespace GameCore
 
         #endregion
 
+        #region Commands
+
         public void SaveMap(string aFilePath)
         {
             string tempFilePath = FileNameToMapFileName(aFilePath);
@@ -181,6 +184,11 @@ namespace GameCore
             Resume();
         }
 
+        public void MapToBitmap()
+        {
+            Map.Map.TestFromMapObject(theGameStatus.TheMap);
+        }
+
         private static string FileNameToMapFileName(string aFilePath)
         {
             string tempPath = Path.GetDirectoryName(aFilePath);
@@ -189,6 +197,8 @@ namespace GameCore
             string tempFilePath = Path.Combine(tempPath, aFileName);
             return tempFilePath;
         }
+
+        #endregion
 
 
         private void ShowMenuForm()
@@ -201,6 +211,7 @@ namespace GameCore
 
             theMenuForm.Shown += delegate
             {
+                Thread.Sleep(100);
                 FormPositioner.PlaceNextToForm(theMenuForm, theKeyboardBindingsForm,FormPositioner.Locations.Left);
             };
         }
@@ -214,9 +225,15 @@ namespace GameCore
                 Application.Run(theKeyboardBindingsForm); 
             });
 
+            theKeyboardBindingsForm.Shown += delegate
+            {
+                FormPositioner.PlaceOnSecondScreenIfPossible(theKeyboardBindingsForm, FormPositioner.Locations.TopRight);
+
+            };
+
             // Wait for the form to start up.
-            Thread.Sleep(200);
-            FormPositioner.PlaceOnSecondScreenIfPossible(theKeyboardBindingsForm, FormPositioner.Locations.TopRight);
+//            Thread.Sleep(200);
+//            FormPositioner.PlaceOnSecondScreenIfPossible(theKeyboardBindingsForm, FormPositioner.Locations.TopRight);
         }
 
         #region Game Events

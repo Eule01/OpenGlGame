@@ -34,5 +34,10 @@ namespace GameCore.GuiHelpers
         {
             theGameCore.LoadMap(textBoxMapName.Text);
         }
+
+        private void buttonMapToBitmap_Click(object sender, EventArgs e)
+        {
+            theGameCore.MapToBitmap();
+        }
     }
 }

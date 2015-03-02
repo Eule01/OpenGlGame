@@ -38,7 +38,6 @@ namespace GameCore.Utils
 
         public static void SerializeObject(string filename, object anObject)
         {
-//            XmlSerializer ser = new XmlSerializer(typeof(Map.Map));
             XmlSerializer ser = new XmlSerializer(anObject.GetType());
             XmlTextWriter writer = new XmlTextWriter(filename, new UTF8Encoding());
             writer.Formatting = Formatting.Indented;

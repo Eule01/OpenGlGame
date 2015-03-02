@@ -1,4 +1,5 @@
 
+2015.03.02	FEATURE		Maps can now be converted into bitmaps and back. These can be save as a png with a sidecar file for the map details.
 2015.03.01	FEATURE		Created a MenuForm in which maps can be saved and loaded (minimal implementation so far).
 2015.02.26	FEATURE		The turret towers will now rotate at a maximum speed.
 2015.02.24	IMPROVEMENT	Made game object locations and direction Vector3 and tydied up.

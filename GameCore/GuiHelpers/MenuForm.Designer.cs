@@ -31,6 +31,7 @@
             this.buttonSaveMap = new System.Windows.Forms.Button();
             this.buttonLoadMap = new System.Windows.Forms.Button();
             this.textBoxMapName = new System.Windows.Forms.TextBox();
+            this.buttonMapToBitmap = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonSaveMap
@@ -60,11 +61,22 @@
             this.textBoxMapName.Size = new System.Drawing.Size(141, 20);
             this.textBoxMapName.TabIndex = 2;
             // 
+            // buttonMapToBitmap
+            // 
+            this.buttonMapToBitmap.Location = new System.Drawing.Point(13, 237);
+            this.buttonMapToBitmap.Name = "buttonMapToBitmap";
+            this.buttonMapToBitmap.Size = new System.Drawing.Size(102, 23);
+            this.buttonMapToBitmap.TabIndex = 3;
+            this.buttonMapToBitmap.Text = "Map to Bitmap";
+            this.buttonMapToBitmap.UseVisualStyleBackColor = true;
+            this.buttonMapToBitmap.Click += new System.EventHandler(this.buttonMapToBitmap_Click);
+            // 
             // MenuForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(380, 272);
+            this.Controls.Add(this.buttonMapToBitmap);
             this.Controls.Add(this.textBoxMapName);
             this.Controls.Add(this.buttonLoadMap);
             this.Controls.Add(this.buttonSaveMap);
@@ -80,5 +92,6 @@
         private System.Windows.Forms.Button buttonSaveMap;
         private System.Windows.Forms.Button buttonLoadMap;
         private System.Windows.Forms.TextBox textBoxMapName;
+        private System.Windows.Forms.Button buttonMapToBitmap;
     }
 }
