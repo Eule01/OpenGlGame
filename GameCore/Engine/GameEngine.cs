@@ -39,6 +39,8 @@ namespace GameCore.Engine
             ObjectGame.TheUserInputPlayer = theUserInputPlayer;
             theTickEngine = new TickEngineThread();
             theTickEngine.Setup("GameEngine", GameTick, StatusTick, timerTickIntervalMs);
+            watch = Stopwatch.StartNew();
+            watch.Stop();
         }
 
         public UserInputPlayer TheUserInputPlayer
@@ -76,7 +78,7 @@ namespace GameCore.Engine
         /// </summary>
         public void Start()
         {
-            watch = Stopwatch.StartNew();
+            watch.Restart();
             theTickEngine.Start();
         }
 

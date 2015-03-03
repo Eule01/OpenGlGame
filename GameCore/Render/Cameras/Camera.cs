@@ -191,12 +191,14 @@ namespace GameCore.Render.Cameras
         public override void OnRenderFrame(float deltaTime)
         {
             // update our camera by moving it camForward to 5 units per second in each direction
-            if (camBack) TheCamera.MoveRelative(Vector3.UnitZ * deltaTime * 5);
-            if (camForward) TheCamera.MoveRelative(-Vector3.UnitZ * deltaTime * 5);
-            if (camLeft) TheCamera.MoveRelative(-Vector3.UnitX * deltaTime * 5);
-            if (camRight) TheCamera.MoveRelative(Vector3.UnitX * deltaTime * 5);
-            if (camUp) TheCamera.MoveRelative(Vector3.Up * deltaTime * 3);
-            if (camDown) TheCamera.MoveRelative(-Vector3.Up * deltaTime * 3);
+            float cameraSpeed = 10.0f;
+            float cameraSpeedUpDown = 6.0f;
+            if (camBack) TheCamera.MoveRelative(Vector3.UnitZ * deltaTime * cameraSpeed);
+            if (camForward) TheCamera.MoveRelative(-Vector3.UnitZ * deltaTime * cameraSpeed);
+            if (camLeft) TheCamera.MoveRelative(-Vector3.UnitX * deltaTime * cameraSpeed);
+            if (camRight) TheCamera.MoveRelative(Vector3.UnitX * deltaTime * cameraSpeed);
+            if (camUp) TheCamera.MoveRelative(Vector3.Up * deltaTime * cameraSpeedUpDown);
+            if (camDown) TheCamera.MoveRelative(-Vector3.Up * deltaTime * cameraSpeedUpDown);
         }
 
         public override void OnReshape(int width, int height)

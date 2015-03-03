@@ -104,9 +104,8 @@ namespace GameCore
             theGameEngine = new GameEngine();
             theRendererManager = new RendererManager();
 
-            //            TheGameStatus = new GameStatus();
             theGameStatus = GameStatus.CreatTestGame();
-            SaveMapToXml("test1");
+//            SaveMapToXml("test1");
 //
 //            LoadMapFromXml("test1");
 //
@@ -200,11 +199,10 @@ namespace GameCore
         public void LoadMapObject(string aMapName)
         {
             Pause();
-            string filePath = ResourceManager.GetMapPath(aMapName);
-            theGameStatus.LoadMapObject(filePath);
+            theGameStatus.LoadMapObject(aMapName);
             TheGameCore.OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.MapLoaded)
             {
-                Message = filePath
+                Message = aMapName
             });
             Resume();
         }

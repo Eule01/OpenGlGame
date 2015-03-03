@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using GameCore.GameObjects;
 using GameCore.Render.Cameras;
+using GameCore.Render.RenderMaterial;
 using OpenGL;
 
 #endregion
@@ -51,7 +52,8 @@ namespace GameCore
 
         internal static GameStatus CreatTestGame()
         {
-            GameStatus tempGameStatus = new GameStatus {TheMap = Map.Map.CreateTestMap()};
+            GameStatus tempGameStatus = new GameStatus {TheMap = LoadMapObjectFromFile("test1")};
+            //            GameStatus tempGameStatus = new GameStatus {TheMap = Map.Map.CreateTestMap()};
             ObjectPlayer tempPlayer = new ObjectPlayer(ObjectGame.ObjcetIds.Player)
             {
                 Location = new Vector3(10.3f, 0.0f, 5.6f)
@@ -143,16 +145,14 @@ namespace GameCore
 
        public void LoadMapObject(string aFilePath)
         {
-            TheMap = Map.Map.LoadFromMapObjectFiles(aFilePath);
+            TheMap = LoadMapObjectFromFile(aFilePath);
         }
 
-        private static string FileNameToMapFileName(string aFilePath)
+        private static Map.Map LoadMapObjectFromFile(string aFilePath)
         {
-            string tempPath = Path.GetDirectoryName(aFilePath);
-            string aFileName = Path.GetFileNameWithoutExtension(aFilePath);
-            aFileName = "Map_" + aFileName + ".xml";
-            string tempFilePath = Path.Combine(tempPath, aFileName);
-            return tempFilePath;
+            string filePath = ResourceManager.GetMapPath(aFilePath);
+
+            return Map.Map.LoadFromMapObjectFiles(filePath);
         }
     }
 }
