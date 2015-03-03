@@ -246,7 +246,7 @@ namespace GameCore.Render.Cameras
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraDown]) camDown = false;
             else if (key == TheKeyBindings.TheKeyLookUp[KeyBindings.Ids.CameraTurnAtField])
             {
-                RectangleF tempRec = TheGameStatus.TheMap.TheBoundingBox;
+                Rectangle tempRec = TheGameStatus.TheMap.TheBoundingBox;
                 Vector3 tempTopLeft = new Vector3(tempRec.Location.X, 0.0f, tempRec.Location.Y);
                 Vector3 tempBottomRight = new Vector3(tempRec.Right, 0.0f, tempRec.Bottom);
 

@@ -35,7 +35,7 @@ namespace GameCore.Map
         }
 
         [XmlIgnore]
-        public RectangleF TheBoundingBox
+        public Rectangle TheBoundingBox
         {
             get { return theBoundingBox; }
         }
