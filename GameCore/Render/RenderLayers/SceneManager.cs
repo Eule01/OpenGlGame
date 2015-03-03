@@ -26,11 +26,11 @@ namespace GameCore.Render.RenderLayers
         private GameStatus theGameStatus;
         private UserInputPlayer theUserInputPlayer;
         private KeyBindings theKeyBindings;
-        private MaterialManager theMaterialManager;
+        private ResourceManager theResourceManager;
         public Vector3 MouseWorld = Vector3.Zero;
 
         public SceneManager(GameStatus theGameStatus, UserInputPlayer theUserInputPlayer,
-            KeyBindings theKeyBindings, MaterialManager theMaterialManager, RenderStatus theRenderStatus)
+            KeyBindings theKeyBindings, ResourceManager theResourceManager, RenderStatus theRenderStatus)
         {
             GameCore.TheGameCore.TheGameEventHandler += TheGameCore_TheGameEventHandler;
 
@@ -39,7 +39,7 @@ namespace GameCore.Render.RenderLayers
             this.theGameStatus = theGameStatus;
             this.theUserInputPlayer = theUserInputPlayer;
             this.theKeyBindings = theKeyBindings;
-            this.theMaterialManager = theMaterialManager;
+            this.theResourceManager = theResourceManager;
             this.TheRenderStatus = theRenderStatus;
 
             ReInitialize();
@@ -147,7 +147,7 @@ namespace GameCore.Render.RenderLayers
             RenderLayerBase.TheGameStatus = theGameStatus;
             RenderLayerBase.TheRenderStatus = TheRenderStatus;
             RenderLayerBase.TheKeyBindings = theKeyBindings;
-            RenderLayerBase.TheMaterialManager = theMaterialManager;
+            RenderLayerBase.TheResourceManager = theResourceManager;
             RenderLayerBase.TheSceneManager = this;
 
             foreach (IRenderLayer renderLayer in theRenderLayers)

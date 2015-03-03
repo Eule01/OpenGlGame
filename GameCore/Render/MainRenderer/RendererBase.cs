@@ -10,7 +10,7 @@ namespace GameCore.Render.MainRenderer
         public UserInputPlayer TheUserInputPlayer;
 
         protected string name = "RendererBase";
-        protected MaterialManager theMaterialManager;
+        protected ResourceManager theResourceManager;
         protected KeyBindings theKeyBindings;
 
         public RendererBase()
@@ -26,9 +26,9 @@ namespace GameCore.Render.MainRenderer
             get { return name; }
         }
 
-        public MaterialManager TheMaterialManager
+        public ResourceManager TheResourceManager
         {
-            get { return theMaterialManager; }
+            get { return theResourceManager; }
         }
 
         public KeyBindings TheKeyBindings

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#region
+
+using System;
 using System.Windows.Forms;
+
+#endregion
 
 namespace GameCore.GuiHelpers
 {
@@ -27,17 +24,22 @@ namespace GameCore.GuiHelpers
 
         private void buttonSaveMap_Click(object sender, EventArgs e)
         {
-            theGameCore.SaveMap(textBoxMapName.Text);
+            theGameCore.SaveMapToXml(textBoxMapName.Text);
         }
 
         private void buttonLoadMap_Click(object sender, EventArgs e)
         {
-            theGameCore.LoadMap(textBoxMapName.Text);
+            theGameCore.LoadMapFromXml(textBoxMapName.Text);
         }
 
-        private void buttonMapToBitmap_Click(object sender, EventArgs e)
+        private void buttonSaveMapObject_Click(object sender, EventArgs e)
         {
-            theGameCore.MapToBitmap();
+            theGameCore.SaveMapObject(textBoxMapObject.Text);
+        }
+
+        private void buttonLoadMapObject_Click(object sender, EventArgs e)
+        {
+            theGameCore.LoadMapObject(textBoxMapObject.Text);
         }
     }
 }

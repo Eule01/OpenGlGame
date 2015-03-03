@@ -19,5 +19,16 @@ namespace GameCore.Utils
             }
             return newBmp;
         }
+
+
+        public static Bitmap ConvertToPixelFormat(Bitmap aBitmap, PixelFormat aRequiredPixelFormat)
+        {
+            Bitmap clone = new Bitmap(aBitmap.Width, aBitmap.Height, aRequiredPixelFormat);
+            using (Graphics gr = Graphics.FromImage(clone))
+            {
+                gr.DrawImage(aBitmap, new Rectangle(0, 0, clone.Width, clone.Height));
+            }
+            return clone;
+        }
     }
 }

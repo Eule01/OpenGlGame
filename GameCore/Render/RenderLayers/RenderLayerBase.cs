@@ -18,7 +18,7 @@ namespace GameCore.Render.RenderLayers
         public static SceneManager TheSceneManager;
         public static GameStatus TheGameStatus;
         public static KeyBindings TheKeyBindings;
-        public static MaterialManager TheMaterialManager;
+        public static ResourceManager TheResourceManager;
         public static RenderStatus TheRenderStatus;
 
 

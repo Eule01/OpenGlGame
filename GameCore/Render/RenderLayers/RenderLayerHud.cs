@@ -120,7 +120,7 @@ namespace GameCore.Render.RenderLayers
 //            SolidBrush tempBrush = new SolidBrush(aColor);
 //            Bitmap tempBmp = BitmapHelper.CreatBitamp(new Size(20, 20), tempBrush);
 //            ObjMaterial tempMaterial = new ObjMaterial(hudProgram) {DiffuseMap = new Texture(tempBmp)};
-            ObjMaterial tempMaterial = TheMaterialManager.GetPlainColor(hudProgram, "HudPanelPlain" + aColor.Name,
+            ObjMaterial tempMaterial = TheResourceManager.GetPlainColor(hudProgram, "HudPanelPlain" + aColor.Name,
                 aColor);
             Vector2 tempLoc2 = new Vector2(0, 0);
 
@@ -143,7 +143,7 @@ namespace GameCore.Render.RenderLayers
 
         private ObjHudPanel CreateHudPanel(string aBmpPath, ObjHudPanel.Anchors anAnchor)
         {
-            ObjMaterial tempMaterial = TheMaterialManager.GetFromFile(hudProgram, aBmpPath);
+            ObjMaterial tempMaterial = TheResourceManager.GetFromFile(hudProgram, aBmpPath);
             Size tempSize = tempMaterial.DiffuseMap.Size;
 
             Vector2 tempLoc2 = new Vector2(0, 0);
@@ -231,7 +231,7 @@ namespace GameCore.Render.RenderLayers
                             if (Tile.TileIds.TryParse(tempTileIdName, true, out tempTileId))
                             {
                                 selectedTileId = tempTileId;
-                                selectedObjHudButton.Material = TheMaterialManager.Get("Tile_" + tempTileIdName);
+                                selectedObjHudButton.Material = TheResourceManager.Get("Tile_" + tempTileIdName);
                             }
                         }
 

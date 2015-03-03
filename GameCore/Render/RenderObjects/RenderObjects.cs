@@ -16,7 +16,7 @@ namespace GameCore.Render.RenderObjects
 {
     public class RenderObjects
     {
-        public static MaterialManager TheMaterialManager;
+        public static ResourceManager TheResourceManager;
 
         public RenderObjects()
         {
@@ -36,7 +36,7 @@ namespace GameCore.Render.RenderObjects
         public static Dictionary<BoxSides, Bitmap> GetBoxTextures(string anImagePath,int rows, int cols, BoxIndex[] anBoxIndix)
         {
             Dictionary<BoxSides, Bitmap> bitmapsList = new Dictionary<BoxSides, Bitmap>();
-            string tempFilePath = Path.Combine(TheMaterialManager.ImageDirectory, anImagePath);
+            string tempFilePath = Path.Combine(TheResourceManager.ImageDirectory, anImagePath);
             Bitmap tempMainImage = (Bitmap) Bitmap.FromFile(tempFilePath);
 //            tempMainImage.RotateFlip(RotateFlipType.RotateNoneFlipY); // bitmaps read from bottom up, so flip it
             if (tempMainImage.PixelFormat != PixelFormat.Format32bppArgb)
@@ -95,7 +95,7 @@ namespace GameCore.Render.RenderObjects
             {
                 string tempTiletextureName = "Tile_" + keyValuePair.Key.ToString() + ".png";
 
-                string tempFilePath = Path.Combine(TheMaterialManager.TileDirectory, tempTiletextureName);
+                string tempFilePath = Path.Combine(TheResourceManager.TileDirectory, tempTiletextureName);
                 PlainBmpTexture tempBmpTexture = new PlainBmpTexture(keyValuePair.Value.Name);
 
                 if (!File.Exists(tempFilePath))
@@ -142,7 +142,7 @@ namespace GameCore.Render.RenderObjects
                 string tempTiletextureName = "Tile_" + keyValuePair.Key.ToString() + ".png";
 
                 PlainBmpTexture tempBmpTexture = new PlainBmpTexture(keyValuePair.Value.Name);
-                tempMaterial = TheMaterialManager.GetFromFile(aProgram, tempTiletextureName,false,MaterialManager.ResourceTypes.Tile);
+                tempMaterial = TheResourceManager.GetFromFile(aProgram, tempTiletextureName,false,ResourceManager.ResourceTypes.Tile);
                 if (tempMaterial == null)
                 {
                     tempBmpTexture.Color = keyValuePair.Value.Color;

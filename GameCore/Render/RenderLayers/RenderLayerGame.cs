@@ -68,7 +68,7 @@ namespace GameCore.Render.RenderLayers
             program["enable_lighting"].SetValue(theEnvironment.Lighting);
             program["ambient"].SetValue(theEnvironment.LightAmbient);
 
-            pointMaterial = TheMaterialManager.GetPlainColor(program, "GamePlainRed", Color.Red);
+            pointMaterial = TheResourceManager.GetPlainColor(program, "GamePlainRed", Color.Red);
 
             objMeshs = new List<IObjGroup>();
 
@@ -77,7 +77,7 @@ namespace GameCore.Render.RenderLayers
             tempObjMesh2.Scale = Vector3.UnitScale*0.3f;
             objMeshs.Add(tempObjMesh2);
 
-            ObjMaterial tempMaterial = TheMaterialManager.GetPlainColor(program, "GamePlainGreen", Color.Green);
+            ObjMaterial tempMaterial = TheResourceManager.GetPlainColor(program, "GamePlainGreen", Color.Green);
 
             tileTextures = RenderObjects.RenderObjects.CreateTileTextures(new Size(20, 20), program);
 
@@ -415,7 +415,7 @@ namespace GameCore.Render.RenderLayers
                                 new Vector3(tempLoc.X + gameObject.Diameter, gameObject.Diameter,
                                     tempLoc.Y + gameObject.Diameter),
                                 true));
-                        ObjMaterial tempMaterial = TheMaterialManager.GetFromFile(program, "tileTestMike200x200.png");
+                        ObjMaterial tempMaterial = TheResourceManager.GetFromFile(program, "tileTestMike200x200.png");
                         tempObjObject.Material = tempMaterial;
                         tempGroup.AddObject(tempObjObject);
                         playerObjObject = tempGroup;
@@ -430,7 +430,7 @@ namespace GameCore.Render.RenderLayers
                                 new Vector3(tempLoc.X + gameObject.Diameter, gameObject.Diameter,
                                     tempLoc.Y + gameObject.Diameter),
                                 true));
-                        ObjMaterial tempMaterial1 = TheMaterialManager.GetFromFile(program, "tileTestMike200x200.png");
+                        ObjMaterial tempMaterial1 = TheResourceManager.GetFromFile(program, "tileTestMike200x200.png");
                         tempObjObject.Material = tempMaterial1;
                         tempGroup.AddObject(tempObjObject);
                         tempGroup.Location = gameObject.Location;
@@ -467,43 +467,6 @@ namespace GameCore.Render.RenderLayers
 
                 tempObjList.Add(tempGroup);
             }
-            return tempObjList;
-        }
-
-
-        private List<ObjObject> GetTileObjects()
-        {
-            List<ObjObject> tempTileObj = CreateTiles();
-            return tempTileObj;
-        }
-
-        private List<ObjObject> CreateTiles()
-        {
-            Stopwatch watch = Stopwatch.StartNew();
-
-
-            Dictionary<Tile.TileIds, PlainBmpTexture> tempTiletypeList =
-                RenderObjects.RenderObjects.CreateTileTextures(new Size(20, 20), program);
-            List<ObjObject> tempObjList = new List<ObjObject>();
-            IEnumerable<Tile> tempTiles = TheGameStatus.TheMap.Tiles;
-            foreach (Tile tempTile in tempTiles)
-            {
-                Vector tempLoc = tempTile.Location;
-
-                ObjObject tempObjObject =
-                    new ObjObject(ObjectPrimitives.CreateTile(new Vector3(tempLoc.X, 0, tempLoc.Y),
-                        new Vector3(tempLoc.X + Tile.Size.X, 0,
-                            tempLoc.Y + Tile.Size.Y), true))
-                    {
-                        Material = tempTiletypeList[tempTile.TheTileId].Material
-                    };
-
-                tempObjList.Add(tempObjObject);
-            }
-            watch.Stop();
-            GameCore.TheGameCore.RaiseMessage(string.Format("CreateTiles() took {0}ms", watch.ElapsedMilliseconds));
-
-
             return tempObjList;
         }
 

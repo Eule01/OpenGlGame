@@ -14,14 +14,22 @@ namespace GameCore.Render.RenderMaterial
     /// <summary>
     ///     This class manages all the materials (textures) used
     /// </summary>
-    public class MaterialManager
+    public class ResourceManager
     {
         private Dictionary<string, ObjMaterial> materials = new Dictionary<string, ObjMaterial>();
 
         private string imageDirectory = @"./Resources/Images/";
 
+
         private string tileDirectory = @"Tiles";
         private string skyBoxDirectory = @"SkyBoxes";
+
+        #region Maps
+
+        private static string mapPrefix = "Map_";
+        private static string mapDirectory = @"./Resources/Maps/";
+
+        #endregion
 
         public enum ResourceTypes
         {
@@ -45,6 +53,21 @@ namespace GameCore.Render.RenderMaterial
         {
             get { return Path.Combine(imageDirectory,skyBoxDirectory); }
         }
+
+        #region Maps
+
+        public static string GetMapDirectory
+        {
+            get { return mapDirectory; }
+        }
+
+        public static string GetMapPath(string aMapName)
+        {
+            return Path.Combine(mapDirectory, mapPrefix + aMapName);
+        }
+
+
+        #endregion
 
 
         private void AddMaterial(string aName, ObjMaterial anObjMaterial)
@@ -86,7 +109,7 @@ namespace GameCore.Render.RenderMaterial
             tempFilePath = Path.Combine(tempFilePath, aFileName);
             if (!File.Exists(tempFilePath))
             {
-                GameCore.TheGameCore.RaiseMessage(string.Format("MaterialManager.GetFromFile() file does not exist: "+ tempFilePath));
+                GameCore.TheGameCore.RaiseMessage(string.Format("ResourceManager.GetFromFile() file does not exist: "+ tempFilePath));
                 return null;
             }
 

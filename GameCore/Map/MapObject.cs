@@ -1,9 +1,11 @@
-using System;
+#region
+
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Reflection;
 using GameCore.Utils;
+
+#endregion
 
 namespace GameCore.Map
 {
@@ -33,23 +35,26 @@ namespace GameCore.Map
             string objectPath = aFilePath + ".xml";
             if (!File.Exists(bitmapPath))
             {
-                
             }
             if (!File.Exists(objectPath))
             {
-                
+            }
+
+            Bitmap tempBitmap = new Bitmap(bitmapPath);
+            if (tempBitmap.PixelFormat != PixelFormat.Format32bppArgb)
+            {
+                Bitmap tempBitmap2 = BitmapHelper.ConvertToPixelFormat(tempBitmap, PixelFormat.Format32bppArgb);
+                tempBitmap.Dispose();
+                tempBitmap = tempBitmap2;
             }
 
             MapObject tempMapObject = new MapObject
             {
-                TheBitmap = new Bitmap(bitmapPath),
-                TheMapDetail = (MapDetail)SaveObjects.DeserializeObject(objectPath, typeof(MapDetail))
+                TheBitmap = tempBitmap,
+                TheMapDetail = (MapDetail) SaveObjects.DeserializeObject(objectPath, typeof (MapDetail))
             };
 
             return tempMapObject;
         }
-
-
-    
     }
 }

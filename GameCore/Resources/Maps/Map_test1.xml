@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MapDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <TheBoundingBox>
+        <Location>
+            <X>-250</X>
+            <Y>-250</Y>
+        </Location>
+        <Size>
+            <Width>500</Width>
+            <Height>500</Height>
+        </Size>
+        <X>-250</X>
+        <Y>-250</Y>
+        <Width>500</Width>
+        <Height>500</Height>
+    </TheBoundingBox>
+</MapDetail>

@@ -62,8 +62,10 @@
     <Compile Include="GuiHelpers\MenuForm.Designer.cs">
       <DependentUpon>MenuForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utils\Argb.cs" />
     <Compile Include="Map\MapDetail.cs" />
     <Compile Include="Map\MapObject.cs" />
+    <Compile Include="Utils\Rgb.cs" />
     <Compile Include="Render\Cameras\Camera.cs" />
     <Compile Include="Render\OpenGlHelper\MeshData.cs" />
     <Compile Include="Render\OpenGlHelper\ObjLoader.cs" />
@@ -73,7 +75,7 @@
     <Compile Include="Render\RenderLayers\RenderLayerSkyBox.cs" />
     <Compile Include="Render\RenderLayers\RenderStatus.cs" />
     <Compile Include="Render\RenderLayers\SceneManager.cs" />
-    <Compile Include="Render\RenderMaterial\MaterialManager.cs" />
+    <Compile Include="Render\RenderMaterial\ResourceManager.cs" />
     <Compile Include="Render\RenderMaterial\TextureArray.cs" />
     <Compile Include="Render\RenderObjects\ObjGroups\ObjGroupGameObjectEnemy.cs" />
     <Compile Include="Render\RenderObjects\ObjGroups\IObjGroup.cs" />
@@ -242,6 +244,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Images\Tile_Grass.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Maps\Map_test1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Maps\Map_test1.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Models\TurretBase.png">

@@ -270,10 +270,10 @@ namespace GameCore.Render.RenderObjects.ObjGroups
 
 
 //            ObjMaterial tempMat =
-//                GameCore.TheGameCore.TheRendererManager.TheRenderer.TheMaterialManager.GetFromFile(program,
+//                GameCore.TheGameCore.TheRendererManager.TheRenderer.theResourceManager.GetFromFile(program,
 //                    @".\SkyBoxes\Day_Skybox.png", false);
             ObjMaterial tempMat =
-                GameCore.TheGameCore.TheRendererManager.TheRenderer.TheMaterialManager.GetFromFile(program,
+                GameCore.TheGameCore.TheRendererManager.TheRenderer.TheResourceManager.GetFromFile(program,
                     @".\SkyBoxes\Above_The_Sea.jpg", false);
 
             float dist = 0.5f;
@@ -462,7 +462,7 @@ namespace GameCore.Render.RenderObjects.ObjGroups
 
 
             ObjMaterial tempMat =
-                GameCore.TheGameCore.TheRendererManager.TheRenderer.TheMaterialManager.GetFromFile(program,
+                GameCore.TheGameCore.TheRendererManager.TheRenderer.TheResourceManager.GetFromFile(program,
                     @".\SkyBoxes\SkyBox-Clouds-Few-Noon.png", false);
 
             float dist = 0.5f;

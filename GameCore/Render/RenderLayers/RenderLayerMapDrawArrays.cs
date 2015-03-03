@@ -104,7 +104,7 @@ namespace GameCore.Render.RenderLayers
 
         private void ChangeTileType(Tile theTile)
         {
-            List<Tile> tempTiles = theMap.Tiles;
+            Tile[] tempTiles = theMap.TheTileArray;
 
             CreateTileIdVbo(tempTiles);
         }
@@ -119,9 +119,9 @@ namespace GameCore.Render.RenderLayers
             Dictionary<Tile.TileIds, Bitmap> tempTiletypeList =
                 RenderObjects.RenderObjects.CreateTileBitmaps(new Size(256, 256));
             List<ObjObject> tempObjList = new List<ObjObject>();
-            List<Tile> tempTiles = theMap.Tiles;
+            Tile[] tempTiles = theMap.TheTileArray;
 
-            numberOfTiles = tempTiles.Count();
+            numberOfTiles = tempTiles.Length;
             int numberOfTextures = tempTiletypeList.Count;
             // Number of values in SVertex2D
             stride = 5;
@@ -184,7 +184,7 @@ namespace GameCore.Render.RenderLayers
             GameCore.TheGameCore.RaiseMessage(string.Format("CreateTiles() took {0}ms", watch.ElapsedMilliseconds));
         }
 
-        private void CreateTileIdVbo(List<Tile> tempTiles)
+        private void CreateTileIdVbo(Tile[] tempTiles)
         {
 //Generate an instanced vertex array to identify each draw call in the shader
             float[] vDrawId = new float[numberOfTiles*numberOfVerticesPerTile];

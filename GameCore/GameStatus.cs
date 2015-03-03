@@ -141,6 +141,11 @@ namespace GameCore
             TheMap = Map.Map.LoadMap(aFilePath);
         }
 
+       public void LoadMapObject(string aFilePath)
+        {
+            TheMap = Map.Map.LoadFromMapObjectFiles(aFilePath);
+        }
+
         private static string FileNameToMapFileName(string aFilePath)
         {
             string tempPath = Path.GetDirectoryName(aFilePath);

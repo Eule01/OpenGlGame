@@ -54,7 +54,7 @@ namespace GameCore.Render.MainRenderer
             theKeyBindings = KeyBindings.GetDefaultKeyBindings();
             theKeyBindings.Initialise();
 
-            theMaterialManager = new MaterialManager();
+            theResourceManager = new ResourceManager();
             GameCore.TheGameCore.RaiseMessage("Loaded KeyBindings: " + System.Environment.NewLine + theKeyBindings);
 
             // StartOpenGl();
@@ -112,7 +112,7 @@ namespace GameCore.Render.MainRenderer
             Gl.Enable(EnableCap.Blend);
             Gl.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-            RenderObjects.RenderObjects.TheMaterialManager = theMaterialManager;
+            RenderObjects.RenderObjects.TheResourceManager = theResourceManager;
 
             Camera camera = new Camera(new Vector3(0, 20, 10), Quaternion.Identity);
             camera.SetDirection(new Vector3(1, -3, -1));
@@ -120,7 +120,7 @@ namespace GameCore.Render.MainRenderer
             TheGameStatus.TheCamera = camera;
 
             theSceneManager = new SceneManager(TheGameStatus, TheUserInputPlayer, theKeyBindings,
-                theMaterialManager, new RenderStatus() {Width = width, Height = height});
+                theResourceManager, new RenderStatus() {Width = width, Height = height});
 
             theSceneManager.AddCamera(camera);
 

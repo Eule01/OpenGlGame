@@ -1,4 +1,6 @@
 
+2015.03.03	IMPROVEMENT Improved the loading of the maps.
+2015.03.03	IMPROVEMENT Improved the map class. It now used an array to store the tiles. This is much faster.
 2015.03.02	FEATURE		Maps can now be converted into bitmaps and back. These can be save as a png with a sidecar file for the map details.
 2015.03.01	FEATURE		Created a MenuForm in which maps can be saved and loaded (minimal implementation so far).
 2015.02.26	FEATURE		The turret towers will now rotate at a maximum speed.

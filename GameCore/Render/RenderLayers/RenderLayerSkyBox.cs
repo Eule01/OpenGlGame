@@ -66,7 +66,7 @@ namespace GameCore.Render.RenderLayers
         private void AddAllSkyBoxes()
         {
             skyBoxes.Clear();
-            string tempSkyBoxFolder = TheMaterialManager.SkyBoxDirectory;
+            string tempSkyBoxFolder = TheResourceManager.SkyBoxDirectory;
             string[] files = Directory.GetFiles(tempSkyBoxFolder, "SkyBox_T*.*");
             List<string> fileList = new List<string>();
             foreach (string aFile in files)

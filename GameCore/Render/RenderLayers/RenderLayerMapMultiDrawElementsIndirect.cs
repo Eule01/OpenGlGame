@@ -159,7 +159,7 @@ namespace GameCore.Render.RenderLayers
             Dictionary<Tile.TileIds, Bitmap> tempTiletypeList =
                 RenderObjects.RenderObjects.CreateTileBitmaps(new Size(256, 256));
             List<ObjObject> tempObjList = new List<ObjObject>();
-            List<Tile> tempTiles = theMap.Tiles;
+            Tile[] tempTiles = theMap.TheTileArray;
 
             numberOfTiles = tempTiles.Count();
             int numberOfTextures = tempTiletypeList.Count;

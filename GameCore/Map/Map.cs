@@ -20,28 +20,18 @@ namespace GameCore.Map
         /// <summary>
         ///     The size of the map.
         /// </summary>
-        private RectangleF theBoundingBox = RectangleF.Empty;
+        private Rectangle theBoundingBox = Rectangle.Empty;
 
+        private int width;
+        private int height;
 
-//        private Tile[,] theTiles;
+        private Tile[] theTileArray;
+        private int offsetX;
+        private int offsetY;
 
-        private Dictionary<Vector, Tile> theTiles;
-        private List<Tile> tiles;
 
         public Map()
         {
-            theTiles = new Dictionary<Vector, Tile>();
-            tiles = new List<Tile>();
-//            Init();
-        }
-
-        /// <summary>
-        ///     Initialize the map object.
-        /// </summary>
-        private void Init()
-        {
-            Tiles = CreatTestTiles(new Point(-10, -10), new Size(20, 20));
-            theBoundingBox = GetBoundingBox(theTiles);
         }
 
         [XmlIgnore]
@@ -50,78 +40,68 @@ namespace GameCore.Map
             get { return theBoundingBox; }
         }
 
-        [XmlElement("Tiles")]
-        public List<Tile> Tiles
+
+        [XmlIgnore]
+        public int Width
         {
-            get { return tiles; }
-            set
-            {
-                tiles = value;
-                theTiles.Clear();
-                foreach (Tile aTile in tiles)
-                {
-                    theTiles.Add(aTile.Location, aTile);
-                }
-                theBoundingBox = GetBoundingBox(theTiles);
-            }
+            get { return width; }
         }
 
+        [XmlIgnore]
+        public int Height
+        {
+            get { return height; }
+        }
+
+        [XmlElement("TheTileArray")]
+        public Tile[] TheTileArray
+        {
+            get { return theTileArray; }
+            set
+            {
+                theTileArray = value;
+                theBoundingBox = GetBoundingBox(theTileArray);
+                width = theBoundingBox.Width;
+                height = theBoundingBox.Height;
+                offsetX = theBoundingBox.Location.X;
+                offsetY = theBoundingBox.Location.Y;
+            }
+        }
 
         [XmlIgnore]
         public Tile this[int x, int y]
         {
-            get
-            {
-                Vector loc = new Vector(x, y);
-                if (theTiles.ContainsKey(loc))
-                {
-                    return theTiles[loc];
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            get { return theTileArray[(x-offsetX) + (y-offsetY)*width]; }
         }
 
-        private static RectangleF GetBoundingBox(Dictionary<Vector, Tile> tempTiles)
+        private static Rectangle GetBoundingBox(Tile[] tempTiles)
         {
-            float minX = float.MaxValue;
-            float maxX = float.MinValue;
-            float minY = float.MaxValue;
-            float maxY = float.MinValue;
+            int minX = int.MaxValue;
+            int maxX = int.MinValue;
+            int minY = int.MaxValue;
+            int maxY = int.MinValue;
 
-            foreach (Vector aLoc in tempTiles.Keys)
+            foreach (Tile aTile in tempTiles)
             {
+                Vector aLoc = aTile.Location;
                 if (aLoc.X > maxX)
                 {
-                    maxX = aLoc.X;
+                    maxX = (int) aLoc.X;
                 }
                 if (aLoc.X < minX)
                 {
-                    minX = aLoc.X;
+                    minX = (int) aLoc.X;
                 }
                 if (aLoc.Y > maxY)
                 {
-                    maxY = aLoc.Y;
+                    maxY = (int) aLoc.Y;
                 }
                 if (aLoc.Y < minY)
                 {
-                    minY = aLoc.Y;
+                    minY = (int) aLoc.Y;
                 }
             }
-            return new RectangleF(minX, minY, maxX - minX + 1, maxY - minY + 1);
-        }
-
-        internal static void SaveMap(string aFilePath, Map aMap)
-        {
-            SaveObjects.SerializeObject(aFilePath, aMap);
-        }
-
-        internal static Map LoadMap(string aFilePath)
-        {
-            Map aMap = (Map) SaveObjects.DeserializeObject(aFilePath, typeof (Map));
-            return aMap;
+            return new Rectangle(minX, minY, maxX - minX + 1, maxY - minY + 1);
         }
 
         /// <summary>
@@ -135,51 +115,51 @@ namespace GameCore.Map
         {
             Stopwatch watch = Stopwatch.StartNew();
 
-            Map aMap = new Map {Tiles = CreatTestTiles(new Point(-250, -250), new Size(500, 500))};
+            Size aSize = new Size(500, 500);
+            Map aMap = new Map {TheTileArray = CreatTestTiles(new Point(-250, -250), aSize)};
             watch.Stop();
             GameCore.TheGameCore.RaiseMessage(string.Format("CreateTestMap() took {0}ms", watch.ElapsedMilliseconds));
-
-
             return aMap;
         }
 
-
-        private static List<Tile> CreatTestTiles(Point startPos, Size aSize)
+        private static Tile[] CreatTestTiles(Point startPos, Size aSize)
         {
-            List<Tile> tempTiles = new List<Tile>();
+            int width = aSize.Width;
+            int height = aSize.Height;
+            int mapOffsetX = startPos.X;
+            int mapOffsetY = startPos.Y;
+
+
+            Tile[] tempTiles = new Tile[width*height];
+
+
             Tile tempTile = null;
-            int x0 = startPos.X;
-            int x1 = startPos.X + aSize.Width;
-
-            int y0 = startPos.Y;
-            int y1 = startPos.Y + aSize.Height;
-
-
-            for (int x = x0; x < x1; x++)
+            for (int y = 0; y < height; y++)
             {
-                for (int y = y0; y < y1; y++)
+                for (int x = 0; x < width; x++)
                 {
-                    if (x == 8)
+                    Vector tempLoc = new Vector(x + mapOffsetX, y + mapOffsetY);
+                    if (x + mapOffsetX == 8)
                     {
-                        tempTile = new Tile(Tile.TileIds.Grass) {Location = new Vector(x, y)};
+                        tempTile = new Tile(Tile.TileIds.Grass) {Location = tempLoc};
                     }
-                    else if (x == 5)
+                    else if (x + mapOffsetX == 5)
                     {
-                        tempTile = new Tile(Tile.TileIds.Road) {Location = new Vector(x, y)};
+                        tempTile = new Tile(Tile.TileIds.Road) {Location = tempLoc};
                     }
-                    else if (x == 2)
+                    else if (x + mapOffsetX == 2)
                     {
-                        tempTile = new Tile(Tile.TileIds.Water) {Location = new Vector(x, y)};
+                        tempTile = new Tile(Tile.TileIds.Water) {Location = tempLoc};
                     }
-                    else if (x == 12)
+                    else if (x + mapOffsetX == 12)
                     {
-                        tempTile = new Tile(Tile.TileIds.Wall) {Location = new Vector(x, y)};
+                        tempTile = new Tile(Tile.TileIds.Wall) {Location = tempLoc};
                     }
                     else
                     {
-                        tempTile = new Tile(Tile.TileIds.Desert) {Location = new Vector(x, y)};
+                        tempTile = new Tile(Tile.TileIds.Desert) {Location = tempLoc};
                     }
-                    tempTiles.Add(tempTile);
+                    tempTiles[x+ y*width] = tempTile;
                 }
             }
             return tempTiles;
@@ -195,6 +175,19 @@ namespace GameCore.Map
                     TheTile = tempSelectedTile
                 });
             }
+        }
+
+        #region Load and Save
+
+        internal static void SaveMap(string aFilePath, Map aMap)
+        {
+            SaveObjects.SerializeObject(aFilePath, aMap);
+        }
+
+        internal static Map LoadMap(string aFilePath)
+        {
+            Map aMap = (Map) SaveObjects.DeserializeObject(aFilePath, typeof (Map));
+            return aMap;
         }
 
         public static void SaveToMapObject(Map aMap, string aFileNamePath)
@@ -222,14 +215,6 @@ namespace GameCore.Map
             return tempMapObject;
         }
 
-        public static void TestFromMapObject(Map aMap)
-        {
-//            MapObject tempMapObject = ConvertToMapObject(aMap);
-            SaveToMapObject(aMap, @".\testMapSave");
-            Map tempMap = LoadFromMapObjectFiles(@".\testMapSave");
-//            Map tempMap = FromMapObject(tempMapObject);
-        }
-
         public static Map FromMapObject(MapObject aMapObject)
         {
             Stopwatch watch = Stopwatch.StartNew();
@@ -255,7 +240,7 @@ namespace GameCore.Map
                                     " required: " + aPixelFormat);
             }
             Map tempMap = new Map();
-            List<Tile> tempTiles = new List<Tile>();
+            Tile[] tempTiles = new Tile[width*height];
             // lock source bitmap data
             BitmapData srcData = tempBitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly,
                 aPixelFormat);
@@ -264,29 +249,29 @@ namespace GameCore.Map
             int mapOffsetX = (int) aMapObject.TheMapDetail.TheBoundingBox.Location.X;
             int mapOffsetY = (int) aMapObject.TheMapDetail.TheBoundingBox.Location.Y;
 
+            int index = 0;
             unsafe
             {
                 int* src = (int*) srcData.Scan0.ToPointer();
 //                byte* src = (byte*) srcData.Scan0.ToPointer();
-                int x;
                 // for each row
                 for (int y = 0; y < height; y++)
                 {
                     // for each pixel
 //                    for (int x = 0; x < width; x++, src += 4)
-                    for (x = 0; x < width; x++, src++)
+                    for (int x = 0; x < width; x++, src++, index++)
                     {
                         int color = *src;
                         Tile tempTile = new Tile(colorToTileIds[color])
                         {
                             Location = new Vector(x + mapOffsetX, y + mapOffsetY)
                         };
-                        tempTiles.Add(tempTile);
+                        tempTiles[index] = tempTile;
                     }
                     src += srcOffset;
                 }
             }
-            tempMap.Tiles = tempTiles;
+            tempMap.TheTileArray = tempTiles;
 
             // unlock image
             tempBitmap.UnlockBits(srcData);
@@ -303,7 +288,7 @@ namespace GameCore.Map
 
             int width = (int) aMap.theBoundingBox.Width;
             int height = (int) aMap.theBoundingBox.Height;
-
+            Tile[] tempTiles = aMap.TheTileArray;
             Dictionary<Tile.TileIds, TileType> tileTypes = Tile.GetTileTypes();
             Dictionary<Tile.TileIds, int> tileIdToColor = new Dictionary<Tile.TileIds, int>();
             foreach (Tile.TileIds aTileIds in tileTypes.Keys)
@@ -325,7 +310,7 @@ namespace GameCore.Map
 
             int mapOffsetX = (int) aMap.theBoundingBox.Location.X;
             int mapOffsetY = (int) aMap.theBoundingBox.Location.Y;
-
+            int index = 0;
             unsafe
             {
 //                byte* src = (byte*) srcData.Scan0.ToPointer();
@@ -336,13 +321,13 @@ namespace GameCore.Map
                 {
                     // for each pixel
 //                    for (int x = 0; x < width; x++, src += 4)
-                    for (int x = 0; x < width; x++, src++)
+                    for (int x = 0; x < width; x++, src++, index++)
                     {
 //                        Tile tempTile = aMap[x + mapOffsetX, y + mapOffsetY];
 //                        Color tempColor = tileTypes[tempTile.TheTileId].Color;
 //                        Color tempColor = tileTypes[aMap[x + mapOffsetX, y + mapOffsetY].TheTileId].Color;
 //                        Color tempColor = tileIdToColor[aMap[x + mapOffsetX, y + mapOffsetY].TheTileId];
-                        *src = tileIdToColor[aMap[x + mapOffsetX, y + mapOffsetY].TheTileId];
+                        *src = tileIdToColor[tempTiles[index].TheTileId];
 
 //                        src[ARGB.AIndex] = tempColor.A;
 //                        src[ARGB.RIndex] = tempColor.R;
@@ -360,128 +345,14 @@ namespace GameCore.Map
             return tempBitmap;
         }
 
+        #endregion
+
         public override string ToString()
         {
             string outStr = "";
             outStr += "BoudingBox: " + theBoundingBox;
-            outStr += " with " + tiles.Count + " tiles";
+            outStr += " with " + theTileArray.Length + " tiles";
             return outStr;
-        }
-    }
-
-    /// ARGB components
-    /// Note: PixelFormat.Format24bppRgb actually means BGRA format
-    /// </summary>
-    public class ARGB
-    {
-        public const short AIndex = 3;
-        public const short RIndex = 2;
-        public const short GIndex = 1;
-        public const short BIndex = 0;
-
-        /// <summary>
-        ///     [0...255]
-        /// </summary>
-        public byte Alpha;
-
-        /// <summary>
-        ///     [0...255]
-        /// </summary>
-        public byte Red;
-
-        /// <summary>
-        ///     [0...255]
-        /// </summary>
-        public byte Green;
-
-        /// <summary>
-        ///     [0...255]
-        /// </summary>
-        public byte Blue;
-
-        // Color property
-        public Color Color
-        {
-            get { return Color.FromArgb(Alpha, Red, Green, Blue); }
-            set
-            {
-                Alpha = value.A;
-                Red = value.R;
-                Green = value.G;
-                Blue = value.B;
-            }
-        }
-
-        // Constructors
-        public ARGB()
-        {
-        }
-
-        public ARGB(byte alpha, byte red, byte green, byte blue)
-        {
-            Alpha = alpha;
-            Red = red;
-            Green = green;
-            Blue = blue;
-        }
-
-        public override string ToString()
-        {
-            return "A: " + Alpha + "R: " + Red + " G: " + Green + " B: " + Blue;
-        }
-    }
-
-    /// RGB components
-    /// Note: PixelFormat.Format24bppRgb actually means BGR format
-    /// </summary>
-    public class RGB
-    {
-        public const short RIndex = 2;
-        public const short GIndex = 1;
-        public const short BIndex = 0;
-
-        /// <summary>
-        ///     [0...255]
-        /// </summary>
-        public byte Red;
-
-        /// <summary>
-        ///     [0...255]
-        /// </summary>
-        public byte Green;
-
-        /// <summary>
-        ///     [0...255]
-        /// </summary>
-        public byte Blue;
-
-        // Color property
-        public Color Color
-        {
-            get { return Color.FromArgb(Red, Green, Blue); }
-            set
-            {
-                Red = value.R;
-                Green = value.G;
-                Blue = value.B;
-            }
-        }
-
-        // Constructors
-        public RGB()
-        {
-        }
-
-        public RGB(byte red, byte green, byte blue)
-        {
-            Red = red;
-            Green = green;
-            Blue = blue;
-        }
-
-        public override string ToString()
-        {
-            return "R: " + Red + " G: " + Green + " B: " + Blue;
         }
     }
 }

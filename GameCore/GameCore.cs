@@ -1,7 +1,5 @@
 ﻿#region
 
-using System;
-using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -10,6 +8,7 @@ using GameCore.Engine;
 using GameCore.GameObjects;
 using GameCore.GuiHelpers;
 using GameCore.Render.MainRenderer;
+using GameCore.Render.RenderMaterial;
 using GameCore.UserInterface;
 using GameCore.Utils;
 using GameCore.Utils.Timers;
@@ -95,7 +94,7 @@ namespace GameCore
         /// <param name="aMessage"></param>
         internal void RaiseMessage(string aMessage)
         {
-            OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.Message){Message = aMessage});
+            OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.Message) {Message = aMessage});
         }
 
         #region Game flow
@@ -107,9 +106,9 @@ namespace GameCore
 
             //            TheGameStatus = new GameStatus();
             theGameStatus = GameStatus.CreatTestGame();
-            SaveMap("test1");
+            SaveMapToXml("test1");
 //
-//            LoadMap("test1");
+//            LoadMapFromXml("test1");
 //
             ObjectGame.TheGameStatus = theGameStatus;
 
@@ -118,7 +117,6 @@ namespace GameCore
             ChangeRenderer(0);
             ShowKeyboardBindingForm();
             ShowMenuForm();
-
         }
 
         public void ChangeRenderer(int aRendererIndex)
@@ -161,32 +159,54 @@ namespace GameCore
 
         #region Commands
 
-        public void SaveMap(string aFilePath)
+        public void SaveMapToXml(string aFilePath)
         {
             string tempFilePath = FileNameToMapFileName(aFilePath);
             theGameStatus.SaveMap(tempFilePath);
             TheGameCore.OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.MapSaved)
-                {
-                    Message = tempFilePath
-                });
+            {
+                Message = tempFilePath
+            });
         }
 
-        public void LoadMap(string aFilePath)
+        public void LoadMapFromXml(string aFilePath)
         {
             Pause();
             string tempFilePath = FileNameToMapFileName(aFilePath);
             theGameStatus.LoadMap(tempFilePath);
             theRenderer.MapLoaded();
             TheGameCore.OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.MapLoaded)
-                {
-                    Message = tempFilePath
-                });
+            {
+                Message = tempFilePath
+            });
             Resume();
         }
 
-        public void MapToBitmap()
+        public void SaveMapObject(string aMapName)
         {
-            Map.Map.TestFromMapObject(theGameStatus.TheMap);
+            if (!Directory.Exists(ResourceManager.GetMapDirectory))
+            {
+                Directory.CreateDirectory(ResourceManager.GetMapDirectory);
+            }
+
+            string filePath = ResourceManager.GetMapPath(aMapName);
+            Map.Map.SaveToMapObject(theGameStatus.TheMap, filePath);
+            TheGameCore.OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.MapSaved)
+            {
+                Message = filePath
+            });
+        }
+
+        public void LoadMapObject(string aMapName)
+        {
+            Pause();
+            string filePath = ResourceManager.GetMapPath(aMapName);
+            theGameStatus.LoadMapObject(filePath);
+            TheGameCore.OnGameEventHandler(new GameEventArgs(GameEventArgs.Types.MapLoaded)
+            {
+                Message = filePath
+            });
+            Resume();
         }
 
         private static string FileNameToMapFileName(string aFilePath)
@@ -200,19 +220,15 @@ namespace GameCore
 
         #endregion
 
-
         private void ShowMenuForm()
         {
             theMenuForm = new MenuForm(this);
-            Async.Do(delegate
-            {
-                Application.Run(theMenuForm);
-            });
+            Async.Do(delegate { Application.Run(theMenuForm); });
 
             theMenuForm.Shown += delegate
             {
                 Thread.Sleep(100);
-                FormPositioner.PlaceNextToForm(theMenuForm, theKeyboardBindingsForm,FormPositioner.Locations.Left);
+                FormPositioner.PlaceNextToForm(theMenuForm, theKeyboardBindingsForm, FormPositioner.Locations.Left);
             };
         }
 
@@ -220,16 +236,14 @@ namespace GameCore
         private void ShowKeyboardBindingForm()
         {
             theKeyboardBindingsForm = new KeyboardBindingsForm(theRenderer.TheKeyBindings);
-            Async.Do(delegate
-            {
-                Application.Run(theKeyboardBindingsForm); 
-            });
+            Async.Do(delegate { Application.Run(theKeyboardBindingsForm); });
 
-            theKeyboardBindingsForm.Shown += delegate
-            {
-                FormPositioner.PlaceOnSecondScreenIfPossible(theKeyboardBindingsForm, FormPositioner.Locations.TopRight);
-
-            };
+            theKeyboardBindingsForm.Shown +=
+                delegate
+                {
+                    FormPositioner.PlaceOnSecondScreenIfPossible(theKeyboardBindingsForm,
+                        FormPositioner.Locations.TopRight);
+                };
 
             // Wait for the form to start up.
 //            Thread.Sleep(200);
