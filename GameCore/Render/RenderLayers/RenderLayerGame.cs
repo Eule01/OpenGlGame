@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using GameCore.GameObjects;
 using GameCore.Map;
 using GameCore.Render.Cameras;
@@ -36,7 +37,8 @@ namespace GameCore.Render.RenderLayers
 
         private Matrix4 projectionMatrix;
 
-        private ObjMaterial pointMaterial;
+        private ObjMaterial materialPoint;
+        private ObjMaterial materialLineMarker;
         private Dictionary<Tile.TileIds, PlainBmpTexture> tileTextures;
 
         private const bool UseObjMap = false;
@@ -44,6 +46,9 @@ namespace GameCore.Render.RenderLayers
 
         private Environment theEnvironment;
         private Camera TheCamera;
+
+        private ObjGroupPaths thePaths;
+        private Vector3[] thePathVector3 = null;
 
 
         public override void OnLoad()
@@ -68,7 +73,8 @@ namespace GameCore.Render.RenderLayers
             program["enable_lighting"].SetValue(theEnvironment.Lighting);
             program["ambient"].SetValue(theEnvironment.LightAmbient);
 
-            pointMaterial = TheResourceManager.GetPlainColor(program, "GamePlainRed", Color.Red);
+            materialPoint = TheResourceManager.GetPlainColor(program, "GamePlainRed", Color.Red);
+            materialLineMarker = TheResourceManager.GetPlainColor(program, "GamePlainGreenYellow", Color.GreenYellow);
 
             objMeshs = new List<IObjGroup>();
 
@@ -124,8 +130,10 @@ namespace GameCore.Render.RenderLayers
 //            tempObjGroup.AddObjects(theTileObjects);
 //            objMeshs.Add(tempObjGroup);
 //
-
             objMeshs.AddRange(GetGameObjects());
+
+            thePaths = new ObjGroupPaths(program);
+            objMeshs.Add(thePaths);
 
             Gl.UseProgram(0);
             Gl.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
@@ -143,7 +151,8 @@ namespace GameCore.Render.RenderLayers
 
         public override void OnDisplay()
         {
-        }
+
+       }
 
         public override void OnRenderFrame(float deltaTime)
         {
@@ -162,7 +171,19 @@ namespace GameCore.Render.RenderLayers
                 theEnvironment.LightDirection = theEnvironment.LightDirection*Matrix4.CreateRotationY(deltaTime);
                 program["light_direction"].SetValue(theEnvironment.LightDirection);
             }
-
+ 
+            if (thePathVector3 != null)
+            {
+                ObjPath tempObjPath = new ObjPath("Path", thePathVector3,
+                    new Vector3[] {thePathVector3[0], thePathVector3.Last()})
+                {
+                    LineMaterial = materialPoint,
+                    MarkerMaterial = materialLineMarker
+                };
+                thePaths.AddObject(tempObjPath);
+                thePathVector3 = null;
+            }
+ 
 
             // now draw the object file
 //            if (wireframe) Gl.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
@@ -198,7 +219,7 @@ namespace GameCore.Render.RenderLayers
 
                 VBO<Vector3> vertices = new VBO<Vector3>(vertexData);
 
-                if (pointMaterial != null) pointMaterial.Use();
+                if (materialPoint != null) materialPoint.Use();
 
                 Gl.BindBufferToShaderAttribute(vertices, program, "vertexPosition");
 
@@ -263,7 +284,7 @@ namespace GameCore.Render.RenderLayers
                     aObjObject.Dispose();
                 }
             }
-            if (pointMaterial != null) pointMaterial.Dispose();
+            if (materialPoint != null) materialPoint.Dispose();
             foreach (KeyValuePair<Tile.TileIds, PlainBmpTexture> plainBmpTexture in tileTextures)
             {
                 plainBmpTexture.Value.Material.Dispose();
@@ -385,6 +406,11 @@ namespace GameCore.Render.RenderLayers
         }
 
         #region Game objects
+
+        public void AddPath(Vector3[] tempVect3)
+        {
+            thePathVector3 = tempVect3;
+        }
 
         private List<ObjGroup> GetGameObjects()
         {

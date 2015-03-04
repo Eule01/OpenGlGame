@@ -106,13 +106,13 @@ namespace GameCore.Render.RenderObjects.ObjGroups
             }
         }
 
-        public void AddObject(ObjObject aObject)
+        public void AddObject(IObjObject aObject)
         {
             Objects.Add(aObject);
             if (aObject.Material == null) aObject.Material = defaultMaterial;
         }
 
-        public void AddObject(ObjObject aObject, ObjMaterial anObjMaterial)
+        public void AddObject(IObjObject aObject, ObjMaterial anObjMaterial)
         {
             aObject.Material = anObjMaterial;
             AddObject(aObject);

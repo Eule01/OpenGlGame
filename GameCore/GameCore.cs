@@ -1,5 +1,8 @@
 ﻿#region
 
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -8,10 +11,14 @@ using GameCore.Engine;
 using GameCore.GameObjects;
 using GameCore.GuiHelpers;
 using GameCore.Render.MainRenderer;
+using GameCore.Render.RenderLayers;
 using GameCore.Render.RenderMaterial;
+using GameCore.Render.RenderObjects;
 using GameCore.UserInterface;
 using GameCore.Utils;
+using GameCore.Utils.PathFinder.FirstAStar;
 using GameCore.Utils.Timers;
+using OpenGL;
 
 #endregion
 
@@ -214,6 +221,26 @@ namespace GameCore
             aFileName = "Map_" + aFileName + ".xml";
             string tempFilePath = Path.Combine(tempPath, aFileName);
             return tempFilePath;
+        }
+
+        public void FindPath()
+        {
+            Stopwatch watch = Stopwatch.StartNew();
+
+            bool[,] boolMap = SearchHelpers.GetSearchBoolMap(theGameStatus.TheMap);
+            Point startLocation = new Point(100, 100);
+            Point endLocation = new Point(300, 300);
+            SearchParameters tempSearchParameters = new SearchParameters(startLocation, endLocation,
+                boolMap);
+
+            AStarPathFinder tempAStarPathFinder = new AStarPathFinder(tempSearchParameters);
+            List<Point> tempPath = tempAStarPathFinder.FindPath();
+            tempPath.Insert(0,startLocation);
+            Vector3[] tempVect3 = SearchHelpers.PathToVector3Array(theGameStatus.TheMap, tempPath, 0.1f);
+            RenderLayerBase.TheSceneManager.TheRenderLayerGame.AddPath(tempVect3);
+
+            watch.Stop();
+            TheGameCore.RaiseMessage("FindPath() took " + watch.ElapsedMilliseconds + "ms, MapObject: ");
         }
 
         #endregion

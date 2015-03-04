@@ -34,6 +34,7 @@
             this.textBoxMapObject = new System.Windows.Forms.TextBox();
             this.buttonLoadMapObject = new System.Windows.Forms.Button();
             this.buttonSaveMapObject = new System.Windows.Forms.Button();
+            this.buttonFindPath = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonSaveMap
@@ -90,11 +91,22 @@
             this.buttonSaveMapObject.UseVisualStyleBackColor = true;
             this.buttonSaveMapObject.Click += new System.EventHandler(this.buttonSaveMapObject_Click);
             // 
+            // buttonFindPath
+            // 
+            this.buttonFindPath.Location = new System.Drawing.Point(12, 237);
+            this.buttonFindPath.Name = "buttonFindPath";
+            this.buttonFindPath.Size = new System.Drawing.Size(75, 23);
+            this.buttonFindPath.TabIndex = 7;
+            this.buttonFindPath.Text = "Find Path";
+            this.buttonFindPath.UseVisualStyleBackColor = true;
+            this.buttonFindPath.Click += new System.EventHandler(this.buttonFindPath_Click);
+            // 
             // MenuForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(380, 272);
+            this.Controls.Add(this.buttonFindPath);
             this.Controls.Add(this.textBoxMapObject);
             this.Controls.Add(this.buttonLoadMapObject);
             this.Controls.Add(this.buttonSaveMapObject);
@@ -116,5 +128,6 @@
         private System.Windows.Forms.TextBox textBoxMapObject;
         private System.Windows.Forms.Button buttonLoadMapObject;
         private System.Windows.Forms.Button buttonSaveMapObject;
+        private System.Windows.Forms.Button buttonFindPath;
     }
 }

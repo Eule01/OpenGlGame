@@ -62,9 +62,14 @@
     <Compile Include="GuiHelpers\MenuForm.Designer.cs">
       <DependentUpon>MenuForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Render\RenderObjects\ObjGroups\ObjGroupPaths.cs" />
+    <Compile Include="Render\RenderObjects\ObjPath.cs" />
     <Compile Include="Utils\Argb.cs" />
     <Compile Include="Map\MapDetail.cs" />
     <Compile Include="Map\MapObject.cs" />
+    <Compile Include="Utils\PathFinder\FirstAStar\Node.cs" />
+    <Compile Include="Utils\PathFinder\FirstAStar\SearchHelpers.cs" />
+    <Compile Include="Utils\PathFinder\FirstAStar\SearchParameters.cs" />
     <Compile Include="Utils\Rgb.cs" />
     <Compile Include="Render\Cameras\Camera.cs" />
     <Compile Include="Render\OpenGlHelper\MeshData.cs" />
@@ -118,7 +123,7 @@
     <Compile Include="UserInterface\UserInputPlayer.cs" />
     <Compile Include="Utils\BitmapHelper.cs" />
     <Compile Include="Utils\FormPositioner.cs" />
-    <Compile Include="Utils\PathFinder\AStarPathFinder.cs" />
+    <Compile Include="Utils\PathFinder\FirstAStar\AStarPathFinder.cs" />
     <Compile Include="Utils\PhysiscTest.cs" />
     <Compile Include="Utils\RandomNumGen.cs" />
     <Compile Include="Utils\SaveObjects.cs" />

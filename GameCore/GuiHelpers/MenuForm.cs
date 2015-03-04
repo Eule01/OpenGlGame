@@ -41,5 +41,10 @@ namespace GameCore.GuiHelpers
         {
             theGameCore.LoadMapObject(textBoxMapObject.Text);
         }
+
+        private void buttonFindPath_Click(object sender, EventArgs e)
+        {
+            theGameCore.FindPath();
+        }
     }
 }

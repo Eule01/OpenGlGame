@@ -1,10 +1,8 @@
 ﻿#region
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using GameCore.Render.OpenGlHelper;
-using GameCore.Render.RenderMaterial;
 using OpenGL;
 
 #endregion

@@ -49,6 +49,7 @@ namespace GameCore.Render.MainRenderer
             name = "RendererOpenGl4CSharp";
         }
 
+
         public override void Start()
         {
             theKeyBindings = KeyBindings.GetDefaultKeyBindings();

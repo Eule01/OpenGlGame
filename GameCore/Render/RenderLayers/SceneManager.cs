@@ -45,6 +45,15 @@ namespace GameCore.Render.RenderLayers
             ReInitialize();
         }
 
+        private RenderLayerGame theRenderLayerGame;
+
+        public RenderLayerGame TheRenderLayerGame
+        {
+            get { return theRenderLayerGame; }
+        }
+
+
+
         void TheGameCore_TheGameEventHandler(object sender, GameEventArgs args)
         {
             switch (args.TheType)
@@ -85,6 +94,11 @@ namespace GameCore.Render.RenderLayers
 
         public void AddLayer(IRenderLayer aRenderLayer)
         {
+            if (aRenderLayer is RenderLayerGame)
+            {
+                theRenderLayerGame = (RenderLayerGame) aRenderLayer;
+            }
+
             RenderLayerBase tempLayerBase = (RenderLayerBase) aRenderLayer;
             tempLayerBase.Width = width;
             tempLayerBase.Height = height;
