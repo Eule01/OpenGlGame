@@ -235,12 +235,18 @@ namespace GameCore
 
             AStarPathFinder tempAStarPathFinder = new AStarPathFinder(tempSearchParameters);
             List<Point> tempPath = tempAStarPathFinder.FindPath();
-            tempPath.Insert(0,startLocation);
-            Vector3[] tempVect3 = SearchHelpers.PathToVector3Array(theGameStatus.TheMap, tempPath, 0.1f);
-            RenderLayerBase.TheSceneManager.TheRenderLayerGame.AddPath(tempVect3);
-
+            if (tempPath.Count == 0)
+            {
+                TheGameCore.RaiseMessage("No path found: " + startLocation + "-"+endLocation);
+            }
+            else
+            {
+                tempPath.Insert(0, startLocation);
+                Vector3[] tempVect3 = SearchHelpers.PathToVector3Array(theGameStatus.TheMap, tempPath, 0.1f);
+                RenderLayerBase.TheSceneManager.TheRenderLayerGame.AddPath(tempVect3);
+            }
             watch.Stop();
-            TheGameCore.RaiseMessage("FindPath() took " + watch.ElapsedMilliseconds + "ms, MapObject: ");
+            TheGameCore.RaiseMessage("FindPath() took " + watch.ElapsedMilliseconds + "ms,: " + startLocation + "-" + endLocation);
         }
 
         #endregion

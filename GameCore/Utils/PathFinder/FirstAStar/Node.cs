@@ -107,6 +107,9 @@ namespace GameCore.Utils.PathFinder.FirstAStar
         /// </summary>
         internal static float GetTraversalCost(Point location, Point otherLocation)
         {
+//            float deltaX = otherLocation.X - location.X;
+//            float deltaY = otherLocation.Y - location.Y;
+//            return (float) Math.Abs(deltaX) + Math.Abs(deltaY);
             float deltaX = otherLocation.X - location.X;
             float deltaY = otherLocation.Y - location.Y;
             return (float) Math.Sqrt(deltaX*deltaX + deltaY*deltaY);

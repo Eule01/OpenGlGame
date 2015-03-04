@@ -368,6 +368,10 @@ https://www.youtube.com/watch?v=Kw8AMmyc6vg
 General A* tutorial:
 http://www.policyalmanac.org/games/aStarTutorial.htm
 
+A* with different parameters in C# (including optimisations):
+http://www.codeproject.com/Articles/15307/A-algorithm-implementation-in-C
+
+
 # Textures source
 
 http://opengameart.org/content/explosion
